@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<!--cleanup transformation for import of ASpace MARC-XML to Voyager-->
+
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
 	xmlns:marc="http://www.loc.gov/MARC21/slim"
 version="1.0">
