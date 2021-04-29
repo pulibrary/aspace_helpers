@@ -17,8 +17,8 @@ config = ArchivesSpace::Configuration.new({
 client = ArchivesSpace::Client.new(config).login
 
 #get all container ids for AC107.xx
-file_ids = [2044, 2140, 2141, 2152, 2158, 2159, 2160, 2161, 2162, 2163, 2164, 2142, 2143, 2144, 2145, 2146, 2147]
-#file_ids = [2044]
+#file_ids = [2044, 2140, 2141, 2152, 2158, 2159, 2160, 2161, 2162, 2163, 2164, 2142, 2143, 2144, 2145, 2146, 2147]
+file_ids = [2044, 2041, 2146, 2147]#
 
 #this doesn't scale
 #containers_all = []
@@ -47,9 +47,22 @@ file_ids.each do |id|
   #need to use two sets of double quotes to allow query parameters to use interpolation
   query: { q: "collection_uri_u_sstr:\"/repositories/4/resources/#{id}\"" }
   #the json field, counter-intuitively, is a string; parse as json
-).parsed['response']['docs'].map { |result| { result['uri'] => JSON.parse(result['json'])['indicator']} }
+).parsed['response']['docs'].map { |result| { JSON.parse(result['json'])['indicator'] => result['uri'] } }
 end
 
-top_containers.each do |ref|
-  puts ref
+top_containers = top_containers.flatten!
+top_containers_grouped = {}
+top_containers.each do |hash|
+   hash.each do |k, v|
+     #keys << k
+     if top_containers_grouped.has_key?(k) == false
+     then top_containers_grouped.store(k, []) && top_containers_grouped[k] << hash[k]
+     else top_containers_grouped[k] << hash[k]
+     end
+   end
 end
+
+puts top_containers_grouped
+
+
+#File.open(AC107_top_containers, 'w') { |file| file.write(top_containers) }
