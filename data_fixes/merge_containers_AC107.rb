@@ -56,9 +56,9 @@ top_containers.each do |hash|
    hash.each do |k, v|
      #keys << k
      if top_containers_grouped.has_key?(k) == false
-     then top_containers_grouped.store(k, []) && top_containers_grouped[k] << hash[k]
-     else top_containers_grouped[k] << hash[k]
+     then top_containers_grouped.store(k, [])
      end
+     top_containers_grouped[k] << hash[k]
    end
 end
 
