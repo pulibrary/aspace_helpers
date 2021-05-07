@@ -1,2 +1,2 @@
 # aspace_helpers
-Methods and reports to support common SC activities in ArchivesSpace.
+Methods, post-ASpace transformation tools, and reports to support common SC activities around ArchivesSpace.
