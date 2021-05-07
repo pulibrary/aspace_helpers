@@ -4,7 +4,7 @@ require 'json'
 
 #configure access
 config = ArchivesSpace::Configuration.new({
-  base_uri: "https://aspace.princeton.edu/staff/api",
+  base_uri: "https://aspace-staging.princeton.edu/staff/api",
   base_repo: "",
   username: @user,
   password: @password,
@@ -39,7 +39,7 @@ file_ids = [2044, 2041, 2146, 2147]#
 #  puts uri
 #end
 
-#search across all the top containers in the repository for AC107; resolve top_container record; put in array
+#search across all the top containers in the repository for AC107 containers; get indicator and uri
 top_containers = []
 file_ids.each do |id|
   top_containers << client.get(
@@ -50,19 +50,36 @@ file_ids.each do |id|
 ).parsed['response']['docs'].map { |result| { JSON.parse(result['json'])['indicator'] => result['uri'] } }
 end
 
+#flatten response array and group by box number string (we know they are all of type "box")
 top_containers = top_containers.flatten!
 top_containers_grouped = {}
 top_containers.each do |hash|
    hash.each do |k, v|
-     #keys << k
      if top_containers_grouped.has_key?(k) == false
      then top_containers_grouped.store(k, [])
      end
-     top_containers_grouped[k] << hash[k]
+     #instead of storing top_containers_grouped[k] << hash[k], need to hash uris with key "ref"
+     ref = {}
+     ref.store("ref", hash[k])
+     top_containers_grouped[k] << ref
    end
 end
 
-puts top_containers_grouped
-
-
-#File.open(AC107_top_containers, 'w') { |file| file.write(top_containers) }
+#puts top_containers_grouped
+#for each group, take first as target, following as victims, and merge victims into target
+top_containers_grouped = top_containers_grouped.select {|k,v| v.count > 1}
+top_containers_grouped.each do|k,v|
+  target =
+      v[0]
+  victims =
+      v.drop(1)
+  query = {
+    target: target,
+    victims: victims
+  }
+  #x=query.to_json
+  #puts x
+  #puts query.to_json
+  update = client.post('/merge_requests/top_container?repo_id=4', query)
+  puts update.body
+end
