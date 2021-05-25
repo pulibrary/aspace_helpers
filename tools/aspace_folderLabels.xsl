@@ -197,7 +197,7 @@
                         padding-left=".1in" padding-right=".1in" white-space-collapse="false" padding-bottom="5pt">
                         <xsl:value-of select="current()"/>
                     </fo:block>
-                    <fo:block font-size="11pt" font-family="Arial" line-height="0.2in" text-align="left" span="none"
+                	<fo:block font-weight="bold" font-size="11pt" font-family="Arial" line-height="0.2in" text-align="left" span="none"
                         padding-left=".1in" padding-right=".1in" padding-bottom="4pt">
                         <fo:inline white-space-collapse="true">
                             <xsl:choose>
