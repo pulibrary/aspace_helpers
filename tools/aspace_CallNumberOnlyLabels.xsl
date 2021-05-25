@@ -6,6 +6,7 @@
 	<xsl:output method="xml" encoding="utf-8" indent="yes"/>
 	<xsl:import href="http://www.xsltfunctions.com/xsl/functx-1.0.1-doc.xsl"/>
 	<xsl:strip-space elements="*"/>
+	<xsl:variable name="eadid" select="//ead:eadid"/>
 	<xsl:template match="/">
 		<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
 			<fo:layout-master-set>
@@ -30,13 +31,17 @@
 				<fo:table>
 					<fo:table-column column-width="96mm"/>
 					<fo:table-body font-family="Arial">
-						<xsl:apply-templates select="//ead:container[@label]"/>
+						<xsl:variable name="top_container" select="//ead:container[@label]"/>
+						<xsl:variable name="count" select="count(distinct-values($top_container))"/>
+						<xsl:for-each select="1 to $count">
+							<xsl:call-template name="container-label"/>
+						</xsl:for-each>
 					</fo:table-body>
 				</fo:table>
 			</fo:flow>
 		</fo:page-sequence>
 	</xsl:template>
-	<xsl:template match="ead:container[@label]">
+	<xsl:template name="container-label">
 		<fo:table-row height="2in" padding-bottom=".2in" padding-top=".2in" padding-left=".2in"
 			padding-right=".2in">
 			<fo:table-cell>
@@ -44,7 +49,7 @@
 					padding-right="2mm" margin-top="9mm">
 					<fo:block font-weight="bold" font-family="Arial" font-size="80pt"
 						line-height="0.3in" text-align="center" padding-before="10pt">
-						<xsl:value-of select="//ead:eadid"/>
+						<xsl:value-of select="$eadid"/>
 					</fo:block>
 				</fo:block>
 			</fo:table-cell>
