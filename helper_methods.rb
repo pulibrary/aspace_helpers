@@ -44,11 +44,11 @@ def get_all_resource_records_for_institution
     #puts count_ids
 
     #for each endpoint, get the record by id and add to array of records
-    paginate_endpoint(count_ids, endpoint)
+    paginate_endpoint(@ids_by_endpoint, count_ids, endpoint)
   end #close resources_endpoints.each
 
   #return array of results
-  return @results
+  puts @results
 end #close method
 
 def paginate_endpoint(ids, count_ids, endpoint)
@@ -98,4 +98,31 @@ def get_single_resource_by_id(repo, id)
     query: {
      id_set: id
     }}).parsed
+end
+
+def get_single_archival_object_by_id(repo, id)
+    endpoint_name = '/archival_objects/'
+    endpoint = construct_endpoint(repo, endpoint_name)
+    id = id.to_s
+    @client.get(endpoint + id,{
+      query: {
+       id_set: id
+      }}).parsed
+end
+
+def get_single_container_by_id(repo, id)
+  endpoint_name = '/top_containers/'
+  endpoint = construct_endpoint(repo, endpoint_name)
+  id = id.to_s
+  @client.get(endpoint + id,{
+    query: {
+     id_set: id
+    }}).parsed
+end
+
+def get_single_archival_object_by_cid(repo, cid)
+  components_all = get_all_records_for_repo_endpoint(repo, 'archival_objects')
+  selected_resources = components_all.select do |c|
+    c['ref_id'] == cid
+  end
 end
