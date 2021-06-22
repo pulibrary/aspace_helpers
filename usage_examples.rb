@@ -3,7 +3,7 @@ require 'json'
 require 'csv'
 require_relative 'helper_methods.rb'
 
-aspace_staging_login()
+aspace_login()
 
 #get all resource records for the institution
 #all_resources = get_all_resource_records_for_institution
@@ -52,5 +52,19 @@ aspace_staging_login()
 #  end
 
 #get a single event by id
-event = get_single_event_by_id(5, 16485)
-puts event
+#event = get_single_event_by_id(5, 16485)
+#puts event
+
+#get a single resource by ead_id and return its uri
+#resource = get_single_resource_by_eadid(11, "GC186")
+#result = resource.each.map  {|r| { r["ead_id"] => r["uri"] }}
+#puts result
+
+#get a hash of eadi/uri's for a list of eadids
+eadids = ["GC186", "GC185"]
+result =
+resources_all = get_array_of_resources_by_eadids(eadids)
+resources_all.each do |resource_by_eadid|
+  resource_by_eadid.each.map  {|r| puts r['ead_id'] => r['uri']}
+end
+#puts result
