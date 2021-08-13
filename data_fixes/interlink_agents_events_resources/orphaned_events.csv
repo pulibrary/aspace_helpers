@@ -1,0 +1,97 @@
+uri,created_by,create_time,event_type,outcome_note
+/repositories/3/events/16529,vj2,2019-09-13T17:56:12Z,deaccession,"Some oversize memorabilia and awards were deemed out of scope. Materials include, a flag base with pole and an animal hide award (Armed Forces Day ""Power for Peace"" Award, 1959 May 19 (Oversized former box 576b)."
+/repositories/3/events/16638,ldurginpua,2019-10-25T17:28:22Z,deaccession,Deaccessioned 11 boxes of Bill Bradley Papers that were marked as discards and separations. Dan Linke approved the deaccessioning in October 2019.
+/repositories/3/events/16648,pnobles,2019-11-04T21:50:26Z,Preservation,"Box 4506 was treated for mold. Some material was not salvagable: a Federal Sentencing Guideline Manual, 1987, and two illegible folders. Original folder organization is now unknown (there were accordion folders and manila folders inside), though materials should be in basically the same front-to-back order in the box. Treatment # 20.032 "
+/repositories/4/events/14575,ldurginpua,2018-01-10T18:33:29Z,Preservation,TREATMENT # 17.136
+/repositories/4/events/14583,ldurginpua,2018-01-10T21:00:01Z,Preservation,TREATMENT # 18.033
+/repositories/4/events/14879,ldurginpua,2018-04-10T14:59:15Z,Preservation,"Handy, Parker D. (Chairman, Committee on Finance) – Oversize (AD047)-- Brittle photograph mounted on archival backing paper. Conservation #18.081"
+/repositories/4/events/16183,ldurginpua,2019-05-13T16:47:52Z,Preservation,"Three dissertations were treated by the Preservation Lab for mold on the cover; 32101103048573; 32101103051338, 32101102996913. Dissertations were affected by mold due to their location on the shelving on the perimeter of the 2nd floor of the Mudd Library. Mold was discovered when sending all dissertations to ReCAP. 
+
+
+
+"
+/repositories/4/events/16411,hvrossum,2019-08-06T15:52:46Z,deaccession,Operating System/360 Chart (in Subject files Run II) because oversize format and information is available elsewhere.
+/repositories/4/events/16411,hvrossum,2019-08-06T15:52:46Z,deaccession,Operating System/360 Chart (in Subject files Run II) because oversize format and information is available elsewhere.
+/repositories/4/events/16619,ldurginpua,2019-10-17T19:52:35Z,Preservation,"Three volumes of Reports to the President: Vol. 1966-1967, II (32); Vol. 1967-1968 Vol. I (33); Vol. 1967-1968 Vol. II (34); were sent to the Preservation Lab because the covers had inactive mold. No record no. or treatment plan available. "
+/repositories/4/events/16639,ccleeton,2019-10-25T18:12:48Z,digitization,1969 Football Film
+/repositories/4/events/16706,hvrossum,2020-02-12T21:21:03Z,deaccession,During 2020 move survey it was determined that these five boxes of fragments should not be kept.
+/repositories/5/events/13778,kbolding,2016-08-03T19:27:15Z,virus_check,"For disk 001-024, all disks that could be mounted successfully (014-018, 020, & 022-024) passed."
+/repositories/5/events/13909,ah15,2016-10-24T20:31:39Z,Preservation,"Preservation number 17.052. Item from box 181, folder 13 treated for mold."
+/repositories/5/events/13917,ah15,2016-11-04T19:43:58Z,deaccession,"Disks 021, 149, and 152 deaccessioned after imaging revealed the contents to be out of scope of the collection. Disks returned to the creator. Disk images currently remain in bag on Isilon."
+/repositories/5/events/13918,faithc,2016-11-04T19:53:41Z,virus_check,"Hard drive: 6 threats identified with status ""PUA.Win.Packer...""; ignored as they were all executable files appearing to be related to hard drive software; not acquired"
+/repositories/5/events/13919,ah15,2016-11-04T20:03:12Z,Sensitive Data Scan,Bulk Extractor PII scan of floppy disk contents revealed 3 files to contain SSNs. Restricted files deleted from access copies; remain in bag on Isilon.
+/repositories/5/events/13920,faithc,2016-11-07T15:28:02Z,File Identification,Hard drive 
+/repositories/5/events/13921,faithc,2016-11-07T16:50:57Z,Sensitive Data Scan,"Hard drive: ccn files were identified, but numbers are not credit card numbers "
+/repositories/5/events/13922,faithc,2016-11-07T17:05:52Z,appraisal,Hard drive: deleted system files associated with external hard drive
+/repositories/5/events/13925,faithc,2016-11-07T20:18:01Z,Checksum Generation,Hard drive
+/repositories/5/events/14005,kbolding,2016-12-27T20:46:57Z,virus_check,0 threats identified
+/repositories/5/events/14006,kbolding,2016-12-27T20:48:38Z,File Identification,"- 1 .zip archive file found and extracted
+- no file extension mismatches found"
+/repositories/5/events/14007,kbolding,2016-12-27T20:50:55Z,Sensitive Data Scan,"- 2 flag words found, both were false positives and ignored
+- be report TBD"
+/repositories/5/events/14008,kbolding,2016-12-27T20:58:12Z,appraisal,"- while the entire contents of external hard drive were initially acquired, everything outside of the ""Frank Lewin Collection"" directory was deleted immediately after file transfer (deleted files consisted of a recycle bin and system files for the external hard drive); these files were deleted prior to file identification and scanning for the sake of efficiency and since their nature was readily apparent"
+/repositories/5/events/14010,kbolding,2016-12-29T15:17:30Z,Disk Image,All 13 floppy disks (disk001-disk013) were successfully imaged with KryoFlux (Apple DOS formatting). Some disks had bad sectors but none severe enough to prevent subsequent mounting of the disk image or file extraction. Files were extracted from these images using HFS Explorer.
+/repositories/5/events/14011,kbolding,2016-12-29T15:20:50Z,virus_check,0 threats identified.
+/repositories/5/events/14012,kbolding,2016-12-29T15:29:53Z,Checksum Generation,Bagged using bagit.py. Validated using bagit.py and Bagger GUI as confirmation.
+/repositories/5/events/14042,kbolding,2017-02-01T15:43:15Z,Sensitive Data Scan,"0 flag words found
+0 instances of sensitive data found"
+/repositories/5/events/14043,kbolding,2017-02-01T15:45:09Z,File Identification,"- 0 archive files found
+- .mcw was appended to files missing extensions
+"
+/repositories/5/events/14044,kbolding,2017-02-01T15:46:29Z,Checksum Generation,
+/repositories/5/events/14268,kbolding,2017-07-19T14:07:52Z,virus_check,"Performed on disks 007, 011, 012, 013, 022, 023, 025, 050, 052 and 074."
+/repositories/5/events/14269,kbolding,2017-07-19T14:24:12Z,File Identification,"Performed on disks 007, 011, 012, 013, 022, 023, 025, 050, and 074.
+Appended .mcw to 4 files and .wp to 33 files. Refer to the document ""AM.2015.62_ext_mismatch"" in the ri folder of AM2015-62_bag_4 for specific files corrected."
+/repositories/5/events/14270,kbolding,2017-07-19T14:26:35Z,Sensitive Data Scan,"Performed on disks disks 007, 011, 012, 013, 022, 023, 025, 050, and 074.
+No flag words found.
+666 instances of telephone numbers found; no actions taken. "
+/repositories/5/events/14271,kbolding,2017-07-19T14:27:53Z,Checksum Generation,"Performed on disks 007, 011, 012, 013, 022, 023, 025, 050, 052, and 074"
+/repositories/5/events/14410,kbolding,2017-11-02T14:16:06Z,ingestion,
+/repositories/5/events/14733,faithc,2018-01-31T19:11:10Z,Preservation,"Project numbers: 18.061, 18.062, and 18.0620
+Book conservator Lindsey Hobbs treated 3 diaries from this collection, primarily mending the bindings and creating custom enclosures "
+/repositories/5/events/14769,faithc,2018-02-15T19:21:36Z,Preservation,"Project #: 18.080; paper conservator, Ted Stanley, treated and cleaned two passports in the collection that exhibited possible mold damage. "
+/repositories/5/events/14987,pfendler,2018-05-24T15:15:36Z,virus_check,"Floppies: disk001-disk002, no threats found."
+/repositories/5/events/14996,pfendler,2018-05-29T20:24:48Z,File Identification,"No archive files found; 4 file missing file extensions but DROID didn't catch them; staff decided to leave as is. Staff also tried JHOVE, but were not provided with enough information to confidently add file extensions."
+/repositories/5/events/14999,pfendler,2018-05-29T20:38:09Z,Sensitive Data Scan,Floppy disks: No sensitive data found.
+/repositories/5/events/15002,pfendler,2018-05-29T20:54:35Z,appraisal,Floppy disks: Disk002 (cdo and image) was deleted because content was a duplicate of disk001. Retained MAC format version (disk001) because file names more meaningful. Disposed of disk002.
+/repositories/5/events/15005,pfendler,2018-05-29T21:07:48Z,Checksum Generation,Floppy disks: Bagged!
+/repositories/5/events/15011,pfendler,2018-05-30T20:16:24Z,ingestion,Floppy disks
+/repositories/5/events/15290,sirogers,2018-07-10T19:47:10Z,virus_check,
+/repositories/5/events/15292,sirogers,2018-07-10T19:49:39Z,Disk Image,Disk Images successfully created for disks001-disk008
+/repositories/5/events/15336,sirogers,2018-08-01T18:42:12Z,Disk Image,Created disk image for disk009 using the FC5025.
+/repositories/5/events/15339,sirogers,2018-08-01T18:44:04Z,Disk Image,Successfully completed disk image of optical001 using ISOBuster. 
+/repositories/5/events/15342,sirogers,2018-08-01T18:46:35Z,virus_check,Virus checks on disk009 and optical001 completed. 
+/repositories/5/events/15348,sirogers,2018-08-06T15:00:30Z,File Identification,
+/repositories/5/events/15351,sirogers,2018-08-06T15:32:36Z,Sensitive Data Scan,"- 2 instances of flag words found; actions logged
+
+- No ccn or pii found. "
+/repositories/5/events/15354,sirogers,2018-08-06T16:21:24Z,Checksum Generation,
+/repositories/5/events/15428,sirogers,2018-08-30T20:35:29Z,Disk Image,"AM.2015.62_bag_5 Optical Processing:
+Created preservation copies (disk images for CD and DVDs and .wav files for CD-DAs) for 39 pieces of media. Four pieces of media (optical030 ; optical035 ; optical036 ; optical041) could not be imaged. "
+/repositories/5/events/15434,sirogers,2018-08-30T20:43:22Z,virus_check,AM.2015.62_bag_5 Optical Processing: All files in this bag passed the Virus Check. 
+/repositories/5/events/15440,sirogers,2018-08-31T13:41:15Z,Sensitive Data Scan,"AM.2015.62_bag_5 Optical Processing: 
+- 74 instances of ccn patterns were found and a ccn.txt file was produced; after reviewing the files it was determined that this was just a false positive that was appearing in some of the wav and video files. "
+/repositories/5/events/16010,faithc,2019-02-13T22:18:05Z,Preservation,"Ted Stanley, Conservator; Project # 19.070 Determined that photographic negative included with letter from Madam Veillet to René Char was nitrate. 
+Per the Curator of MSS, item to be digitized and then disposed of. "
+/repositories/5/events/16341,alicelg,2019-07-24T14:20:08Z,virus_check,"Virus check for floppy disks in this collection. No threats identified although input/output error on disk011, ClamTK could not read some of the contents"
+/repositories/5/events/16343,alicelg,2019-07-24T14:22:33Z,Disk Image,Disk imaging for floppy disks in this collection. The following disk has bad sectors and could not be fully imaged: disk011
+/repositories/5/events/16347,alicelg,2019-07-24T15:25:35Z,File Identification,"For floppy disks in this collection: 
+- appended "".doc"" to file /cdo/disk011/CLEANRM.BAK
+DROID had error when exporting ext_mismatch .csv, so .csv has been created manually"
+/repositories/5/events/16351,alicelg,2019-07-24T19:53:33Z,Sensitive Data Scan,"- no instances of flag words found 
+- no instances of ccn.txt or pii.txt found"
+/repositories/5/events/16353,alicelg,2019-07-24T20:14:28Z,appraisal,"- Duplicate disks and disk images were deleted disk005, disk006, disk007, disk008. 
+- The improperly encoded/imaged file in disk011 was deleted.
+"
+/repositories/5/events/16355,alicelg,2019-07-25T16:49:29Z,Checksum Generation,
+/repositories/5/events/16369,alicelg,2019-07-26T19:24:13Z,ingestion,
+/repositories/5/events/16471,alicelg,2019-08-21T16:36:00Z,virus_check,No threats found.
+/repositories/5/events/16473,alicelg,2019-08-21T16:38:25Z,Disk Image,Images from disk001 and disk002 were successful.
+/repositories/5/events/16485,alicelg,2019-08-22T13:29:07Z,virus_check,No threats identified on disk001 and disk002.
+/repositories/5/events/16487,alicelg,2019-08-22T13:30:46Z,Disk Image,disk001 and disk002 successfully imaged.
+/repositories/5/events/16752,kbolding,2020-09-22T20:47:19Z,virus_check,
+/repositories/5/events/16791,kbolding,2020-10-23T20:15:06Z,File Identification,"- several webarchive files were identified by the archive files filter but were not extracted because software to do so was not readily available and because the files are third-party websites used as source material (equivalent to clippings)
+- two .DS_Store files were identified by the extension mismatch filter and deleted"
+/repositories/5/events/16792,kbolding,2020-10-23T20:21:42Z,Sensitive Data Scan,
+/repositories/5/events/16793,kbolding,2020-10-23T20:31:49Z,Checksum Generation,
+/repositories/5/events/16794,kbolding,2020-10-23T20:36:45Z,ingestion,
