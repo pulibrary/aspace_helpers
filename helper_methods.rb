@@ -100,6 +100,38 @@ def get_all_event_records_for_institution
   @results = @results.flatten!
 end #close method
 
+def get_all_archival_object_records_for_institution
+  #run through all repositories
+  resources_endpoints = []
+  repos_all = (3..12).to_a
+  repos_all.each do |repo|
+    resources_endpoints << 'repositories/'+repo.to_s+'/archival_objects'
+    end
+  #debug
+  #puts "endpoints to process are:"
+  #puts resources_endpoints
+
+  #for each endpoint, get the count of records
+  @results = []
+  resources_endpoints.each do |endpoint|
+    @ids_by_endpoint = []
+    @ids_by_endpoint << @client.get(endpoint, {
+      query: {
+       all_ids: true
+      }}).parsed
+    @ids_by_endpoint = @ids_by_endpoint.flatten!
+    count_ids = @ids_by_endpoint.count
+    #debug
+    #puts "number of records to retrieve for #{endpoint}:"
+    #puts count_ids
+
+    #for each endpoint, get the record by id and add to array of records
+    paginate_endpoint(@ids_by_endpoint, count_ids, endpoint)
+  end #close resources_endpoints.each
+
+  #return array of results
+  @results = @results.flatten!
+end #close method
 
 def paginate_endpoint(ids, count_ids, endpoint)
   count_processed_records = 0
