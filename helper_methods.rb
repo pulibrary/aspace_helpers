@@ -114,7 +114,7 @@ def paginate_endpoint(ids, count_ids, endpoint)
 end
 
 def construct_endpoint(repo, endpoint_name)
-  endpoint = 'repositories/'+repo.to_s+'/'+endpoint_name
+  endpoint = 'repositories/'+repo.to_s+'/'+endpoint_name.to_s
 end
 
 def get_paginated_records(repo, endpoint_name)
@@ -240,4 +240,12 @@ def get_all_top_container_records_for_institution
     paginate_endpoint(@ids_by_endpoint, count_ids, endpoint)
   end #close resources_endpoints.each
   @results = @results.flatten!
+end
+
+def get_all_archival_objects_for_resource(repo, id)
+  archival_objects_all = get_all_records_for_repo_endpoint(repo, 'archival_objects')
+  archival_objects_filtered =
+    archival_objects_all.select do |ao|
+      ao['resource']['ref'] == "/repositories/#{repo}/resources/#{id}"
+    end
 end
