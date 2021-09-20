@@ -216,3 +216,28 @@ def get_person_by_id_as_xml(repo_id, agent_id)
 endpoint_name = '/repositories/' + repo_id.to_s + '/archival_contexts/people/' + agent_id.to_s + '.xml'
 @client.get(endpoint_name.to_s).parsed
 end
+
+def get_all_top_container_records_for_institution
+  #run through all repositories
+  resources_endpoints = []
+  repos_all = (3..12).to_a
+  repos_all.each do |repo|
+    resources_endpoints << 'repositories/'+repo.to_s+'/top_containers'
+    end
+
+  #for each endpoint, get the count of records
+  @results = []
+  resources_endpoints.each do |endpoint|
+    @ids_by_endpoint = []
+    @ids_by_endpoint << @client.get(endpoint, {
+      query: {
+       all_ids: true
+      }}).parsed
+    @ids_by_endpoint = @ids_by_endpoint.flatten!
+    count_ids = @ids_by_endpoint.count
+
+    #for each endpoint, get the record by id and add to array of records
+    paginate_endpoint(@ids_by_endpoint, count_ids, endpoint)
+  end #close resources_endpoints.each
+  @results = @results.flatten!
+end
