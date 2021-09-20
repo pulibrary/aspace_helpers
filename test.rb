@@ -4,41 +4,16 @@ require_relative 'helper_methods.rb'
 
 aspace_login()
 
-#test dm
-# containers = []
-# aos << get_single_archival_object_by_id(3, 521187)
-# aos.each do |ao|
-#   #for each top_container, get the data and ref
-#   ao['instances'].each do |instance|
-#     puts "#{ao['uri']}
-#     #{ao['ref_id']}
-#     #{ao['title']}
-#     #{ao['dates'][0]['expression']}
-#     #{instance['sub_container']['top_container']['ref']}"
-#   #for each subcontainer, get data and ref as well as top container
-#     pattern = /type_\d+/
-#     subcontainers = instance['sub_container'].select {|k,v| k[pattern]}
-#     subcontainers.each do |subcontainer|
-#       puts "#{ao['uri']}
-#       #{ao['ref_id']}
-#       #{ao['title']}
-#       #{ao['dates'][0]['expression']}
-#       #{instance['sub_container']['top_container']['ref']}
-#       #{subcontainer[0]}: #{subcontainer[1]}"
-#     end
-#   end
-# end
-
+#ao = get_single_archival_object_by_id(11, 254845)
+#puts ao
 
 filename = 'get_aos.csv'
-#repos_all = (3..12).to_a
-repos_all = [11]
+repos_all = (3..12).to_a
+#repos_all = [11]
 aos_to_review = []
 start_time = "Process started: #{Time.now}"
 puts start_time
 
-#file_ids.each do |id|
-  #aos_to_review << get_all_archival_objects_for_resource(3, id).select do |ao|
 repos_all.each do |repo|
   aos_to_review << get_all_records_for_repo_endpoint(repo, 'archival_objects').select do |ao| #3, 1807
     #aos must have a parent and a subcontainer to be selected.
@@ -66,16 +41,19 @@ CSV.open(filename, "wb",
                 subcontainer_type_pattern = /(type_)(\d+)/ #this is the 'type_2' pattern
                 nested_box = instance['sub_container'].find {|k,v| k[subcontainer_type_pattern] && v=="box"}
                 if nested_box.nil? == false
-                  #get the first box, i.e. the top container
+                  #get the first box, i.e. the top container uri
+                  #do we need to get the top_container record for the box number? or is this sufficient?
                   then top_container = instance.dig('sub_container', 'top_container', 'ref')
                   row << [uri, cid, unittitle, unitdate, top_container]
-                  #get all nested boxes in that box
-                  #can I just do nested_box.select here? instead of instance['sub_container']
+                  #find all nested boxes in that box
                   subcontainer_types = instance['sub_container'].select {|k,v| k[subcontainer_type_pattern] && v=="box"}
                     subcontainer_types.each do |type_pair|
                       subcontainer_type = type_pair[0] + ': ' + type_pair[1]
                       subcontainer_type_index = type_pair[0].gsub(/\D+/, '')
-                      subcontainer_indicator = instance['sub_container'].select {|k,v| k ': ' v unless k.gsub(/\D+/, '') !== subcontainer_type_index }
+                      #match each numbered type_ hash to its corresponding indicator_hash via regex
+                      #(very hacky, but the best idea I came up with)
+                      subcontainer_indicator_logic = instance['sub_container'].select {|k,v| k[/indicator_\d+/] if k.gsub(/\D+/, '') == subcontainer_type_index }
+                      subcontainer_indicator = subcontainer_indicator_logic.keys.join('') + ': ' + subcontainer_indicator_logic.values.join('')
                       row << [uri, cid, unittitle, unitdate, top_container, subcontainer_type, subcontainer_indicator]
                     end #end subcontainer_types.each
                   end #end if
