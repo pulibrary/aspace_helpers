@@ -74,7 +74,8 @@ CSV.open(filename, "wb",
                   subcontainer_types = instance['sub_container'].select {|k,v| k[subcontainer_type_pattern] && v=="box"}
                     subcontainer_types.each do |type_pair|
                       subcontainer_type = type_pair[0] + ': ' + type_pair[1]
-                      subcontainer_indicator = instance['sub_container'].select {|k,v| k[/(indicator_)(\d+)/]}
+                      subcontainer_type_index = type_pair[0].gsub(/\D+/, '')
+                      subcontainer_indicator = instance['sub_container'].select {|k,v| k ': ' v unless k.gsub(/\D+/, '') !== subcontainer_type_index }
                       row << [uri, cid, unittitle, unitdate, top_container, subcontainer_type, subcontainer_indicator]
                     end #end subcontainer_types.each
                   end #end if
