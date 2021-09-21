@@ -64,7 +64,7 @@
                     	<xsl:value-of select="//ead:eadid"/>
                     </fo:block>
                 	<fo:block font-weight="bold" font-family="Arial" font-size="16pt"
-                		line-height="0.3in" span="none" text-align="center" padding-before="30pt">
+                		line-height="0.3in" span="none" text-align="right" padding-before="30pt">
                 		<xsl:value-of
                 			select="concat(upper-case(substring(normalize-space(@type),1,1)),
                 			substring(normalize-space(@type), 2))"/>
