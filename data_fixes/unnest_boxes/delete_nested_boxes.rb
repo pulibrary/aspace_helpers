@@ -11,10 +11,11 @@ log = "log.txt"
 repos_all = [10]
 aos_to_review = []
 
+#get all ao records for the endpoint
 repos_all.each do |repo|
   aos_to_review << get_all_records_for_repo_endpoint(repo, 'archival_objects').select do |ao| #3, 1807
     #aos must have a parent and a subcontainer to be selected.
-    #ao['parent'] &&
+    ao['parent'] &&
     #index [0] is a hack but we're looking for a known improperly nested box
     ao.dig('instances', 0, 'sub_container')
   rescue Exception => msg
@@ -29,6 +30,7 @@ aos_to_review.each do |ao|
     #check for all subcontainer keys called 'type_\d+' with value 'box'
       subcontainer_type_pattern = /(type_)(\d+)/ #this is the 'type_2' pattern
       nested_box = instance['sub_container'].find {|k,v| k[subcontainer_type_pattern] && v=="box"}
+      #delete them
       unless nested_box.nil?
           if instance['sub_container'].dig('type_3')
             instance['sub_container']['type_3'] = nil
@@ -38,11 +40,11 @@ aos_to_review.each do |ao|
           elsif instance['sub_container'].dig('type_2')
             instance['sub_container']['type_2'] = nil
             instance['sub_container']['indicator_2'] = nil
-          end
+          end #end if
         post = @client.post(ao['uri'], ao.to_json)
         #write to log
         File.write(log, post.body, mode: 'a')
-      end
+      end #end unless
   end #end ao['instances'].each
   #if something goes wrong, tell me why
   rescue Exception => msg
