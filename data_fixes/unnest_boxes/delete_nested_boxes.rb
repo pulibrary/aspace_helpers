@@ -46,7 +46,7 @@ aos_to_review.each do |ao|
       end
   end #end ao['instances'].each
   #if something goes wrong, tell me why
-  #rescue Exception => msg
-  #puts "Processing gathered records ended at #{Time.now} with error '#{msg.class}: #{msg.message}''"
+  rescue Exception => msg
+  puts "Processing gathered records ended at #{Time.now} with error '#{msg.class}: #{msg.message}''"
 end #end aos_to_review.each
     puts "Process ended: #{Time.now}"
