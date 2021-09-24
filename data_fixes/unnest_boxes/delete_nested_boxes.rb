@@ -37,7 +37,7 @@ aos_to_review.each do |ao|
             instance['sub_container']['indicator_3'] = nil
             instance['sub_container']['type_2'] = nil
             instance['sub_container']['indicator_2'] = nil
-          elsif instance['sub_container'].dig('type_3')
+          elsif instance['sub_container'].dig('type_2')
             instance['sub_container']['type_2'] = nil
             instance['sub_container']['indicator_2'] = nil
           end
