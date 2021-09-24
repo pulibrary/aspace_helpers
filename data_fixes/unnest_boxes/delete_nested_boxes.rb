@@ -31,7 +31,6 @@ aos_to_review.each do |ao|
       subcontainer_type_pattern = /(type_)(\d+)/ #this is the 'type_2' pattern
       nested_box = instance['sub_container'].find {|k,v| k[subcontainer_type_pattern] && v=="box"}
       unless nested_box.nil?
-        #this is crazy. after all manner of errors i'm deleting the same key twice, but somehow it deletes both fields.
           if instance['sub_container'].dig('type_3')
             instance['sub_container']['type_3'] = nil
             instance['sub_container']['indicator_3'] = nil
