@@ -10,7 +10,6 @@ log = "log.txt"
 #repos_all = (3..12).to_a
 repos_all = [10]
 aos_to_review = []
-top_containers = []
 
 repos_all.each do |repo|
   aos_to_review << get_all_records_for_repo_endpoint(repo, 'archival_objects').select do |ao| #3, 1807
