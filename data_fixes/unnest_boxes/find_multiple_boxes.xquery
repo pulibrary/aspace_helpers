@@ -8,15 +8,35 @@ at "http://www.xqueryfunctions.com/xq/functx-1.0-doc-2007-01.xq";
 
 declare variable $eads as document-node()* := collection("file:////Users/heberleinr/Documents/SVN_Working_Copies/trunk/rbscXSL/ASpace_files?select=*.xml;recurse=yes")/doc(document-uri(.));
 
-for $ead in $eads[not(//ead:dsc[2])]
-	let $components := $ead//ead:c/ead:did[count(ead:container[matches(@type, 'box|carton|volume', 'i')])>3]
-	for $component in $components[ead:container[@type = following-sibling::ead:container/@type and @encodinganalog = following-sibling::ead:container/@encodinganalog]]
+for $ead in $eads
+let $components := $ead//ead:c/ead:did[count(ead:container[matches(@type, 'box', 'i')]) > 1]
+let $distinct-siblings := distinct-values($components/ead:container[@type = preceding-sibling::ead:container/@type 
+												and @encodinganalog = preceding-sibling::ead:container/@encodinganalog
+												and contains(@encodinganalog, '_n')])
+	for $component in $components[ead:container[@type = following-sibling::ead:container/@type 
+												and @encodinganalog = following-sibling::ead:container/@encodinganalog
+												and contains(@encodinganalog, '_n')]]
 		let $top_container := $component/ead:container[1]
-		let $siblings := <siblings>{for $sibling in $top_container/following-sibling::ead:container[@type = $top_container/@type] return $sibling/@type || ' ' || $sibling}</siblings>
-			return
+		let $siblings :=
+		<siblings>{
+				for $sibling in $top_container/following-sibling::ead:container[@type = $top_container/@type]
+				let $encodinganalog := $sibling/@encodinganalog
+				let $position := index-of($distinct-siblings, $sibling)
+				return
+					<sibling
+						encodinganalog='{$encodinganalog}' position='{$position}'>{$sibling/@type || ' ' || $sibling}
+					</sibling>
+			}</siblings>
+		for $sibling in $siblings/*
+		let $id := xs:integer(substring-after($sibling/@encodinganalog, '_n')) + $sibling/@position
+		return
 			normalize-space(
 			$component/../@id || '^' ||
 			$top_container/@type || ' ' || $top_container || '^' ||
-			$siblings
-
-) || codepoints-to-string(10)
+			$top_container/@encodinganalog || '^' ||
+			$top_container/@label || '^' ||
+			$sibling || '^' ||
+			$sibling/@position || '^' ||
+			substring-before($sibling/@encodinganalog, '_n') || '_n' ||$id
+		(:	$sibling/@encodinganalog
+		:)	) || codepoints-to-string(10)
