@@ -10,8 +10,12 @@ puts start_time
 # #declare input file with uri and restriction value
 csv = CSV.parse(File.read("data_fixes/unnest_boxes/test.csv"), :headers => true)
 
-containers_all = get_all_top_container_records_for_institution()
-containers_all_ids = containers_all {|container| container['ils_holding_id']}
+#containers_all = get_all_top_container_records_for_institution()
+containers_all = get_all_records_for_repo_endpoint(12, 'top_containers')
+containers_all_ids = []
+  containers_all.each do |container|
+  containers_all_ids << container['ils_holding_id']
+end
 
 csv.each do |row|
   repo = row['repo']
@@ -40,11 +44,10 @@ csv.each do |row|
     "container_profile"=>{"ref"=>"/container_profiles/3"}
     }
 
-    post = if containers_all_ids.include? ils_holding_id
+    post = unless containers_all_ids.include? ils_holding_id
             puts ils_holding_id
           #@client.post('/repositories/12/top_containers', top_container.to_json)
           #puts post.body['uri']
           end
 end
-
 puts "Process ended: #{Time.now}"
