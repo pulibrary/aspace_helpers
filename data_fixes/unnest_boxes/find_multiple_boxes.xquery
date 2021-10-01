@@ -7,6 +7,7 @@ import module namespace functx = "http://www.functx.com"
 at "http://www.xqueryfunctions.com/xq/functx-1.0-doc-2007-01.xq";
 
 declare variable $eads as document-node()* := collection("file:////Users/heberleinr/Documents/SVN_Working_Copies/trunk/rbscXSL/ASpace_files?select=*.xml;recurse=yes")/doc(document-uri(.));
+declare variable $containers as document-node()* := doc("file:/Users/heberleinr/Documents/SVN_Working_Copies/trunk/rbscXSL/ASpace_tools/helpers/top_containers.xml");
 
 for $ead in $eads
 let $components := $ead//ead:c/ead:did[count(ead:container[matches(@type, 'box', 'i')]) > 1]
@@ -31,6 +32,7 @@ let $siblings :=
 	}</siblings>
 for $sibling in $siblings/*
 let $id := xs:integer(substring-after($sibling/@encodinganalog, '_n')) + $sibling/@position
+let $location := $containers//c[@id=$sibling/@encodinganalog or contains($sibling/@label, @id)]/physloc[@type[.='code']]
 return
 	normalize-space(
 	$component/../@id || '^' ||
@@ -40,6 +42,23 @@ return
 	$sibling/@type || '^' ||
 	$sibling || '^' ||
 	$sibling/@position || '^' ||
-	substring-before($sibling/@encodinganalog, '_n') || '_n' || $id
-	(:	$sibling/@encodinganalog
-		:)) || codepoints-to-string(10)
+	substring-before($sibling/@encodinganalog, '_n') || '_n' || $id || '^' ||
+		(if($location='mss')
+		then '/locations/23648'
+		else if($location='mudd')
+		then '/locations/23649'
+		else if($location='rcpph')
+		then '/locations/23652'
+		else if($location='rcpxm')
+		then '/locations/23657'
+		else if($location='rcpxr')
+		then '/locations/23658'
+		else if($location='review')
+		then '/locations/23662'
+		else $location
+		) || '^' ||
+(:	$containers//c[@id=$sibling/@encodinganalog or contains($sibling/@label, @id)]/physloc[@type[.='profile']]
+:)
+(:hard-coding profile uri, since they were all assigned B:)	
+	'/container_profiles/3'
+	) || codepoints-to-string(10)
