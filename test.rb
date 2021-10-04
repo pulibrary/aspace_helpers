@@ -9,14 +9,15 @@ puts start_time
 
 # #declare input file with uri and restriction value
 csv = CSV.parse(File.read("data_fixes/unnest_boxes/test.csv"), :headers => true)
+log = "nested_boxes_log.txt"
 
 #containers_all = get_all_top_container_records_for_institution()
-containers_all = get_all_records_for_repo_endpoint(12, 'top_containers')
+containers_all = get_all_records_for_repo_endpoint(3, 'top_containers')
 containers_all_ids = []
   containers_all.each do |container|
   containers_all_ids << container['ils_holding_id']
 end
-
+#construct new container record from csv
 csv.each do |row|
   repo = row['repo']
   ao = row['uri']
@@ -43,16 +44,18 @@ csv.each do |row|
     #hardcoding NBox profile
     "container_profile"=>{"ref"=>"/container_profiles/3"}
     }
-
+#compare ils_holding_id against ids from repo to make sure the container doesn't already exist
     post =
           unless containers_all_ids.include? ils_holding_id
       # puts ils_holding_id
             @client.post('/repositories/12/top_containers', top_container.to_json)
-          else puts "#{ils_holding_id} already exists"
+          else puts "#{ils_holding_id}:already exists"
           end
     #return the cid and the newly minted uri from the response, side by side
     response = JSON.parse post.body
-    puts "#{ils_holding_id} : #{response['uri']}"
+    response_parsed = "#{ils_holding_id}:#{response['uri']}"
+    puts response_parsed
+    File.write(log, response_parsed, mode: 'a')
   rescue Exception => msg
   end_time = "Process ended: #{Time.now} with message '#{msg.class}: #{msg.message}''"
 end
