@@ -28,10 +28,10 @@ csv.each do |row|
   location = row['location']
   top_container =
     {
-    "barcode"=>"{#{barcode}}",
-    "indicator"=>"{#{indicator}}",
-    "type"=>"{#{type}}",
-    "ils_holding_id"=>"{#{ils_holding_id}}",
+    "barcode"=>"#{barcode}",
+    "indicator"=>"#{indicator}",
+    "type"=>"#{type}",
+    "ils_holding_id"=>"#{ils_holding_id}",
     "container_locations"=>[{
       #hardcoding current status
       "status"=>"current",
@@ -44,10 +44,17 @@ csv.each do |row|
     "container_profile"=>{"ref"=>"/container_profiles/3"}
     }
 
-    post = unless containers_all_ids.include? ils_holding_id
-            puts ils_holding_id
-          #@client.post('/repositories/12/top_containers', top_container.to_json)
-          #puts post.body['uri']
+    post =
+          unless containers_all_ids.include? ils_holding_id
+      # puts ils_holding_id
+            @client.post('/repositories/12/top_containers', top_container.to_json)
+          else puts "#{ils_holding_id} already exists"
           end
+    #return the cid and the newly minted uri from the response, side by side
+    response = JSON.parse post.body
+    puts "#{ils_holding_id} : #{response['uri']}"
+  rescue Exception => msg
+  end_time = "Process ended: #{Time.now} with message '#{msg.class}: #{msg.message}''"
 end
+
 puts "Process ended: #{Time.now}"
