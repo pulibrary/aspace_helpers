@@ -9,7 +9,7 @@ puts start_time
 
 # #declare input file with uri and restriction value
 csv = CSV.parse(File.read("data_fixes/unnest_boxes/test.csv"), :headers => true)
-log = "nested_boxes_log.txt"
+log = "data_fixes/unnest_boxes/nested_boxes_log.txt"
 
 #containers_all = get_all_top_container_records_for_institution()
 containers_all = get_all_records_for_repo_endpoint(3, 'top_containers')
@@ -53,7 +53,7 @@ csv.each do |row|
           end
     #return the cid and the newly minted uri from the response, side by side
     response = JSON.parse post.body
-    response_parsed = "#{ils_holding_id}:#{response['uri']}"
+    response_parsed = "#{ils_holding_id}:#{response['uri']}\n"
     puts response_parsed
     File.write(log, response_parsed, mode: 'a')
   rescue Exception => msg
