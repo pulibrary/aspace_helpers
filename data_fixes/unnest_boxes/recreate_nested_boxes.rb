@@ -11,8 +11,8 @@ puts start_time
 csv = CSV.parse(File.read("data_fixes/unnest_boxes/test.csv"), :headers => true)
 log = "data_fixes/unnest_boxes/nested_boxes_log.txt"
 
-#containers_all = get_all_top_container_records_for_institution()
-containers_all = get_all_records_for_repo_endpoint(12, 'top_containers')
+containers_all = get_all_top_container_records_for_institution()
+#containers_all = get_all_records_for_repo_endpoint(12, 'top_containers')
 existing_container_ids = []
   containers_all.each do |container|
   existing_container_ids << {container['ils_holding_id'] => container['uri']}
