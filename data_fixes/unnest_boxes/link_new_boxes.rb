@@ -8,10 +8,11 @@ start_time = "Process started: #{Time.now}"
 puts start_time
 
 # #declare input file with uri and restriction value
-csv = CSV.parse(File.read("test_linking.csv"), :headers => true)
+csv = CSV.parse(File.read("test-restriction.csv"), :headers => true)
 log = "link_nested_boxes_log.txt"
 
 csv.each do |row|
+  puts row['ao_uri']
   uri = row['ao_uri']
   ao = @client.get(uri).parsed
     ao['instances'] <<
@@ -28,7 +29,7 @@ csv.each do |row|
   File.write(log, response, mode: 'a')
 rescue Exception => msg
 end_time = "Process ended: #{Time.now} with message '#{msg.class}: #{msg.message}''"
-
+puts end_time
 end
 
 puts "Process ended: #{Time.now}"
