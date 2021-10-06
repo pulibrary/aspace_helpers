@@ -29,6 +29,7 @@ csv.each do |row|
   indicator = row['indicator']
   type = row['type']
   location = row['location']
+  restriction = row['local_access_restriction_type']
   top_containers <<
     {
     "barcode"=>"#{barcode}",
@@ -41,11 +42,16 @@ csv.each do |row|
       "status"=>"current",
       "start_date"=>"{#{Time.now}}",
       "note"=>"this is a test",
-      #hard-coding review location
+      #hardcoding review location
       "ref"=>"#{location}"}
     ],
     #hardcoding NBox profile
-    "container_profile"=>{"ref"=>"/container_profiles/3"}
+    "container_profile"=>{"ref"=>"/container_profiles/3"},
+    "active_restrictions" << [{
+    "restriction_note_type"=>"accessrestrict",
+    "jsonmodel_type"=>"rights_restriction",
+    "local_access_restriction_type"=>["#{restriction}"],
+    "linked_records"=>{"ref"=>"#{ao}"}}
     }
   end
 
@@ -61,6 +67,7 @@ top_containers.each do |top_container|
     puts response_parsed
   else puts "#{existing_container.keys[0]}:#{existing_container.values[0]}:already exists\n"
     end
+    File.write(log, post.body, mode: 'a')
   rescue Exception => msg
   end_time = "Process ended: #{Time.now} with message '#{msg.class}: #{msg.message}''"
 
