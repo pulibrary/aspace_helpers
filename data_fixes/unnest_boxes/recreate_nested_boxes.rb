@@ -1,6 +1,6 @@
 require 'archivesspace/client'
 require 'json'
-require_relative 'helper_methods.rb'
+require_relative '../../helper_methods.rb'
 
 aspace_staging_login()
 
@@ -8,11 +8,11 @@ start_time = "Process started: #{Time.now}"
 puts start_time
 
 # #declare input file with uri and restriction value
-csv = CSV.parse(File.read("data_fixes/unnest_boxes/test.csv"), :headers => true)
-log = "data_fixes/unnest_boxes/nested_boxes_log.txt"
+csv = CSV.parse(File.read("test-restriction.csv"), :headers => true)
+log = "restrictions_log.txt"
 
-containers_all = get_all_top_container_records_for_institution()
-#containers_all = get_all_records_for_repo_endpoint(12, 'top_containers')
+#containers_all = get_all_top_container_records_for_institution()
+containers_all = get_all_records_for_repo_endpoint(12, 'top_containers')
 existing_container_ids = []
   containers_all.each do |container|
   existing_container_ids << {container['ils_holding_id'] => container['uri']}
@@ -29,6 +29,7 @@ csv.each do |row|
   indicator = row['indicator']
   type = row['type']
   location = row['location']
+  restriction = row['restriction']
   top_containers <<
     {
     "barcode"=>"#{barcode}",
@@ -41,11 +42,17 @@ csv.each do |row|
       "status"=>"current",
       "start_date"=>"{#{Time.now}}",
       "note"=>"this is a test",
-      #hard-coding review location
+      #hardcoding review location
       "ref"=>"#{location}"}
     ],
     #hardcoding NBox profile
-    "container_profile"=>{"ref"=>"/container_profiles/3"}
+    "container_profile"=>{"ref"=>"/container_profiles/3"},
+    "active_restrictions"=>{
+      "restriction_note_type"=>"accessrestrict",
+      "jsonmodel_type"=>"rights_restriction",
+      "local_access_restriction_type"=>["#{restriction}"],
+      "linked_records"=>{"ref"=>"#{ao}"}
+      }
     }
   end
 
@@ -61,9 +68,10 @@ top_containers.each do |top_container|
     puts response_parsed
   else puts "#{existing_container.keys[0]}:#{existing_container.values[0]}:already exists\n"
     end
+    File.write(log, post.body, mode: 'a')
   rescue Exception => msg
   end_time = "Process ended: #{Time.now} with message '#{msg.class}: #{msg.message}''"
-
+  puts end_time
 end
 
 puts "Process ended: #{Time.now}"
