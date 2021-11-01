@@ -46,15 +46,15 @@ CSV.open(filename, "wb",
             end
 
         puts "#{self_uri}: #{self_restriction}: #{self_restriction_note}: #{ancestor_level}: #{ancestor_uri}"
-
         row << [self_uri, self_restriction, self_restriction_note, ancestor_level, ancestor_uri]
-        rescue Exception => msg
-        puts "Processing gathered interrupted at #{Time.now} with error '#{msg.class}: #{msg.message}''"
         end #if
       end #end each
     end #end each
   end #end aos.each
 end #end repos_all.each do
+rescue Exception => msg
+puts "Processing gathered records ended at #{Time.now} with error '#{msg.class}: #{msg.message}'"
+
 end #CSV.open
 
 
