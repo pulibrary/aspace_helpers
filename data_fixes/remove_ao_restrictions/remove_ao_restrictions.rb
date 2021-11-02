@@ -101,7 +101,7 @@ CSV.open(filename, "wb",
       end]
 
     end #end aos.each
-puts "Processing gathered records ended at #{Time.now}""
+puts "Processing gathered records ended at #{Time.now}"
 rescue Exception => msg
 puts "Processing gathered records ended at #{Time.now} with error '#{msg.class}: #{msg.message}'"
 end #repos.each
