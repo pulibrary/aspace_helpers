@@ -9,8 +9,8 @@ start_time = "Process started: #{Time.now}"
 puts start_time
 
 filename = 'get_aos.csv'
-#repos_all = (3..12).to_a
-repos_all = [11]
+repos_all = (3..12).to_a
+#repos_all = [11]
 aos = []
 
 CSV.open(filename, "wb",
@@ -34,7 +34,7 @@ CSV.open(filename, "wb",
             resource_restriction_note <<
               unless
                 note.dig('subnotes', 0, 'jsonmodel_type') != "note_text"
-                note.dig('subnotes', 0, 'content')
+                note.dig('subnotes', 0, 'content').gsub(/[\r\n]+/, ' ')
               end #unless
           end #if
         end #end each note
@@ -52,7 +52,7 @@ CSV.open(filename, "wb",
             parent_restriction_note <<
               unless
                 note.dig('subnotes', 0, 'jsonmodel_type') != "note_text"
-                note.dig('subnotes', 0, 'content')
+                note.dig('subnotes', 0, 'content').gsub(/[\r\n]+/, ' ')
               end #unless
           end #if
         end #end each note
@@ -68,7 +68,7 @@ CSV.open(filename, "wb",
           self_restriction_note <<
             unless
               note.dig('subnotes', 0, 'jsonmodel_type') != "note_text"
-              note.dig('subnotes', 0, 'content')
+              note.dig('subnotes', 0, 'content').gsub(/[\r\n]+/, ' ')
             end #unless
         end #if
       end #end each note
@@ -101,7 +101,7 @@ CSV.open(filename, "wb",
       end]
 
     end #end aos.each
-puts "Processing gathered records ended at #{Time.now}"
+puts "Processing gathered records for repo #{repo} ended at #{Time.now}"
 rescue Exception => msg
 puts "Processing gathered records ended at #{Time.now} with error '#{msg.class}: #{msg.message}'"
 end #repos.each
