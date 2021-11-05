@@ -68,3 +68,22 @@ resources_all.each do |resource_by_eadid|
   resource_by_eadid.each.map  {|r| puts r['ead_id'] => r['uri']}
 end
 #puts result
+
+#delete all instances from an archival archival_object
+csv.each do |row|
+  #puts row['ao_uri']
+  uri = row['ao_uri']
+  ao = @client.get(uri).parsed
+    ao['instances'] = []
+  post = @client.post(uri, ao.to_json)
+  response = post.body
+  puts response
+end
+
+#delete top containers by uriscsv.each do |row|
+csv.each do |row|
+  uri = row['tc_uri']
+  post = @client.delete(uri)
+  response = post.body
+  puts response
+end
