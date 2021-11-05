@@ -1,5 +1,6 @@
 require 'archivesspace/client'
 require 'json'
+require 'csv'
 require_relative 'helper_methods.rb'
 
 aspace_staging_login()
@@ -7,63 +8,90 @@ aspace_staging_login()
 start_time = "Process started: #{Time.now}"
 puts start_time
 
-# #declare input file with uri and restriction value
-csv = CSV.parse(File.read("data_fixes/unnest_boxes/test.csv"), :headers => true)
-log = "data_fixes/unnest_boxes/nested_boxes_log.txt"
+filename = 'test.csv'
+#repos_all = (7..12).to_a
+repos_all = [11]
+aos = []
 
-#containers_all = get_all_top_container_records_for_institution()
-containers_all = get_all_records_for_repo_endpoint(12, 'top_containers')
-existing_container_ids = []
-  containers_all.each do |container|
-  existing_container_ids << {container['ils_holding_id'] => container['uri']}
-end
+CSV.open(filename, "wb",
+  :write_headers => true,
+  :headers => ["self_uri", "self_restriction_type", "self_restriction_note", "parent_level", "parent_uri", "parent_restriction_type", "parent_restriction_note", "resource_level", "resource_uri", "resource_restriction_type", "resource_restriction_note"]) do |row|
+  repos_all.each do |repo|
+    aos << get_all_records_for_repo_endpoint(repo, 'archival_objects', ['parent', 'resource'])
+    puts "Gathering records ended at #{Time.now}"
+    aos = aos.flatten!
+    aos.each do |ao|
+      #get resource properties
+      unless ao.dig('resource').nil?
+        resource_level = ao['resource']['_resolved']['level']
+        resource_uri = ao['resource']['ref']
 
-#construct new container record from csv
-top_containers = []
-csv.each do |row|
-  ils_holding_id = row['ils_holding_id']
-  repo = row['repo']
-  ao = row['uri']
-  cid= row['cid']
-  barcode = row['ils_holding_id']
-  indicator = row['indicator']
-  type = row['type']
-  location = row['location']
-  top_containers <<
-    {
-    "barcode"=>"#{barcode}",
-    "indicator"=>"#{indicator}",
-    "type"=>"#{type}",
-    "ils_holding_id"=>"#{ils_holding_id}",
-    "repository"=>{"ref"=>"/repositories/#{repo}"},
-    "container_locations"=>[{
-      #hardcoding current status
-      "status"=>"current",
-      "start_date"=>"{#{Time.now}}",
-      "note"=>"this is a test",
-      #hard-coding review location
-      "ref"=>"#{location}"}
-    ],
-    #hardcoding NBox profile
-    "container_profile"=>{"ref"=>"/container_profiles/3"}
-    }
-  end
+        notes = ao.dig('resource', '_resolved', 'notes')
+        restrictions_hash = notes.select { |hash| hash['type'] == "accessrestrict"}
+        #puts restrictions_hash
+        #puts restrictions_hash.class
+        resource_restriction_type = restrictions_hash.dig(0, 'rights_restriction', 'local_access_restriction_type', 0)
+        resource_restriction_note =
+              unless
+                restrictions_hash.dig(0, 'subnotes', 0, 'jsonmodel_type') != "note_text"
+                restrictions_hash.dig(0, 'subnotes', 0, 'content').gsub(/[\r\n]+/, ' ')
+              end #unless
+      end #unless
+      #get parent properties
+      unless ao.dig('parent').nil?
+        parent_level = ao['parent']['_resolved']['level']
+        parent_uri = ao['parent']['ref']
+        notes = ao.dig('parent', '_resolved', 'notes')
+        restrictions_hash = notes.select { |hash| hash['type'] == "accessrestrict"}
+        parent_restriction_type = restrictions_hash.dig(0, 'rights_restriction', 'local_access_restriction_type', 0)
+        parent_restriction_note =
+              unless
+                restrictions_hash.dig(0, 'subnotes', 0, 'jsonmodel_type') != "note_text"
+                restrictions_hash.dig(0, 'subnotes', 0, 'content').gsub(/[\r\n]+/, ' ')
+              end #unless
+      end #unless
+      #get self properties
+      self_uri = ao['uri']
+      notes = ao.dig('notes')
+      restrictions_hash = notes.select { |hash| hash['type'] == "accessrestrict"}
+      self_restriction_type = restrictions_hash.dig(0, 'rights_restriction', 'local_access_restriction_type', 0)
+      self_restriction_note =
+            unless
+              restrictions_hash.dig(0, 'subnotes', 0, 'jsonmodel_type') != "note_text"
+              restrictions_hash.dig(0, 'subnotes', 0, 'content').gsub(/[\r\n]+/, ' ')
+            end #unless
 
-#check whether the container already exists in ASpace
-#if it doesn't, create it
-#if it does, return id and uri
-top_containers.each do |top_container|
-  unless existing_container = existing_container_ids.find { |existing_container| existing_container.has_key?(top_container['ils_holding_id']) }
-    repo = top_container['repository']['ref']
-    post = @client.post("#{repo}/top_containers", top_container.to_json)
-    response = JSON.parse post.body
-    response_parsed = "#{top_container['ils_holding_id']}:#{response['uri']}:created\n"
-    puts response_parsed
-  else puts "#{existing_container.keys[0]}:#{existing_container.values[0]}:already exists\n"
-    end
-  rescue Exception => msg
-  end_time = "Process ended: #{Time.now} with message '#{msg.class}: #{msg.message}''"
+      puts "#{self_uri}:#{unless self_restriction_type.nil?
+        self_restriction_type
+      end}:#{unless self_restriction_note.nil?
+        self_restriction_note
+      end}:#{parent_level}:#{parent_uri}:#{unless parent_restriction_type.nil?
+        parent_restriction_type
+      end}:#{unless parent_restriction_note.nil?
+        parent_restriction_note
+      end}:#{resource_level}:#{resource_uri}:#{unless resource_restriction_type.nil?
+        resource_restriction_type
+      end}:#{unless resource_restriction_note.nil?
+        resource_restriction_note
+      end}"
+      #write to csv
+      row << [self_uri, unless self_restriction_type.nil?
+        self_restriction_type
+      end, unless self_restriction_note.nil?
+        self_restriction_note
+      end, parent_level, parent_uri, unless parent_restriction_type.nil?
+        parent_restriction_type
+      end, unless parent_restriction_note.nil?
+        parent_restriction_note
+      end, resource_level, resource_uri, unless resource_restriction_type.nil?
+        resource_restriction_type
+      end, unless resource_restriction_note.nil?
+        resource_restriction_note
+      end]
 
-end
-
-puts "Process ended: #{Time.now}"
+    end #end aos.each
+puts "Processing gathered records for repo #{repo} ended at #{Time.now}"
+# rescue Exception => msg
+# puts "Processing gathered records ended at #{Time.now} with error '#{msg.class}: #{msg.message}'"
+end #repos.each
+end #CSV.open
