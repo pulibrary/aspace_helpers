@@ -71,6 +71,25 @@ end
 
 #add a revision statement to a resource record
 uris.each do |uri|
-resource= @client.get(uri).parsed
-revision_statement = add_revision_statement(uri, "test")
+  resource= @client.get(uri).parsed
+  revision_statement = add_revision_statement(uri, "test")
+end
+
+#delete all instances from an archival archival_object
+csv.each do |row|
+  #puts row['ao_uri']
+  uri = row['ao_uri']
+  ao = @client.get(uri).parsed
+    ao['instances'] = []
+  post = @client.post(uri, ao.to_json)
+  response = post.body
+  puts response
+end
+
+#delete top containers by uris
+csv.each do |row|
+  uri = row['tc_uri']
+  post = @client.delete(uri)
+  response = post.body
+  puts response
 end
