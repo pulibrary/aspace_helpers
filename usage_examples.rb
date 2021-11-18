@@ -68,3 +68,9 @@ resources_all.each do |resource_by_eadid|
   resource_by_eadid.each.map  {|r| puts r['ead_id'] => r['uri']}
 end
 #puts result
+
+#add a revision statement to a resource record
+uris.each do |uri|
+resource= @client.get(uri).parsed
+revision_statement = add_revision_statement(uri, "test")
+end
