@@ -8,8 +8,8 @@ aspace_staging_login()
 start_time = "Process started: #{Time.now}"
 puts start_time
 
-csv = CSV.parse(File.read("test_input.csv"), :headers => true)
-log = "test_remove_restrictions.txt"
+csv = CSV.parse(File.read("get_aos_3.csv"), :headers => true)
+log = "remove_restrictions_repo_3.txt"
 
 csv.each do |row|
   uri = row['self_uri']
