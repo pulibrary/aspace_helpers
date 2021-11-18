@@ -184,6 +184,17 @@ def get_single_event_by_id(repo, id, resolve = [])
     }}).parsed
 end
 
+def get_single_do_by_id(repo, id, resolve = [])
+  endpoint_name = '/digital_objects/'
+  endpoint = construct_endpoint(repo, endpoint_name)
+  id = id.to_s
+  @client.get(endpoint + id,{
+    query: {
+     id_set: id,
+     resolve: resolve
+    }}).parsed
+end
+
 def get_single_archival_object_by_cid(repo, cid, resolve = [])
   endpoint_name = 'archival_objects'
   components_all = get_all_records_for_repo_endpoint(repo, endpoint_name, resolve)
@@ -254,4 +265,15 @@ def get_all_archival_objects_for_resource(repo, id, resolve = [])
     archival_objects_all.select do |ao|
       ao['resource']['ref'] == "/repositories/#{repo}/resources/#{id}"
     end
+end
+
+#add a revision statement to a resource uri.
+def add_revision_statement(uri, description)
+  resource = @client.get(uri).parsed
+  revision_statement =
+    {"date"=>Time.now,
+  	"description"=>description}
+  resource['revision_statements'] = resource['revision_statements'].append(revision_statement)
+  post = @client.post(uri, resource.to_json)
+  puts post.body
 end

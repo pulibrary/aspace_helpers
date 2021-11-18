@@ -69,6 +69,12 @@ resources_all.each do |resource_by_eadid|
 end
 #puts result
 
+#add a revision statement to a resource record
+uris.each do |uri|
+  resource= @client.get(uri).parsed
+  revision_statement = add_revision_statement(uri, "test")
+end
+
 #delete all instances from an archival archival_object
 csv.each do |row|
   #puts row['ao_uri']
@@ -80,7 +86,7 @@ csv.each do |row|
   puts response
 end
 
-#delete top containers by uriscsv.each do |row|
+#delete top containers by uris
 csv.each do |row|
   uri = row['tc_uri']
   post = @client.delete(uri)
