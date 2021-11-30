@@ -1,23 +1,3 @@
-event_uri,agent_uri,resource_uri
-"/repositories/5/events/15290","/agents/people/32724","/repositories/5/resources/3838"
-"/repositories/5/events/15292","/agents/people/32724","/repositories/5/resources/3838"
-"/repositories/5/events/15336","/agents/people/32724","/repositories/5/resources/3838"
-"/repositories/5/events/15339","/agents/people/32724","/repositories/5/resources/3838"
-"/repositories/5/events/15342","/agents/people/32724","/repositories/5/resources/3838"
-"/repositories/5/events/15348","/agents/people/32724","/repositories/5/resources/3838"
-"/repositories/5/events/15351","/agents/people/32724","/repositories/5/resources/3838"
-"/repositories/5/events/15354","/agents/people/32724","/repositories/5/resources/3838"
-"/repositories/5/events/15428","/agents/people/32724","/repositories/5/resources/4016"
-"/repositories/5/events/15434","/agents/people/32724","/repositories/5/resources/4016"
-"/repositories/5/events/15440","/agents/people/32724","/repositories/5/resources/4016"
-"/repositories/5/events/16341","/agents/people/32725","/repositories/5/resources/3911"
-"/repositories/5/events/16343","/agents/people/32725","/repositories/5/resources/3911"
-"/repositories/5/events/16347","/agents/people/32725","/repositories/5/resources/3911"
-"/repositories/5/events/16351","/agents/people/32725","/repositories/5/resources/3911"
-"/repositories/5/events/16353","/agents/people/32725","/repositories/5/resources/3911"
-"/repositories/5/events/16355","/agents/people/32725","/repositories/5/resources/3911"
-"/repositories/5/events/16369","/agents/people/32725","/repositories/5/resources/3911"
-"/repositories/5/events/16471","/agents/people/32725","/repositories/5/resources/3609"
-"/repositories/5/events/16473","/agents/people/32725","/repositories/5/resources/3609"
-"/repositories/5/events/16485","/agents/people/32725","/repositories/5/resources/3988"
-"/repositories/5/events/16487","/agents/people/32725","/repositories/5/resources/3988"
+version https://git-lfs.github.com/spec/v1
+oid sha256:538c27baaa8551c0596353801f5d6d212bb023986976a79ad58210f05aaa0e1c
+size 1968
