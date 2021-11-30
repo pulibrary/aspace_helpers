@@ -6,4 +6,5 @@ gem 'rake'
 group :development do
   gem "capistrano", "~> 3.16", require: false
   gem "capistrano-bundler"
+  gem 'capistrano-withrsync'
 end
