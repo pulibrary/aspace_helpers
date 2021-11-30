@@ -1,3 +1,3 @@
-﻿blank,tc_type,tc_indicator,string,repo,barcode,ils_holding_id,location,profile,restriction
-,box,test_01,AC047_box_117,12,EA01_add01,EA01_add01,/locations/23649,/container_profiles/3,Open
-,box,117,AC047_box_117,12,32101106146119,AC047_i196,/locations/23649,/container_profiles/3,Open
+version https://git-lfs.github.com/spec/v1
+oid sha256:d33c00d1a9f65da1b4bacd9765ca2f40f97a46707f9f4e61d2c20c9562ff6240
+size 287
