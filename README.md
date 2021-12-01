@@ -3,18 +3,20 @@ Methods, post-ASpace transformation tools, and reports to support common SC acti
 
 ## deploying code
 
-### dependncies
+### dependencies
   * ruby
   * bundler
     install by running `gem install bundler`
 
 ### deploying
 
-  1. get the lates capistrano
+  1. push a change to git
+  
+  1. get the latest capistrano on your local machine
      ```
      bundle install
      ```
-  1. run capisytano
+  1. run capistrano on your local machine
      1. to install the default branch run
         ```
         cap staging deploy
@@ -23,3 +25,12 @@ Methods, post-ASpace transformation tools, and reports to support common SC acti
         ```
         BRANCH=<name> cap staging deploy
         ```
+     NB: You may need to run this with `bundle exec`
+     
+     NB: You may also need to run `bundle install --path vendor/bundle` first
+   1. cd to current on server
+      1. `bundle install --path vendor/bundle`
+      
+      NB: if it gets into a weird state (can't find a gem):
+      `bundle config set --local path 'vendor/cache'`
+   1. cd out and back into current as needed to get the latest current
