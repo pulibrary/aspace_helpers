@@ -28,9 +28,14 @@ Methods, post-ASpace transformation tools, and reports to support common SC acti
      NB: You may need to run this with `bundle exec`
      
      NB: You may also need to run `bundle install --path vendor/bundle` first
-   1. cd to current on server
+   1. cd to current on server (lib-jobs-stagin1 or lib-jobs-prod1)
       1. `bundle install --path vendor/bundle`
       
       NB: if it gets into a weird state (can't find a gem):
       `bundle config set --local path 'vendor/cache'`
    1. cd out and back into current as needed to get the latest current
+   1. run your script and see it go! E.g.:
+      ```
+      bundle exec ruby my_script_name >> my_script.log 2>&1 &
+      tail -300f my_script.log
+      ```
