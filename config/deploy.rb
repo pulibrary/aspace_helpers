@@ -24,7 +24,7 @@ set :deploy_to, "/opt/aspace_helpers"
 append :linked_files, "sandbox_auth.rb"
 
 # Default value for linked_dirs is []
-# append :linked_dirs, "log", "tmp/pids", "tmp/cache", "tmp/sockets", "public/system"
+append :linked_dirs, "log", "tmp/pids", "tmp/cache", "vendor/cache", "data"
 
 # Default value for default_env is {}
 # set :default_env, { path: "/opt/ruby/bin:$PATH" }
