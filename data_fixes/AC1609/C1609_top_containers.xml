@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<top-containers>
+	<c id="C1609_i1" level="otherlevel" otherlevel="physicalitem">
+		<container type="box">B-001208</container>
+		<unitid type="barcode">32101086135876</unitid>
+		<physloc type="code">mss</physloc>
+		<physloc type="profile">B</physloc>
+	</c>
+	<c id="C1609_i2" level="otherlevel" otherlevel="physicalitem">
+		<container type="box">B-001209</container>
+		<unitid type="barcode">32101086135884</unitid>
+		<physloc type="code">mss</physloc>
+		<physloc type="profile">B</physloc>
+	</c>
+	<c id="C1609_i3" level="otherlevel" otherlevel="physicalitem">
+		<container type="box">B-001210</container>
+		<unitid type="barcode">32101086135892</unitid>
+		<physloc type="code">mss</physloc>
+		<physloc type="profile">B</physloc>
+	</c>
+	<c id="C1609_i4" level="otherlevel" otherlevel="physicalitem">
+		<container type="box">P-000111</container>
+		<unitid type="barcode">32101086135900</unitid>
+		<physloc type="code">mss</physloc>
+		<physloc type="profile">P</physloc>
+	</c>
+	<c id="C1609_i5" level="otherlevel" otherlevel="physicalitem">
+		<container type="box">Z-000006</container>
+		<unitid type="barcode">32101086135918</unitid>
+		<physloc type="code">mss</physloc>
+		<physloc type="profile">Z</physloc>
+	</c>
+</top-containers>
