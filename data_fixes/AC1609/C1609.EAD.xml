@@ -1,0 +1,1215 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ead xmlns="urn:isbn:1-931666-22-9" xmlns:ns2="http://www.w3.org/1999/xlink"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="urn:isbn:1-931666-22-9 http://www.loc.gov/ead/ead.xsd">
+	<eadheader scriptencoding="iso15924" repositoryencoding="iso15511" countryencoding="iso3166-1"
+		dateencoding="iso8601" langencoding="iso639-2b">
+		<eadid url="http://arks.princeton.edu/ark:/88435/td96k630r" countrycode="US"
+			mainagencycode="US-NjP" urn="ark:/88435/td96k630r">C1609</eadid>
+		<filedesc>
+			<titlestmt>
+				<titleproper>Benjamin Taylor Collection of Philip Roth Materials, 1951-2017 (bulk
+					1987-2014): Finding Aid</titleproper>
+			</titlestmt>
+			<publicationstmt id="rbscAddress">
+				<publisher>Princeton University Library. Department of Rare Books and Special
+					Collections.</publisher>
+				<address>
+					<addressline>Manuscripts Division</addressline>
+					<addressline>One Washington Road</addressline>
+					<addressline>Princeton, New Jersey 08544 USA</addressline>
+					<addressline>Phone: (609) 258-3184</addressline>
+					<addressline>Fax: (609) 258-2324</addressline>
+					<addressline>rbsc@princeton.edu</addressline>
+					<addressline>http://www.princeton.edu/~rbsc</addressline>
+				</address>
+				<date normal="2018/2018">2018</date>
+			</publicationstmt>
+		</filedesc>
+		<profiledesc>
+			<creation>This finding aid was produced using the Archivists' Toolkit <date
+					normal="2018-08-24">2018-08-24T09:49-0400</date>
+			</creation>
+			<langusage>
+				<language langcode="eng" scriptcode="Latn"/>
+			</langusage>
+			<descrules>Finding aid content adheres to that prescribed by Describing Archives: A
+				Content Standard. </descrules>
+		</profiledesc>
+		<revisiondesc>
+			<change>
+				<date normal="2018-08-24">2018-08-24T10:37:39.418-04:00</date>
+				<item>Run through PULFA 2.0 normalization routines.</item>
+			</change>
+		</revisiondesc>
+	</eadheader>
+	<archdesc level="collection" type="findingaid" relatedencoding="marc21">
+		<did>
+			<unitid countrycode="US" repositorycode="US-NjP" type="collection">C1609</unitid>
+			<repository id="mss">
+				<corpname source="viaf" authfilenumber="http://viaf.org/viaf/168350386">Princeton
+					University. Library. Department of Rare Books and Special Collections</corpname>
+				<subarea>Manuscripts Division</subarea>
+				<address>
+					<addressline>One Washington Road</addressline>
+					<addressline>Princeton, New Jersey 08544 USA</addressline>
+				</address>
+			</repository>
+			<unittitle>Benjamin Taylor Collection of Philip Roth Materials</unittitle>
+			<unitdate normal="1987/2014" type="bulk">1987-2014</unitdate>
+			<unitdate normal="1951/2017" type="inclusive">1951-2017</unitdate>
+			<physdesc altrender="whole">
+				<extent altrender="spaceoccupied" unit="linearfeet">6.0 linear feet</extent>
+			</physdesc>
+			<physdesc altrender="whole">
+				<extent unit="box" altrender="carrier">5 boxes</extent>
+			</physdesc>
+			<origination>
+				<persname source="viaf" authfilenumber="http://viaf.org/viaf/30258599" role="cre"
+					>Taylor, Benjamin, 1952- </persname>
+			</origination>
+			<langmaterial>
+				<language langcode="eng"/>
+			</langmaterial>
+			<abstract>Consists of a group of writings and speeches, biographical materials,
+				correspondence, photographs, and medical records of American author Philip Roth
+				(1933-2018) collected by his close friend and literary collaborator Benjamin Taylor
+				(1952- ).</abstract>
+			<physloc type="code">mss</physloc>
+		</did>
+		<bioghist id="C1609_b1">
+			<p>Benjamin Taylor (1952- ) is an American author. He is the author of the novels Tales
+				Out of School (1995) and The Book of Getting Even (2008), as well as a number of
+				nonfiction books, including Proust: The Search (2015) and The Hue and Cry at Our
+				House: A Year Remembered (2017), a family memoir that describes his experience
+				growing up gay and Jewish in Texas in the 1960s. He is also the editor of Saul
+				Bellow: Letters (2010). Taylor teaches writing at The New School and at Columbia
+				University's School of the Arts. He is a past fellow and current trustee of the John
+				Simon Guggenheim Memorial Foundation and serves as president of the Edward F. Albee
+				Foundation.</p>
+			<p>Taylor was also a close friend and confidant of author Philip Roth (1933-2018).
+				Taylor and Roth first met in 1995 at a sixtieth birthday celebration for Joel
+				Conarroe, then the President of the Guggenheim Foundation. After Taylor wrote Roth
+				his impressions of I Married a Communist in 1998, the two began speaking regularly.
+				In 2001, Roth sent Taylor the galleys of The Dying Animal, and thereafter Taylor
+				became a first reader for each of Roth's books. Toward the end of his life, Roth
+				also designated Taylor as one of his two medical proxies.</p>
+		</bioghist>
+		<descgrp id="dacs3">
+			<scopecontent>
+				<p>Consists of a group of papers of American author Philip Roth (1933-2018)
+					collected by his close friend and literary collaborator Benjamin Taylor (1952-
+					). Since the late 1990s, Taylor was a first reader of Roth's novels and later
+					became one of Roth's two medical proxies. The collection contains materials
+					related to Taylor's working relationship and friendship with Roth, personal
+					records pertaining to his role as Roth's medical proxy, and drafts, notes,
+					proofs, printed books, correspondence, and photographs Roth gifted to him,
+					including both originals and photocopies. Of note within the gifted papers are
+					85 pages of early handwritten notes for Operation Shylock, an early annotated
+					printout draft of the opening chapter of Everyman, and correspondence from John
+					Updike. The collection also includes over 600 pages of notes, autobiographical
+					essays, and correspondence Roth drafted and compiled for his biographers between
+					2000 and 2014. Much of this biographical material pertains to Roth's refutations
+					of claims made by his first authorized biographer, Ross Miller, whom Roth
+					accused of slandering him; as well as notes he gathered for Blake Bailey, who
+					later took over as Roth's biographer. These extensive autobiographical writings
+					contain detailed rebuttals of claims made by his former spouses, romantic
+					partners, and friends, and demonstrate the care Roth took to control the public
+					narrative of his life and literary output. There is also a small amount of
+					correspondence between Taylor and Roth, as well as Roth's revisions and comments
+					on a complete draft of Taylor's memoir, The Hue and Cry at Our House: A Year
+					Remembered, which was then titled Under No Curse.</p>
+			</scopecontent>
+			<arrangement>
+				<p>Arranged by material type.</p>
+			</arrangement>
+		</descgrp>
+		<descgrp id="dacs4">
+			<accessrestrict type="open" altrender="open">
+				<p>Open for research.</p>
+			</accessrestrict>
+			<userestrict>
+				<p>Single photocopies may be made for research purposes. No further photoduplication
+					of copies of material in the collection can be made when Princeton University
+					Library does not own the original. Inquiries regarding publishing material from
+					the collection should be directed to RBSC Public Services staff at
+					rbsc@princeton.edu. The library has no information on the status of literary
+					rights in the collection and researchers are responsible for determining any
+					questions of copyright.</p>
+			</userestrict>
+		</descgrp>
+		<descgrp id="dacs5">
+			<acqinfo>
+				<p>Purchased in <date normal="2018/2018" type="acquisition">2018</date> (AM
+					2019-8).</p>
+			</acqinfo>
+			<appraisal>
+				<p>No materials were removed from the collection during 2018 processing beyond
+					routine appraisal practices.</p>
+			</appraisal>
+		</descgrp>
+		<descgrp id="dacs6">
+			<relatedmaterial>
+				<p>The bulk of Philip Roth's personal papers are held by the Library of Congress:
+					Philip Roth papers, 1938-2001 (MSS22491) <extref
+						xmlns:xlin="http://www.w3.org/1999/xlink" xlin:type="simple"
+						xlin:href="http://hdl.loc.gov/loc.mss/eadmss.ms006030"
+						>http://hdl.loc.gov/loc.mss/eadmss.ms006030</extref>
+				</p>
+			</relatedmaterial>
+		</descgrp>
+		<descgrp id="dacs7">
+			<processinfo type="processing">
+				<p>This collection was processed by Kelly Bolding in August 2018. Finding aid
+					written by Kelly Bolding in August 2018, repurposing some description provided
+					by the dealer.</p>
+			</processinfo>
+		</descgrp>
+		<controlaccess>
+			<persname source="viaf" authfilenumber="http://viaf.org/viaf/19969933">Bailey, Blake,
+				1963- </persname>
+			<persname source="viaf" authfilenumber="http://viaf.org/viaf/51757642">Miller,
+				Ross</persname>
+			<persname source="viaf" authfilenumber="http://viaf.org/viaf/100235370">Roth, Philip,
+				1933-2018</persname>
+			<persname source="viaf" authfilenumber="http://viaf.org/viaf/30258599">Taylor, Benjamin,
+				1952- </persname>
+			<subject source="lcsh">Novelists, American -- 20th century -- Biography --
+				Sources.</subject>
+			<subject source="lcsh">Novelists, American -- 21st century -- Friends and
+				associates.</subject>
+			<genreform source="aat">Correspondence -- 21st century.</genreform>
+			<genreform source="aat">Drafts (documents) -- 20th century.</genreform>
+			<genreform source="aat">Medical records -- 21st century.</genreform>
+			<genreform source="aat">Photographs -- 20th century.</genreform>
+			<subject source="local" encodinganalog="690" rules="local" authfilenumber="t9">American
+				literature</subject>
+		</controlaccess>
+		<dsc type="combined">
+			<c level="file" id="C1609_c1">
+				<did>
+					<unittitle>Writings and Speeches</unittitle>
+					<unitdate normal="1987-11-09/2014-12-31" type="inclusive">1987 November
+						9-2014</unitdate>
+					<physdesc>
+						<extent type="computed">portion of 3 boxes</extent>
+					</physdesc>
+				</did>
+				<accessrestrict type="open" altrender="open">
+					<p>Open for research.</p>
+				</accessrestrict>
+				<arrangement>
+					<p>Arranged chronologically.</p>
+				</arrangement>
+				<scopecontent>
+					<p>Consists of a selection of drafts, proofs, notes, and printed materials
+						related to Philip Roth's writings and speeches, many of which Roth gifted to
+						Taylor and are inscribed to him.</p>
+				</scopecontent>
+				<c level="file" id="C1609_c2">
+					<did>
+						<unittitle>"Epilogue" (The Facts: A Novelist's Autobiography), Photocopy of
+							Annotated Draft</unittitle>
+						<container type="box" label="mixed materials [32101086135876]"
+							encodinganalog="C1609_i1">B-001208</container>
+						<container type="folder" encodinganalog="C1609_i1">1</container>
+						<unitdate normal="1987-11-09">1987 November 9</unitdate>
+						<physdesc>
+							<extent type="computed">1 folder</extent>
+						</physdesc>
+					</did>
+					<accessrestrict type="open" altrender="open">
+						<p>Open for research.</p>
+					</accessrestrict>
+					<scopecontent>
+						<p>Photocopy of heavily annotated typescript (23 pages), inscribed by hand
+							"For Ben – Happy Birthday 2014 – Philip."</p>
+					</scopecontent>
+				</c>
+				<c level="file" id="C1609_c3">
+					<did>
+						<unittitle> Patrimony, Photocopy of First Set of Galleys</unittitle>
+						<container type="box" label="mixed materials [32101086135876]"
+							encodinganalog="C1609_i1">B-001208</container>
+						<container type="folder" encodinganalog="C1609_i1">2</container>
+						<unitdate normal="1990-02">1990 February</unitdate>
+						<physdesc>
+							<extent type="computed">1 folder</extent>
+						</physdesc>
+					</did>
+					<accessrestrict type="open" altrender="open">
+						<p>Open for research.</p>
+					</accessrestrict>
+					<scopecontent>
+						<p>Approximately 150 pages of photocopied galleys, containing Roth's
+							extensive annotations, including both typographic corrections and
+							substantive changes to the text throughout.</p>
+					</scopecontent>
+				</c>
+				<c level="file" id="C1609_c4">
+					<did>
+						<unittitle> Operation Shylock, Notes</unittitle>
+						<container type="box" label="mixed materials [32101086135876]"
+							encodinganalog="C1609_i1">B-001208</container>
+						<container type="folder" encodinganalog="C1609_i1">3</container>
+						<unitdate type="inclusive" normal="1990-09/1991-05">1990 September-1991
+							May</unitdate>
+						<physdesc>
+							<extent type="computed">1 folder</extent>
+						</physdesc>
+					</did>
+					<accessrestrict type="open" altrender="open">
+						<p>Open for research.</p>
+					</accessrestrict>
+					<scopecontent>
+						<p>Consists of 85 pages of primarily handwritten notes on yellow lined paper
+							that represent nine months early in the process of composition of
+							Operation Shylock. These notes illuminate Roth's preliminary planning
+							stages, and include high- and low-level outlines, character notes for
+							George Ziad and other characters, scene summaries, a reading list on
+							dreams and hallucinations, and other ideas in gestation. The notes are
+							covered in marginalia, circles, and stars, with various colors and types
+							of ink on each page. Tucked within these notes are two computer printout
+							pages containing the text of "Am I Reading the Papers Correctly?" ( New
+							York Times, January 28, 1988), an opinion piece by Woody Allen that is
+							referenced in the novel.</p>
+					</scopecontent>
+				</c>
+				<c level="file" id="C1609_c5">
+					<did>
+						<unittitle>Philip Guston Illustrations of The Breast, Photocopies (Shop
+							Talk)</unittitle>
+						<container type="box" label="mixed materials [32101086135876]"
+							encodinganalog="C1609_i1">B-001208</container>
+						<container type="folder" encodinganalog="C1609_i1">4</container>
+						<unitdate normal="2001/2001">2001</unitdate>
+						<physdesc>
+							<extent type="computed">1 folder</extent>
+						</physdesc>
+					</did>
+					<accessrestrict type="open" altrender="open">
+						<p>Open for research.</p>
+					</accessrestrict>
+					<scopecontent>
+						<p>Photocopies of Philip Guston's illustrations of scenes from Roth's novel,
+							The Breast (Holt, Rinehart and Winston, 1972), which appeared in a
+							chapter about Guston in Shop Talk: A Writer and His Colleagues and Their
+							Work (Houghton Mifflin, 2001).</p>
+					</scopecontent>
+				</c>
+				<c level="item" id="C1609_c6">
+					<did>
+						<unittitle> Il complotto contro l'America </unittitle>
+						<container type="box" label="mixed materials [32101086135876]"
+							encodinganalog="C1609_i1">B-001208</container>
+						<container type="folder" encodinganalog="C1609_i1">5</container>
+						<unitdate normal="2005/2005">2005</unitdate>
+						<physdesc>
+							<extent type="computed">1 item</extent>
+						</physdesc>
+					</did>
+					<accessrestrict type="open" altrender="open">
+						<p>Open for research.</p>
+					</accessrestrict>
+					<scopecontent>
+						<p>Presentation copy of the The Plot Against America, translated by Vincenzo
+							Mantovani (Giulio Einaudi editore, s.p.a., Torino, 2005), that is
+							inscribed by Roth to Taylor: "For Ben – In his native tongue – Philip.
+							April 2005."</p>
+					</scopecontent>
+				</c>
+				<c level="file" id="C1609_c7">
+					<did>
+						<unittitle altrender="Medical History (Everyman), Draft">"A Medical History"
+							(Everyman), Draft</unittitle>
+						<container type="box" label="mixed materials [32101086135876]"
+							encodinganalog="C1609_i1">B-001208</container>
+						<container type="folder" encodinganalog="C1609_i1">6</container>
+						<unitdate normal="2005-06-22">2005 June 22</unitdate>
+						<physdesc>
+							<extent type="computed">1 folder</extent>
+						</physdesc>
+					</did>
+					<accessrestrict type="open" altrender="open">
+						<p>Open for research.</p>
+					</accessrestrict>
+					<scopecontent>
+						<p>An early printout draft (41 pages) of the opening chapter of Everyman,
+							with some handwritten revisions.</p>
+					</scopecontent>
+				</c>
+				<c level="item" id="C1609_c8">
+					<did>
+						<unittitle> Everyman, Broadside</unittitle>
+						<container type="box" label="mixed materials [32101086135918]"
+							encodinganalog="C1609_i5">Z-000006</container>
+						<unitdate normal="2006/2006">2006</unitdate>
+						<physdesc>
+							<extent type="computed">1 item</extent>
+						</physdesc>
+					</did>
+					<accessrestrict type="open" altrender="open">
+						<p>Open for research.</p>
+					</accessrestrict>
+					<scopecontent>
+						<p>Consists of a framed broadside poster (24 x 36 inches in a 27 x 39-inch
+							frame) containing the entire text of the book in black-and-white offset
+							print. The text is laid out in tiny print in six columns, with the
+							printer's device in the bottom left corner and Roth's signature and the
+							number of the print (4/10) in the bottom right corner. According to
+							Taylor, the poster was commissioned by Roth himself as a celebratory
+							gift to close friends.</p>
+					</scopecontent>
+				</c>
+				<c level="file" id="C1609_c9">
+					<did>
+						<unittitle> Exit Ghost, Draft 6</unittitle>
+						<container type="box" label="mixed materials [32101086135876]"
+							encodinganalog="C1609_i1">B-001208</container>
+						<container type="folder" encodinganalog="C1609_i1">7-8</container>
+						<unitdate normal="2006-11-02">2006 November 2</unitdate>
+						<physdesc>
+							<extent type="computed">2 folders</extent>
+						</physdesc>
+					</did>
+					<accessrestrict type="open" altrender="open">
+						<p>Open for research.</p>
+					</accessrestrict>
+					<scopecontent>
+						<p>Typescript (226 pages) inscribed to Taylor on November 4, 2006, along
+							with 12 revision leaves. Also included is a letter from Taylor to Roth
+							giving his initial reaction to the text.</p>
+					</scopecontent>
+				</c>
+				<c level="file" id="C1609_c10">
+					<did>
+						<unittitle>"Change of Life" (The Humbling)</unittitle>
+						<container type="box" label="mixed materials [32101086135876]"
+							encodinganalog="C1609_i1">B-001208</container>
+						<container type="folder" encodinganalog="C1609_i1">9</container>
+						<unitdate normal="2007-08-18">2007 August 18</unitdate>
+						<physdesc>
+							<extent type="computed">1 folder</extent>
+						</physdesc>
+					</did>
+					<accessrestrict type="open" altrender="open">
+						<p>Open for research.</p>
+					</accessrestrict>
+					<scopecontent>
+						<p>Printout draft (24 pages) from the beginning of The Humbling.</p>
+					</scopecontent>
+				</c>
+				<c level="file" id="C1609_c11">
+					<did>
+						<unittitle>"80th Birthday at Newark Museum"</unittitle>
+						<container type="box" label="mixed materials [32101086135876]"
+							encodinganalog="C1609_i1">B-001208</container>
+						<container type="folder" encodinganalog="C1609_i1">10</container>
+						<unitdate normal="2013-03-19">2013 March 19</unitdate>
+						<physdesc>
+							<extent type="computed">1 folder</extent>
+						</physdesc>
+					</did>
+					<accessrestrict type="open" altrender="open">
+						<p>Open for research.</p>
+					</accessrestrict>
+					<scopecontent>
+						<p>Fax (April 21, 2014) of a heavily annotated typescript draft of a speech
+							Roth gave for his 80th birthday, with additional handwritten annotations
+							made after faxing and inscribed to Taylor, "Happy Birthday, Ben – Philip
+							8/20/14" (38 pages).</p>
+					</scopecontent>
+				</c>
+				<c level="file" id="C1609_c12">
+					<did>
+						<unittitle>"For the 2013 PEN Literary Gala, PEN Literary Service
+							Award"</unittitle>
+						<container type="box" label="mixed materials [32101086135876]"
+							encodinganalog="C1609_i1">B-001208</container>
+						<container type="folder" encodinganalog="C1609_i1">11</container>
+						<unitdate type="inclusive" normal="2013-04-24/2013-04-30">2013 April
+							24-30</unitdate>
+						<physdesc>
+							<extent type="computed">1 folder</extent>
+						</physdesc>
+					</did>
+					<accessrestrict type="open" altrender="open">
+						<p>Open for research.</p>
+					</accessrestrict>
+					<scopecontent>
+						<p>Two typescript drafts of a speech (8-9 pages).</p>
+					</scopecontent>
+				</c>
+				<c level="item" id="C1609_c13">
+					<did>
+						<unittitle>"On the Occasion of Receiving an Honorary Degree from the Jewish
+							Theological Seminary"</unittitle>
+						<container type="box" label="mixed materials [32101086135876]"
+							encodinganalog="C1609_i1">B-001208</container>
+						<container type="folder" encodinganalog="C1609_i1">12</container>
+						<unitdate normal="2013-05">2013 May</unitdate>
+						<physdesc>
+							<extent type="computed">1 item</extent>
+						</physdesc>
+					</did>
+					<accessrestrict type="open" altrender="open">
+						<p>Open for research.</p>
+					</accessrestrict>
+					<scopecontent>
+						<p>Typescript draft of a speech (1 page).</p>
+					</scopecontent>
+				</c>
+				<c level="file" id="C1609_c14">
+					<did>
+						<unittitle>"On Receiving the Légion d'honneur"</unittitle>
+						<container type="box" label="mixed materials [32101086135884]"
+							encodinganalog="C1609_i2">B-001209</container>
+						<container type="folder" encodinganalog="C1609_i2">1</container>
+						<unitdate normal="2013-09-27">circa 2013 September 27</unitdate>
+						<physdesc>
+							<extent type="computed">1 folder</extent>
+						</physdesc>
+					</did>
+					<accessrestrict type="open" altrender="open">
+						<p>Open for research.</p>
+					</accessrestrict>
+					<scopecontent>
+						<p>Two photocopies of annotated typescript drafts (each 6 pages) for two
+							versions of a speech, one of which has additional handwritten
+							annotations made after copying.</p>
+					</scopecontent>
+				</c>
+				<c level="item" id="C1609_c15">
+					<did>
+						<unittitle>"For the Emerson-Thoreau Award, American Academy of Arts and
+							Sciences"</unittitle>
+						<container type="box" label="mixed materials [32101086135884]"
+							encodinganalog="C1609_i2">B-001209</container>
+						<container type="folder" encodinganalog="C1609_i2">2</container>
+						<unitdate normal="2013-10-11">2013 October 11</unitdate>
+						<physdesc>
+							<extent type="computed">1 item</extent>
+						</physdesc>
+					</did>
+					<accessrestrict type="open" altrender="open">
+						<p>Open for research.</p>
+					</accessrestrict>
+					<scopecontent>
+						<p>Typescript draft of a speech, along with two copies a typescript
+							selection (2 pages) from Sabbath's Theater, beginning, "He was from the
+							shore..."</p>
+					</scopecontent>
+				</c>
+				<c level="item" id="C1609_c16">
+					<did>
+						<unittitle> Philip Roth at 80: A Celebration </unittitle>
+						<container type="box" label="mixed materials [32101086135884]"
+							encodinganalog="C1609_i2">B-001209</container>
+						<container type="folder" encodinganalog="C1609_i2">3</container>
+						<unitdate normal="2014/2014">2014</unitdate>
+						<physdesc>
+							<extent type="computed">1 item</extent>
+						</physdesc>
+					</did>
+					<accessrestrict type="open" altrender="open">
+						<p>Open for research.</p>
+					</accessrestrict>
+					<scopecontent>
+						<p>Presentation copy of a published volume of remarks delivered on the
+							occasion of Philip Roth’s 80th birthday (March 19, 2013) at the Newark
+							Museum (New York: The Library of America, 2014), inscribed on title page
+							by Roth to Taylor: "For Ben – who was there – [signed] 2014." Includes
+							remarks delivered by Jonathan Lethem, Hermione Lee, Alain Finkielkraut,
+							Claudia Roth Pierpont, Edna O’Brien, and Roth himself.</p>
+					</scopecontent>
+				</c>
+				<c level="file" id="C1609_c17">
+					<did>
+						<unittitle>"On Receiving the Yaddo Award"</unittitle>
+						<container type="box" label="mixed materials [32101086135884]"
+							encodinganalog="C1609_i2">B-001209</container>
+						<container type="folder" encodinganalog="C1609_i2">4</container>
+						<unitdate normal="2014-05-14">2014 May 14</unitdate>
+						<physdesc>
+							<extent type="computed">1 folder</extent>
+						</physdesc>
+					</did>
+					<accessrestrict type="open" altrender="open">
+						<p>Open for research.</p>
+					</accessrestrict>
+					<scopecontent>
+						<p>Three typescript draft versions (4-9 pages) of a speech, one of which is
+							inscribed "For Ben with love – P. 5/17/14."</p>
+					</scopecontent>
+				</c>
+				<c level="file" id="C1609_c18">
+					<did>
+						<unittitle>"Marriage a la Mode"</unittitle>
+						<container type="box" label="mixed materials [32101086135884]"
+							encodinganalog="C1609_i2">B-001209</container>
+						<container type="folder" encodinganalog="C1609_i2">5</container>
+						<unitdate type="inclusive" normal="2014-06/2014-07">2014
+							June-July</unitdate>
+						<physdesc>
+							<extent type="computed">1 folder</extent>
+						</physdesc>
+					</did>
+					<accessrestrict type="open" altrender="open">
+						<p>Open for research.</p>
+					</accessrestrict>
+					<scopecontent>
+						<p>Two draft versions (annotated typescripts, 7-8 pages) of an essay written
+							in response to an accusation posed by Roth's biographer, Blake Bailey,
+							that he would not accept blame for the dissolution of his two marriages.
+							This essay is not the same as the piece of the same title in My Life as
+							a Man.</p>
+					</scopecontent>
+				</c>
+				<c level="file" id="C1609_c19">
+					<did>
+						<unittitle> Under No Curse: A Year Remembered, Draft by Benjamin Taylor with
+							Philip Roth's Revisions</unittitle>
+						<container type="box" label="mixed materials [32101086135884]"
+							encodinganalog="C1609_i2">B-001209</container>
+						<container type="folder" encodinganalog="C1609_i2">6</container>
+						<unitdate>undated</unitdate>
+						<physdesc>
+							<extent type="computed">1 folder</extent>
+						</physdesc>
+					</did>
+					<accessrestrict type="open" altrender="open">
+						<p>Open for research.</p>
+					</accessrestrict>
+					<scopecontent>
+						<p>An early draft of Taylor’s memoir (spiral-bound computer printout, 139
+							pages), which was published in May 2017 as The Hue and Cry at Our House:
+							A Year Remembered and dedicated to Roth. This copy contains extensive
+							handwritten annotations by Roth on almost every page. The comments cover
+							Taylor’s structure, content, wording, spelling, pacing, and other
+							aspects of his writing that Roth either appreciated or thought could be
+							improved.</p>
+					</scopecontent>
+				</c>
+			</c>
+			<c level="file" id="C1609_c20">
+				<did>
+					<unittitle>Biographical Materials</unittitle>
+					<unitdate normal="2000-01-01/2015-12-31" type="inclusive">2000-2015</unitdate>
+					<physdesc>
+						<extent type="computed">portion of 2 boxes</extent>
+					</physdesc>
+				</did>
+				<accessrestrict type="open" altrender="open">
+					<p>Open for research.</p>
+				</accessrestrict>
+				<scopecontent>
+					<p>These materials relate to Roth's relationship with his authorized biographers
+						and his efforts to manage the information that went into his biography. Roth
+						chose Ross Miller as his biographer in 2004. Miller was a longtime friend of
+						Roth's, as well as a professor of English and comparative literature at the
+						University of Connecticut, architecture critic, author of several books, and
+						editor of the Library of America's multi-volume edition of Roth's writings.
+						Roth's opinion of Miller rapidly declined, however. He accused him of
+						deliberately avoiding interviewing his family and friends and of slandering
+						him to those he did interview. The arrangement was terminated in 2009.
+						Materials collected here include over 600 pages of Roth's notes refuting the
+						information Miller acquired during his interviews, as well as copies of
+						related correspondence. With Miller gone, Roth took it upon himself to
+						compose Notes for My Biographer, a 300-page point-by-point refutation of his
+						ex-wife Claire Bloom's memoir, Leaving a Doll’s House. Some correspondence
+						and notes pertain to this work. In 2012, Roth picked a new biographer: Blake
+						Bailey, the biographer for Richard Yates and John Cheever, whose biography
+						of Roth is under contract with W.W. Norton &amp; Company. Materials related
+						to Bailey include his proposal for the biography, notes Roth provided to
+						Bailey, and correspondence. There are also some essays by others and press
+						clippings about Roth and Roth's notes critiquing reading guides about his
+						work.</p>
+				</scopecontent>
+				<c level="file" id="C1609_c21">
+					<did>
+						<unittitle>Ross Miller Materials</unittitle>
+						<unitdate normal="2000-10-24/2011-12-31" type="inclusive">2000 October
+							24-2011</unitdate>
+						<physdesc>
+							<extent type="computed">more than 4 folders</extent>
+						</physdesc>
+					</did>
+					<accessrestrict type="open" altrender="open">
+						<p>Open for research.</p>
+					</accessrestrict>
+					<c level="file" id="C1609_c22">
+						<did>
+							<unittitle>Philip Roth Letter to Ross Miller</unittitle>
+							<container type="box" label="mixed materials [32101086135884]"
+								encodinganalog="C1609_i2">B-001209</container>
+							<container type="folder" encodinganalog="C1609_i2">7</container>
+							<unitdate normal="2000-10-24">2000 October 24</unitdate>
+							<physdesc>
+								<extent type="computed">1 folder</extent>
+							</physdesc>
+						</did>
+						<accessrestrict type="open" altrender="open">
+							<p>Open for research.</p>
+						</accessrestrict>
+						<scopecontent>
+							<p>Photocopy of a letter which Roth later annotated to indicate that he
+								had gifted Miller money and sent to Benjamin Taylor.</p>
+						</scopecontent>
+					</c>
+					<c level="file" id="C1609_c23">
+						<did>
+							<unittitle>Ross Miller Questions for Barbara Epstein</unittitle>
+							<container type="box" label="mixed materials [32101086135884]"
+								encodinganalog="C1609_i2">B-001209</container>
+							<container type="folder" encodinganalog="C1609_i2">8</container>
+							<unitdate type="inclusive" normal="2006-02-17/2006-02-18">2006 February
+								17-18</unitdate>
+							<physdesc>
+								<extent type="computed">1 folder</extent>
+							</physdesc>
+						</did>
+						<accessrestrict type="open" altrender="open">
+							<p>Open for research.</p>
+						</accessrestrict>
+						<scopecontent>
+							<p>Two sets of questions by Miller for an interview with Epstein. The
+								questions mostly pertain to mutual friends and Roth's relationship
+								with and marriage to Claire Bloom.</p>
+						</scopecontent>
+					</c>
+					<c level="file" id="C1609_c24">
+						<did>
+							<unittitle>Notes on Ross Miller Interviews for Hermoine Lee</unittitle>
+							<container type="box" label="mixed materials [32101086135884]"
+								encodinganalog="C1609_i2">B-001209</container>
+							<container type="folder" encodinganalog="C1609_i2">9</container>
+							<unitdate normal="2011/2011">2011</unitdate>
+							<physdesc>
+								<extent type="computed">1 folder</extent>
+							</physdesc>
+						</did>
+						<accessrestrict type="open" altrender="open">
+							<p>Open for research.</p>
+						</accessrestrict>
+						<scopecontent>
+							<p>Consists of a packet of materials (around 130 pages) with a cover
+								letter that Roth created for Hermoine Lee. It contains Roth's
+								refutations of the contents of interviews Ross Miller conducted for
+								his biography, including essays titled "Money," "Pain and Illness
+								History," "Ross Miller's limitless malice toward me and my mother,"
+								as well as notes on Miller's audio material and his interview with
+								Bob Brustein.</p>
+						</scopecontent>
+					</c>
+					<c level="file" id="C1609_c25">
+						<did>
+							<unittitle>Notes on Ross Miller Interviews for Benjamin
+								Taylor</unittitle>
+							<container type="box" label="mixed materials [32101086135884]"
+								encodinganalog="C1609_i2">B-001209</container>
+							<container type="folder" encodinganalog="C1609_i2">10-12</container>
+							<unitdate normal="2011/2011">2011</unitdate>
+							<physdesc>
+								<extent type="computed">3 folders</extent>
+							</physdesc>
+						</did>
+						<accessrestrict type="open" altrender="open">
+							<p>Open for research.</p>
+						</accessrestrict>
+						<scopecontent>
+							<p>Consists of a packet of materials (over 500 pages) with a cover
+								letter that Roth created for Benjamin Taylor. It contains Roth's
+								refutations of the contents of interviews Ross Miller conducted for
+								his biography. The front matter indicates that these materials were
+								intended for his authorized biographer (who then appears to have
+								been Hermoine Lee).</p>
+						</scopecontent>
+					</c>
+				</c>
+				<c level="file" id="C1609_c26">
+					<did>
+						<unittitle>Blake Bailey Materials</unittitle>
+						<unitdate normal="2012-01-01/2015-12-31" type="inclusive"
+							>2012-2015</unitdate>
+						<physdesc>
+							<extent type="computed">4 folders</extent>
+						</physdesc>
+					</did>
+					<accessrestrict type="open" altrender="open">
+						<p>Open for research.</p>
+					</accessrestrict>
+					<c level="file" id="C1609_c27">
+						<did>
+							<unittitle>Notes on Marriages and Correspondence with Jack
+								Miles</unittitle>
+							<container type="box" label="mixed materials [32101086135892]"
+								encodinganalog="C1609_i3">B-001210</container>
+							<container type="folder" encodinganalog="C1609_i3">1</container>
+							<unitdate normal="2012/2012">2012</unitdate>
+							<physdesc>
+								<extent type="computed">1 folder</extent>
+							</physdesc>
+						</did>
+						<accessrestrict type="open" altrender="open">
+							<p>Open for research.</p>
+						</accessrestrict>
+						<scopecontent>
+							<p>Includes a packet of materials assembled by Roth for his biographer,
+								including printouts of essays titled " Why did you marry Maggie? Why
+								did the marriage end?" and "On the effect of my first marriage on my
+								work," along with a group of photocopied correspondence with Jack
+								Miles beginning when Roth asked Miles to read the manuscript of
+								Notes for My Biographer.</p>
+						</scopecontent>
+					</c>
+					<c level="file" id="C1609_c28">
+						<did>
+							<unittitle altrender="Open Letter to Wikipedia">"An Open Letter to
+								Wikipedia"</unittitle>
+							<container type="box" label="mixed materials [32101086135892]"
+								encodinganalog="C1609_i3">B-001210</container>
+							<container type="folder" encodinganalog="C1609_i3">2</container>
+							<unitdate normal="2012-08-10">2012 August 10</unitdate>
+							<physdesc>
+								<extent type="computed">1 folder</extent>
+							</physdesc>
+						</did>
+						<accessrestrict type="open" altrender="open">
+							<p>Open for research.</p>
+						</accessrestrict>
+						<scopecontent>
+							<p>Includes a packed of materials assembled by Roth for his biographer,
+								including a printout draft, with copied annotations, of Roth's open
+								letter to Wikipedia regarding the entry on The Human Stain (17
+								pages), as well as a draft of "The Facts about Coleman Silk: A
+								Supplement to 'An Open Letter to Wikipedia'" (16 pages), and a cover
+								letter titled "On Wikipedia's 'Facts'" (3 pages).</p>
+						</scopecontent>
+					</c>
+					<c level="file" id="C1609_c29">
+						<did>
+							<unittitle>Blake Bailey Proposal for Roth's Biography</unittitle>
+							<container type="box" label="mixed materials [32101086135892]"
+								encodinganalog="C1609_i3">B-001210</container>
+							<container type="folder" encodinganalog="C1609_i3">3</container>
+							<unitdate normal="2012-08-28">2012 August 28</unitdate>
+							<physdesc>
+								<extent type="computed">1 folder</extent>
+							</physdesc>
+						</did>
+						<accessrestrict type="open" altrender="open">
+							<p>Open for research.</p>
+						</accessrestrict>
+					</c>
+					<c level="file" id="C1609_c30">
+						<did>
+							<unittitle>Philip Roth Letters to Blake Bailey</unittitle>
+							<container type="box" label="mixed materials [32101086135892]"
+								encodinganalog="C1609_i3">B-001210</container>
+							<container type="folder" encodinganalog="C1609_i3">4</container>
+							<unitdate type="inclusive" normal="2012/2015">2012-2015</unitdate>
+							<physdesc>
+								<extent type="computed">1 folder</extent>
+							</physdesc>
+						</did>
+						<accessrestrict type="open" altrender="open">
+							<p>Open for research.</p>
+						</accessrestrict>
+						<scopecontent>
+							<p>Includes printouts of lengthy letters from Roth to Bailey including
+								essays on various aspects of his life intended as source material
+								for his biography. There is a letter titled "Grandma’s File," which
+								encloses a photocopy of a letter sent by Roth to his grandmother in
+								October 1952, while he was a junior at Bucknell College. Many of the
+								letters pertain to Roth's romantic relationships, including with
+								"Maggie" (Margaret Martinson Williams) and Barbara Sproul. Others
+								relate to Roth's experiences with depression and physical pain, his
+								friendships, and refuting claims made by others about him. There is
+								also a printout of an email from Blake Bailey (September 10, 2012)
+								that includes a transcript of recordings of President Richard Nixon
+								talking with H.R. Haldeman and Charles Colson about Roth.</p>
+						</scopecontent>
+					</c>
+				</c>
+				<c level="file" id="C1609_c31">
+					<did>
+						<unittitle>Writings by Others about Philip Roth</unittitle>
+						<container type="box" label="mixed materials [32101086135892]"
+							encodinganalog="C1609_i3">B-001210</container>
+						<container type="folder" encodinganalog="C1609_i3">5</container>
+						<unitdate type="inclusive" normal="2003/2014">2003-2014</unitdate>
+						<physdesc>
+							<extent type="computed">1 folder</extent>
+						</physdesc>
+					</did>
+					<accessrestrict type="open" altrender="open">
+						<p>Open for research.</p>
+					</accessrestrict>
+					<scopecontent>
+						<p>Printouts and copies of essays by others about Roth.</p>
+					</scopecontent>
+				</c>
+				<c level="file" id="C1609_c32">
+					<did>
+						<unittitle>Comments on Reading Group Guides</unittitle>
+						<container type="box" label="mixed materials [32101086135892]"
+							encodinganalog="C1609_i3">B-001210</container>
+						<container type="folder" encodinganalog="C1609_i3">6</container>
+						<unitdate>undated</unitdate>
+						<physdesc>
+							<extent type="computed">1 folder</extent>
+						</physdesc>
+					</did>
+					<accessrestrict type="open" altrender="open">
+						<p>Open for research.</p>
+					</accessrestrict>
+					<scopecontent>
+						<p>Consists of Roth's annotated copies of reading group guides for his
+							books, dismissing or editing many of the questions.</p>
+					</scopecontent>
+				</c>
+				<c level="file" id="C1609_c33">
+					<did>
+						<unittitle>Questions for Roth for Indignation Day</unittitle>
+						<container type="box" label="mixed materials [32101086135892]"
+							encodinganalog="C1609_i3">B-001210</container>
+						<container type="folder" encodinganalog="C1609_i3">7</container>
+						<unitdate normal="2008/2008">2008</unitdate>
+						<physdesc>
+							<extent type="computed">1 folder</extent>
+						</physdesc>
+					</did>
+					<accessrestrict type="open" altrender="open">
+						<p>Open for research.</p>
+					</accessrestrict>
+					<scopecontent>
+						<p>Photocopy of an annotated list of questions.</p>
+					</scopecontent>
+				</c>
+				<c level="file" id="C1609_c34">
+					<did>
+						<unittitle>Press Clippings about Roth</unittitle>
+						<container type="box" label="mixed materials [32101086135892]"
+							encodinganalog="C1609_i3">B-001210</container>
+						<container type="folder" encodinganalog="C1609_i3">8</container>
+						<unitdate type="inclusive" normal="2001/2005">2001-2005</unitdate>
+						<physdesc>
+							<extent type="computed">1 folder</extent>
+						</physdesc>
+					</did>
+					<accessrestrict type="open" altrender="open">
+						<p>Open for research.</p>
+					</accessrestrict>
+				</c>
+			</c>
+			<c level="file" id="C1609_c35">
+				<did>
+					<unittitle>Correspondence</unittitle>
+					<unitdate normal="1990-01-01/2017-12-31" type="inclusive">1990-2017</unitdate>
+					<physdesc>
+						<extent type="computed">8 folders</extent>
+					</physdesc>
+				</did>
+				<accessrestrict type="open" altrender="open">
+					<p>Open for research.</p>
+				</accessrestrict>
+				<scopecontent>
+					<p>Consists of a small selection of original or photocopied correspondence of
+						Philip Roth, both outgoing and incoming. While most files consists of only
+						one or a few letters, the file with Benjamin Taylor is the most
+						substantial.</p>
+				</scopecontent>
+				<arrangement>
+					<p>Arranged alphabetically by correspondent.</p>
+				</arrangement>
+				<c level="file" id="C1609_c36">
+					<did>
+						<unittitle>"Caro"</unittitle>
+						<container type="box" label="mixed materials [32101086135892]"
+							encodinganalog="C1609_i3">B-001210</container>
+						<container type="folder" encodinganalog="C1609_i3">9</container>
+						<unitdate type="inclusive" normal="2013-12-23/2013-12-26">2013 December
+							23-26</unitdate>
+						<physdesc>
+							<extent type="computed">1 folder</extent>
+						</physdesc>
+					</did>
+					<accessrestrict type="open" altrender="open">
+						<p>Open for research.</p>
+					</accessrestrict>
+					<scopecontent>
+						<p>Two letters from Roth (photocopy and printout).</p>
+					</scopecontent>
+				</c>
+				<c level="file" id="C1609_c37">
+					<did>
+						<unittitle>Klímová, Helena</unittitle>
+						<container type="box" label="mixed materials [32101086135892]"
+							encodinganalog="C1609_i3">B-001210</container>
+						<container type="folder" encodinganalog="C1609_i3">10</container>
+						<unitdate type="inclusive" normal="2011/2013">2011-2013</unitdate>
+						<physdesc>
+							<extent type="computed">1 folder</extent>
+						</physdesc>
+					</did>
+					<accessrestrict type="open" altrender="open">
+						<p>Open for research.</p>
+					</accessrestrict>
+					<scopecontent>
+						<p>Consists of copies of letters between Roth and Klímová, along with
+							related writings and Roth's cover letter for Peter Godwin at PEN
+							regarding his relationship with Helena and Ivan Klímová.</p>
+					</scopecontent>
+				</c>
+				<c level="file" id="C1609_c38">
+					<did>
+						<unittitle>Newark Public Library</unittitle>
+						<container type="box" label="mixed materials [32101086135892]"
+							encodinganalog="C1609_i3">B-001210</container>
+						<container type="folder" encodinganalog="C1609_i3">11</container>
+						<unitdate type="inclusive" normal="2005/2013">2005-2013</unitdate>
+						<physdesc>
+							<extent type="computed">1 folder</extent>
+						</physdesc>
+					</did>
+					<accessrestrict type="open" altrender="open">
+						<p>Open for research.</p>
+					</accessrestrict>
+					<scopecontent>
+						<p>Letter from Roth in 2013 and notes for a speech accepting an honor in
+							2005.</p>
+					</scopecontent>
+				</c>
+				<c level="item" id="C1609_c39">
+					<did>
+						<unittitle>Pierpont, Claudia Roth</unittitle>
+						<container type="box" label="mixed materials [32101086135892]"
+							encodinganalog="C1609_i3">B-001210</container>
+						<container type="folder" encodinganalog="C1609_i3">12</container>
+						<unitdate normal="2012-12-08">2012 December 8</unitdate>
+						<physdesc>
+							<extent type="computed">1 item</extent>
+						</physdesc>
+					</did>
+					<accessrestrict type="open" altrender="open">
+						<p>Open for research.</p>
+					</accessrestrict>
+					<scopecontent>
+						<p>Letter from Roth including a review of In History's Grip by Michael
+							Kimmage (Stanford University Press, 2012).</p>
+					</scopecontent>
+				</c>
+				<c level="item" id="C1609_c40">
+					<did>
+						<unittitle>Rudin, Max</unittitle>
+						<container type="box" label="mixed materials [32101086135892]"
+							encodinganalog="C1609_i3">B-001210</container>
+						<container type="folder" encodinganalog="C1609_i3">13</container>
+						<unitdate normal="2012-03-12">2012 March 12</unitdate>
+						<physdesc>
+							<extent type="computed">1 item</extent>
+						</physdesc>
+					</did>
+					<accessrestrict type="open" altrender="open">
+						<p>Open for research.</p>
+					</accessrestrict>
+					<scopecontent>
+						<p>Letter to the publisher of Library of America regarding numerous
+							typographical errors Roth reports he found in the Library of America
+							edition of Operation Shylock.</p>
+					</scopecontent>
+				</c>
+				<c level="file" id="C1609_c41">
+					<did>
+						<unittitle>Taylor, Benjamin</unittitle>
+						<container type="box" label="mixed materials [32101086135892]"
+							encodinganalog="C1609_i3">B-001210</container>
+						<container type="folder" encodinganalog="C1609_i3">14</container>
+						<unitdate type="inclusive" normal="2007/2017">2007-2017</unitdate>
+						<physdesc>
+							<extent type="computed">1 folder</extent>
+						</physdesc>
+					</did>
+					<accessrestrict type="open" altrender="open">
+						<p>Open for research.</p>
+					</accessrestrict>
+					<scopecontent>
+						<p>Consists primarily of letters and cards from Roth to Taylor, including
+							regarding comments on Taylor's writings, letters Taylor was to pass onto
+							others, instructions for his memorial service program, a birthday
+							invitation, and personal notes. There is also a photocopy of a
+							photograph inscribed to Taylor of Roth's great-aunt Meema Gitcha, who
+							appears in Operation Shylock, Roth's letter in support of Taylor for a
+							Guggenheim Fellowship, and a thank-you letter to Taylor from Cheryl
+							Hurley of the Library of America.</p>
+					</scopecontent>
+				</c>
+				<c level="file" id="C1609_c42">
+					<did>
+						<unittitle>Updike, John</unittitle>
+						<container type="box" label="mixed materials [32101086135892]"
+							encodinganalog="C1609_i3">B-001210</container>
+						<container type="folder" encodinganalog="C1609_i3">15</container>
+						<unitdate type="inclusive" normal="1990/1992">1990-1992</unitdate>
+						<physdesc>
+							<extent type="computed">1 folder</extent>
+						</physdesc>
+					</did>
+					<accessrestrict type="open" altrender="open">
+						<p>Open for research.</p>
+					</accessrestrict>
+					<scopecontent>
+						<p>Includes a typed, signed postcard, as well as photocopies of three
+							letters from John Updike and one from Miranda Updike.</p>
+					</scopecontent>
+				</c>
+				<c level="item" id="C1609_c43">
+					<did>
+						<unittitle>Winard, Barbara</unittitle>
+						<container type="box" label="mixed materials [32101086135892]"
+							encodinganalog="C1609_i3">B-001210</container>
+						<container type="folder" encodinganalog="C1609_i3">16</container>
+						<unitdate normal="2009-04-19">2009 April 19</unitdate>
+						<physdesc>
+							<extent type="computed">1 item</extent>
+						</physdesc>
+					</did>
+					<accessrestrict type="open" altrender="open">
+						<p>Open for research.</p>
+					</accessrestrict>
+					<scopecontent>
+						<p>One letter from Winard regarding the polio epidemic in Newark in
+							1944.</p>
+					</scopecontent>
+				</c>
+			</c>
+			<c level="file" id="C1609_c44">
+				<did>
+					<unittitle>Photographs</unittitle>
+					<unitdate normal="1951-01-01/2009-12-31" type="inclusive">1951-2009</unitdate>
+					<physdesc>
+						<extent type="computed">portion of 2 boxes</extent>
+					</physdesc>
+				</did>
+				<accessrestrict type="open" altrender="open">
+					<p>Open for research.</p>
+				</accessrestrict>
+				<scopecontent>
+					<p>Consists of 13 black-and-white and color photographs of Philip Roth, his home
+						in Connecticut, and inspirations for the scenes in his writings, many of
+						which are captioned by him by hand.</p>
+				</scopecontent>
+				<c level="file" id="C1609_c45">
+					<did>
+						<unittitle>Photographs of Philip Roth and Others</unittitle>
+						<container type="box" label="mixed materials [32101086135892]"
+							encodinganalog="C1609_i3">B-001210</container>
+						<container type="folder" encodinganalog="C1609_i3">17</container>
+						<unitdate type="inclusive" normal="1951/2009">circa 1951-2009</unitdate>
+						<physdesc>
+							<extent type="computed">1 folder</extent>
+						</physdesc>
+					</did>
+					<accessrestrict type="open" altrender="open">
+						<p>Open for research.</p>
+					</accessrestrict>
+					<scopecontent>
+						<p>Photographs include: "(1951) Bradley Beach, NJ. Stan Pressman, Jerry
+							Lechter [, Philip Roth];" "Two tall kids. Maxine Groffsky. P.R. Back of
+							Roth Moorestown house. 1956;" "England, Summer 1968. Photo by Ann Mudge,
+							used on inside back leaf of Portnoy's Complaint jacket;" [Roth drinking
+							tea]. Stamped "Property of Time Incorporated;" [Roth making a point].
+							Stamped "Property of Time Incorporated;" "With Mel Tumin, Conn. 1974.
+							Mel was a perpetual pedagogue and here, once again, he is straightening
+							me out. But gently;" "Prague. Milan Kundera, Barbara Sproul, P.R. 1974;"
+							"In my First Grade classroom at Chancellor Ave. School [Newark,
+							NJ]."</p>
+					</scopecontent>
+				</c>
+				<c level="item" id="C1609_c46">
+					<did>
+						<unittitle>Nancy Crampton Photograph of Philip Roth Sitting on a Stone
+							Wall</unittitle>
+						<container type="box" label="mixed materials [32101086135900]"
+							encodinganalog="C1609_i4">P-000111</container>
+						<unitdate normal="1990/1990">1990</unitdate>
+						<physdesc>
+							<extent type="computed">1 item</extent>
+						</physdesc>
+					</did>
+					<accessrestrict type="open" altrender="open">
+						<p>Open for research.</p>
+					</accessrestrict>
+					<scopecontent>
+						<p>Inscribed: "For Ben / New Year's 2013 / The best of friends – P. © 1990
+							Nancy Crampton."</p>
+					</scopecontent>
+				</c>
+				<c level="file" id="C1609_c47">
+					<did>
+						<unittitle>Photographs of Philip Roth's Connecticut House</unittitle>
+						<container type="box" label="mixed materials [32101086135892]"
+							encodinganalog="C1609_i3">B-001210</container>
+						<container type="folder" encodinganalog="C1609_i3">18</container>
+						<unitdate>undated</unitdate>
+						<physdesc>
+							<extent type="computed">1 folder</extent>
+						</physdesc>
+					</did>
+					<accessrestrict type="open" altrender="open">
+						<p>Open for research.</p>
+					</accessrestrict>
+					<scopecontent>
+						<p>Three photographs: "West Side [of Roth's Connecticut house];" "South
+							Garden [of Roth's Connecticut house];" "[East Side of Roth's Connecticut
+							house]."</p>
+					</scopecontent>
+				</c>
+				<c level="item" id="C1609_c48">
+					<did>
+						<unittitle>"Model for Levov Glove Factory" (from American
+							Pastoral)</unittitle>
+						<container type="box" label="mixed materials [32101086135892]"
+							encodinganalog="C1609_i3">B-001210</container>
+						<container type="folder" encodinganalog="C1609_i3">19</container>
+						<unitdate>undated</unitdate>
+						<physdesc>
+							<extent type="computed">1 item</extent>
+						</physdesc>
+					</did>
+					<accessrestrict type="open" altrender="open">
+						<p>Open for research.</p>
+					</accessrestrict>
+					<scopecontent>
+						<p>1 photograph.</p>
+					</scopecontent>
+				</c>
+			</c>
+			<c level="file" id="C1609_c49">
+				<did>
+					<unittitle>Medical Records</unittitle>
+					<container type="box" label="mixed materials [32101086135892]"
+						encodinganalog="C1609_i3">B-001210</container>
+					<container type="folder" encodinganalog="C1609_i3">20</container>
+					<unitdate type="inclusive" normal="2010/2017">2010-2017</unitdate>
+					<physdesc>
+						<extent type="computed">1 folder</extent>
+					</physdesc>
+				</did>
+				<accessrestrict type="open" altrender="open">
+					<p>Open for research.</p>
+				</accessrestrict>
+				<scopecontent>
+					<p>Consists of Taylor's file of medical records on Roth, which he maintained due
+						to his role as one of Roth's designated health care proxies. This file
+						includes multiple revisions of various documents, including a list of
+						hospitalizations from 1943 to 2017, a list of medications, a signed letter
+						from Roth to Taylor regarding his burial and funeral instructions (June 7,
+						2017), health care instructions designating Taylor and Julia Golier as joint
+						Health Care Representatives, a HIPAA waiver, and a document from an
+						emergency room visit.</p>
+				</scopecontent>
+			</c>
+		</dsc>
+	</archdesc>
+</ead>
