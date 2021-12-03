@@ -21,11 +21,29 @@ ao_tree['uris'].each do |ao_ref|
     top_containers =
       unless get_ao['instances'].nil?
         get_ao['instances'].each do |instance|
-
+          top_container =
+            if instance.dig('sub_container').nil? == false
+              then @client.get(instance['sub_container']['top_container']['ref']).parsed
+              else
+                if instance.dig('top_container')
+                  then @client.get(instance['top_container']['ref']).parsed
+                end
+            end
+          sub_container =
+            if instance.dig('sub_container').nil? == false
+              then
+                sub1 = instance['sub_container']['type_2'] + " " + instance['sub_container']['indicator_2']
+                unless instance.dig('subcontainer', 'type_3').nil?
+                  sub2 = instance.dig('subcontainer', 'type_3') + instance.dig('subcontainer', 'indicator_3')
+                end
+                "#{sub1} #{sub2}"
+            end
+            puts "#{get_ao['uri']}, #{get_ao['ref_id']}, #{get_ao['title']}, #{get_ao['dates'][0]['expression']}, #{top_container['type']} #{top_container['indicator']} #{sub_container}"
+            end
+          end
         end #get_ao['instances'].each
-      puts "#{get_ao['uri']}, #{get_ao['ref_id']}, #{get_ao['title']}, #{get_ao['dates'][0]['expression']}, #{top_containers}"
       end #unless
-  end #ao_uri
+  #end #ao_uri
   #
   # puts get_ao['uri']
 
@@ -39,7 +57,7 @@ ao_tree['uris'].each do |ao_ref|
     #                   else instance['top_container']['ref']
     #                   end
     #   puts top_container
-end
+#end
 #end
 #end
 end_time = "Process ended: #{Time.now}"
