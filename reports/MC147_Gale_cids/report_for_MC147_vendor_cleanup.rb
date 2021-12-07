@@ -46,10 +46,9 @@ ao_tree['uris'].each do |ao_ref|
                 end
                 "#{sub1} #{sub2}"
             end
-              end #unless
-              row << [get_ao['uri'], get_ao['ref_id'], get_ao['title'], get_ao['dates'][0]['expression'], "#{top_container unless top_container.nil?} #{sub_container unless sub_container.nil?}"]
-              puts "#{get_ao['uri']}, #{get_ao['ref_id']}, #{get_ao['title']}, #{get_ao['dates'][0]['expression']}, #{top_container unless top_container.nil?} #{sub_container unless sub_container.nil?}"
-
+          end #unless
+          row << [get_ao['uri'], get_ao['ref_id'], get_ao['title'], get_ao['dates'][0]['expression'], "#{top_container unless top_container.nil?} #{sub_container unless sub_container.nil?}"]
+          puts "#{get_ao['uri']}, #{get_ao['ref_id']}, #{get_ao['title']}, #{get_ao['dates'][0]['expression']}, #{top_container unless top_container.nil?} #{sub_container unless sub_container.nil?}"
         end #uri.each
       rescue Exception => msg
       end_time = "Process interrupted at #{Time.now} with message '#{msg.class}: #{msg.message}''"
