@@ -15,8 +15,8 @@ csv.each do |row|
   record = @client.get(row['self_uri']).parsed
   has_restriction = record['notes'].select { |hash| hash['type'] == 'accessrestrict' }
   unless has_restriction.nil?
-    restriction_note = csv['self_restriction_note'][0]
-    restriction_type = csv['self_restriction_type']
+    restriction_note = row['self_restriction_note'][0]
+    restriction_type = row['self_restriction_type']
     restriction =
       { 'jsonmodel_type' => 'note_multipart',
         'subnotes' => [{ 'publish' => true,
