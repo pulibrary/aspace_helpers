@@ -1,6 +1,6 @@
 sandbox_auth.rb
 Gemfile
 Gemfile.lock
-*.csv
-*.xlsx
-*.pptx
+**/*.csv
+**/*.xlsx
+**/*.pptx
