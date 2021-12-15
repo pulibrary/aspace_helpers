@@ -3,11 +3,7 @@ require 'json'
 require 'csv'
 require_relative '../../../helper_methods'
 
-<<<<<<< Updated upstream
-aspace_staging_login
-=======
 aspace_login
->>>>>>> Stashed changes
 
 log = 'add_restrictions_log.txt'
 csv = CSV.parse(File.read('undelete_restrictions_5.csv'), headers: true)
