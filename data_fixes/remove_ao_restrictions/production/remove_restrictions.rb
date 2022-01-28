@@ -8,8 +8,8 @@ aspace_login()
 start_time = "Process started: #{Time.now}"
 puts start_time
 
-csv = CSV.parse(File.read("delete_restrictions_5.csv"), :headers => true)
-log = "log_delete_restrictions_5.txt"
+csv = CSV.parse(File.read("delete_restrictions_5_stragglers.csv"), :headers => true)
+log = "log_delete_restrictions_5_stragglers.txt"
 
 csv.each do |row|
   uri = row['self_uri']
