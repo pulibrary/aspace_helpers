@@ -6,7 +6,7 @@ declare copy-namespaces preserve, inherit;
 import module namespace functx = "http://www.functx.com"
 at "http://www.xqueryfunctions.com/xq/functx-1.0-doc-2007-01.xq";
 
-declare variable $eads as document-node()* := doc("file:/Users/heberleinr/Documents/aspace_helpers/reports/MC147_Gale_cids/MC146_export.xml");
+declare variable $eads as document-node()* := doc("file:/Users/heberleinr/Documents/aspace_helpers/reports/MC147_Gale_cids/MC147_export.xml");
 
 for $ead in $eads
 let $records := $ead//record
