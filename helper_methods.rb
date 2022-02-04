@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 #require 'archivesspace/client'
-require_relative 'sandbox_auth'
+require_relative 'authentication'
 
 def aspace_login()
   #configure access
