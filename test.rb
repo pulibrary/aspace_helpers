@@ -1,9 +1,15 @@
 require 'archivesspace/client'
-require 'json'
-require 'csv'
 require_relative 'helper_methods.rb'
 
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
 aspace_login()
+=======
+<<<<<<< Updated upstream
+=======
+>>>>>>> Stashed changes
+aspace_staging_login()
+>>>>>>> Stashed changes
 
 start_time = "Process started: #{Time.now}"
 puts start_time
@@ -48,3 +54,9 @@ puts start_time
 
 end_time = "Process ended: #{Time.now}"
 puts end_time
+=======
+aspace_local_login()
+
+record = get_single_archival_object_by_id('2', '58844')
+puts record
+>>>>>>> Stashed changes

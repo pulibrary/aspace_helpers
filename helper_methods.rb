@@ -34,6 +34,21 @@ def aspace_staging_login()
   @client = ArchivesSpace::Client.new(@config).login
 end
 
+def aspace_local_login()
+  #configure access
+  @config = ArchivesSpace::Configuration.new({
+    base_uri: "http://localhost:3000/staff/api",
+    base_repo: "",
+    username: 'admin',
+    password: 'admin',
+    #page_size: 50,
+    throttle: 0,
+    verify_ssl: false,
+  })
+    #log in
+    @client = ArchivesSpace::Client.new(@config).login
+  end
+
 def get_all_resource_records_for_institution(resolve = [])
   #run through all repositories
   resources_endpoints = []
