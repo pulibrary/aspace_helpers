@@ -3,9 +3,12 @@ require_relative 'helper_methods.rb'
 
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 aspace_login()
 =======
 <<<<<<< Updated upstream
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
 aspace_staging_login()
