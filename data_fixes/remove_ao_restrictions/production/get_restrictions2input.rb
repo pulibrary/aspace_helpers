@@ -1,21 +1,21 @@
 require 'archivesspace/client'
 require 'json'
 require 'csv'
-require_relative '../../helper_methods.rb'
+require_relative '../../../helper_methods.rb'
 
 aspace_login()
 
 start_time = "Process started: #{Time.now}"
 puts start_time
 
-filename = "get_aos_5.csv"
+filename = "get_aos_5_stragglers.csv"
 #repos_all = (6..12).to_a
 repos_all = [5]
 aos = []
 
 CSV.open(filename, "wb",
   :write_headers => true,
-  :headers => ["self_uri", "self_restriction_type", "self_restriction_note", "parent_level", "parent_uri", "parent_restriction_type", "parent_restriction_note", "resource_level", "resource_uri", "resource_restriction_type", "resource_restriction_note"]) do |row|
+  :headers => ["eadid", "self_uri", "self_restriction_type", "self_restriction_note", "parent_level", "parent_uri", "parent_restriction_type", "parent_restriction_note", "resource_level", "resource_uri", "resource_restriction_type", "resource_restriction_note"]) do |row|
   repos_all.each do |repo|
     aos << get_all_records_for_repo_endpoint(repo, 'archival_objects', ['parent', 'resource'])
     puts "Gathering records ended at #{Time.now}"
@@ -25,6 +25,7 @@ CSV.open(filename, "wb",
       unless ao.dig('resource').nil?
         resource_level = ao['resource']['_resolved']['level']
         resource_uri = ao['resource']['ref']
+        eadid = ao['resource']['_resolved']['ead_id']
 
         notes = ao.dig('resource', '_resolved', 'notes')
         restrictions_hash = notes.select { |hash| hash['type'] == "accessrestrict"}
@@ -61,7 +62,7 @@ CSV.open(filename, "wb",
               restrictions_hash.dig(0, 'subnotes', 0, 'content').gsub(/[\r\n]+/, ' ')
             end #unless
 
-      puts "#{self_uri}:#{unless self_restriction_type.nil?
+      puts "#{eadid}:#{self_uri}:#{unless self_restriction_type.nil?
         self_restriction_type
       end}:#{unless self_restriction_note.nil?
         self_restriction_note
@@ -75,7 +76,7 @@ CSV.open(filename, "wb",
         resource_restriction_note
       end}"
       #write to csv
-      row << [self_uri, unless self_restriction_type.nil?
+      row << [eadid, self_uri, unless self_restriction_type.nil?
         self_restriction_type
       end, unless self_restriction_note.nil?
         self_restriction_note
