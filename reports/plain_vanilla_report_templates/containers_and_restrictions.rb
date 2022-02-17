@@ -8,19 +8,8 @@ aspace_login()
 start_time = "Process started: #{Time.now}"
 puts start_time
 
-eadid = "MC001.03-04"
-# resource_ids = [1716]
-resource_ids = [1717, 1711, 1712, 1713, 1714, 1715, 1716, 1718]
-# ACLU MC001.03.xx-MC001.04
-# /repositories/3/resources/1717 but this is just an index
-# /repositories/3/resources/1711
-# /repositories/3/resources/1712
-# /repositories/3/resources/1713
-# /repositories/3/resources/1714
-# /repositories/3/resources/1715
-# /repositories/3/resources/1716
-# /repositories/3/resources/1718
-
+eadid = "MC031"
+resource_ids = [1787]
 repo = 3
 output_file = "#{eadid}.csv"
 
