@@ -70,6 +70,7 @@ DEPENDENCIES
   archivesspace-client
   capistrano (~> 3.16)
   capistrano-bundler
+  nokogiri
   rake
   rubocop
 

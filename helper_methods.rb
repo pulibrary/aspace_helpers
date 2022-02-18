@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 #require 'archivesspace/client'
-require_relative 'sandbox_auth'
+require_relative 'authentication'
 
 def aspace_login()
   #configure access
@@ -33,6 +33,21 @@ def aspace_staging_login()
   #log in
   @client = ArchivesSpace::Client.new(@config).login
 end
+
+def aspace_local_login()
+  #configure access
+  @config = ArchivesSpace::Configuration.new({
+    base_uri: "http://localhost:3000/staff/api",
+    base_repo: "",
+    username: 'admin',
+    password: 'admin',
+    #page_size: 50,
+    throttle: 0,
+    verify_ssl: false,
+  })
+    #log in
+    @client = ArchivesSpace::Client.new(@config).login
+  end
 
 def get_all_resource_records_for_institution(resolve = [])
   #run through all repositories
