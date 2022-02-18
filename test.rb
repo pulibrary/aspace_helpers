@@ -1,7 +1,7 @@
 require 'archivesspace/client'
 require_relative 'helper_methods.rb'
 
-<<<<<<< Updated upstream
+
 aspace_staging_login()
 
 start_time = "Process started: #{Time.now}"
@@ -61,9 +61,3 @@ ao_tree['uris'].each do |ao_ref|
 #end
 end_time = "Process ended: #{Time.now}"
 puts end_time
-=======
-aspace_local_login()
-
-record = get_single_archival_object_by_id('2', '58844')
-puts record
->>>>>>> Stashed changes
