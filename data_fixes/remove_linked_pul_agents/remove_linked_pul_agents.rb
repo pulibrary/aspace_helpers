@@ -43,7 +43,7 @@ CSV.open(output_file, "a",
     #       end
     #   end
     unless rejection.nil? && agents.count<=1
-          # puts "#{uri}^#{record['ead_id']}^#{inclusion}"
+          # puts "#{uri}^#{record['ead_id']}^#{rejection}"
           row_out << [uri, record['ead_id'], rejection]
       post = @client.post(uri, record.to_json)
       response = post.body
