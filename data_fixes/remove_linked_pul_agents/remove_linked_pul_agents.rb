@@ -1,7 +1,7 @@
 require 'archivesspace/client'
 require 'json'
 require 'csv'
-require_relative 'helper_methods.rb'
+require_relative '../../helper_methods.rb'
 
 aspace_login()
 start_time = "Process started: #{Time.now}"
@@ -44,7 +44,7 @@ CSV.open(output_file, "a",
     #   end
     unless rejection.nil? && agents.count<=1
           # puts "#{uri}^#{record['ead_id']}^#{inclusion}"
-          row_out << [uri, record['ead_id'], inclusion]
+          row_out << [uri, record['ead_id'], rejection]
       post = @client.post(uri, record.to_json)
       response = post.body
       #puts record
