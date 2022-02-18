@@ -93,3 +93,11 @@ csv.each do |row|
   response = post.body
   puts response
 end
+
+#get ids of all agent records
+agents = @client.get("/agents/corporate_entities", {
+  query: {
+   #all_ids: true
+   id_set: 4984
+  }}).parsed
+puts agents

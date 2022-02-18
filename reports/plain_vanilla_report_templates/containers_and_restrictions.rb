@@ -8,9 +8,8 @@ aspace_login()
 start_time = "Process started: #{Time.now}"
 puts start_time
 
-eadid = "MC104"
-# resource_ids = [1716]
-resource_ids = [1863, 1860, 1861, 1862]
+eadid = "MC031"
+resource_ids = [1787]
 
 repo = 3
 output_file = "#{eadid}.csv"
