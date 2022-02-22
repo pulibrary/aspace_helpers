@@ -17,15 +17,21 @@ def remove_empty_elements(node)
   node.attribute('code').blank?)
 end
 
+# set up variables
+##################
+tags852 = doc.xpath('//marc:datafield[@tag="852"]')
+
+#do stuff
+##################
+
+#addresses github #128
 remove_empty_elements(doc)
 
-# Search for nodes by xpath
-tags49 = doc.xpath('//marc:datafield[@tag="049"]')
-tags520 = doc.xpath('//marc:datafield[@tag="520"]')
-
+#addresses github #132
+tags852.remove
 # tags49.each do |tag49|
 #   tag49.remove if tag49.content.empty?
 # end
-tags520[0].content = "Snap, Crackle & Pop"
+#tags520[0].content = "Snap, Crackle & Pop"
 
 puts doc
