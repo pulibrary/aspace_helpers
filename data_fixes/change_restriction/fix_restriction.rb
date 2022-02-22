@@ -4,23 +4,23 @@ require 'csv'
 require 'pony'
 require_relative '../../helper_methods.rb'
 
-aspace_staging_login()
+aspace_login()
 
 start_time = "Process started: #{Time.now}"
 puts start_time
 
-log = "log_set_to_open_with_note.csv"
-csv = CSV.parse(File.read("set_to_open_with_note.csv"), :headers => true)
+log = "log_set_to_open.csv"
+csv = CSV.parse(File.read("set_to_open.csv"), :headers => true)
 
   csv.each do |row|
     record = @client.get(row['uri']).parsed
     accessrestrict = record['notes'].select { |note| note["type"] == "accessrestrict" }
     #change restriction type here. Takes an array.
-    accessrestrict[0]['rights_restriction']['local_access_restriction_type'] = row['restriction_type']
+    accessrestrict[0]['rights_restriction']['local_access_restriction_type'] = ["Open"]
     #change restriction note here. Takes a string.
-    accessrestrict[0]['subnotes'][0]['content'] = row['restriction_note']
+    #accessrestrict[0]['subnotes'][0]['content'] = row['restriction_note']
     #change the end date here
-    accessrestrict[0]['rights_restriction']['end'] = row['end_date'] unless row['end_date'].blank?
+    #accessrestrict[0]['rights_restriction']['end'] = row['end_date'] unless row['end_date'].empty?
     post = @client.post(row['uri'], record.to_json)
     #write to log
     File.write(log, post.body, mode: 'a')
