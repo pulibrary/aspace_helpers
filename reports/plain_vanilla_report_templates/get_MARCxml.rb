@@ -17,8 +17,9 @@ def remove_empty_elements(node)
   node.attribute('code').blank?)
 end
 
-# set up variables
+# set up variables (these may return a sequence)
 ##################
+tags544 = doc.xpath('//marc:datafield[@tag="544"]')
 tags852 = doc.xpath('//marc:datafield[@tag="852"]')
 
 #do stuff
@@ -27,8 +28,16 @@ tags852 = doc.xpath('//marc:datafield[@tag="852"]')
 #addresses github #128
 remove_empty_elements(doc)
 
+#addresses github #133
+#NB node.children.before inserts new node as first of node's children; default for add_child is last
+tags544.each do |tag544|
+  tag544.children.before('<subfield code="a">')
+end
+
 #addresses github #132
 tags852.remove
+
+
 # tags49.each do |tag49|
 #   tag49.remove if tag49.content.empty?
 # end
