@@ -27,6 +27,7 @@ csv = CSV.parse(File.read("set_to_open.csv"), :headers => true)
     puts post.body
     rescue Exception => msg
     error = "Process ended: #{Time.now} with error '#{msg.class}: #{msg.message}''"
+    puts error
   end
 
 puts "Process ended #{Time.now}."
