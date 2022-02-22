@@ -12,7 +12,9 @@ doc = Nokogiri::XML(marc_record.body)
 #use node.attributes.blank? for all attributes
 def remove_empty_elements(node)
   node.children.map { |child| remove_empty_elements(child) }
-  node.remove if node.content.blank? && node.attribute('@ind1').blank? && node.attribute('@ind2').blank?
+  node.remove if node.content.blank? && (
+  (node.attribute('@ind1').blank? && node.attribute('@ind2').blank?) ||
+  node.attribute('code').blank?)
 end
 
 remove_empty_elements(doc)
