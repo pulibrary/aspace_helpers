@@ -1,7 +1,6 @@
 require 'archivesspace/client'
 require_relative 'helper_methods.rb'
 
-
 aspace_staging_login()
 
 start_time = "Process started: #{Time.now}"
