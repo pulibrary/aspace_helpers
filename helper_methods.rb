@@ -313,5 +313,5 @@ def get_all_resource_uris_for_institution()
       @uris << "/#{endpoint}/#{id}"
     end
   end #close resources_endpoints.each
-  puts @uris
+  @uris
 end #close method
