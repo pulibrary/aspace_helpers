@@ -298,7 +298,7 @@ def get_all_resource_uris_for_institution()
   resources_endpoints = []
   repos_all = (3..12).to_a
   repos_all.each do |repo|
-    resources_endpoints << '/repositories/'+repo.to_s+'/resources/'
+    resources_endpoints << 'repositories/'+repo.to_s+'/resources'
     end
   #for each endpoint, get the count of records
   @uris = []
@@ -310,7 +310,7 @@ def get_all_resource_uris_for_institution()
       }}).parsed
     ids_by_endpoint = ids_by_endpoint.flatten!
     ids_by_endpoint.each do |id|
-      @uris << endpoint.to_s + id.to_s
+      @uris << "/#{endpoint}/#{id}"
     end
   end #close resources_endpoints.each
   puts @uris
