@@ -22,6 +22,7 @@ end
 tag008 = doc.at_xpath('//marc:controlfield[@tag="008"]')
 tags040 = doc.xpath('//marc:datafield[@tag="040"]')
 tag041 = doc.at_xpath('//marc:datafield[@tag="041"]')
+tag099_a = doc.at_xpath('//marc:datafield[@tag="099"]/marc:subfield[@code="a"]')
 tags544 = doc.xpath('//marc:datafield[@tag="544"]')
 tags852 = doc.xpath('//marc:datafield[@tag="852"]')
 
@@ -30,6 +31,12 @@ tags852 = doc.xpath('//marc:datafield[@tag="852"]')
 
 #addresses github #128
 remove_empty_elements(doc)
+
+#addresses github #129
+tag008.previous=("<controlfield tag='001'>#{tag099_a.content}</controlfield")
+
+#addresses github #130
+tag008.previous=("<controlfield tag='003'>PULFA</controlfield")
 
 #addresses github #131
 tags040.each do |tag040|
