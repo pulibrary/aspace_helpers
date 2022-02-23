@@ -292,3 +292,26 @@ def add_revision_statement(uri, description)
   post = @client.post(uri, resource.to_json)
   puts post.body
 end
+
+def get_all_resource_uris_for_institution()
+  #run through all repositories
+  resources_endpoints = []
+  repos_all = (3..12).to_a
+  repos_all.each do |repo|
+    resources_endpoints << '/repositories/'+repo.to_s+'/resources/'
+    end
+  #for each endpoint, get the count of records
+  @uris = []
+  resources_endpoints.each do |endpoint|
+    ids_by_endpoint = []
+    ids_by_endpoint << @client.get(endpoint, {
+      query: {
+       all_ids: true
+      }}).parsed
+    ids_by_endpoint = ids_by_endpoint.flatten!
+    ids_by_endpoint.each do |id|
+      @uris << endpoint.to_s + id.to_s
+    end
+  end #close resources_endpoints.each
+  puts @uris
+end #close method
