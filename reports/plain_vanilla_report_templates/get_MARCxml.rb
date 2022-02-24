@@ -5,15 +5,14 @@ require_relative '../../helper_methods.rb'
 
 aspace_staging_login()
 
-temp_file = "temp.xml"
 filename = "out.xml"
 
 resources = get_all_resource_uris_for_institution
-#remove this filter when testing is finished; I'm just testing with two records here
 
 file =  File.open(filename, "w")
 file << '<collection xmlns="http://www.loc.gov/MARC21/slim" xmlns:marc="http://www.loc.gov/MARC21/slim" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.loc.gov/MARC21/slim http://www.loc.gov/standards/marcxml/schema/MARC21slim.xsd">'
 
+#remove this filter when testing is finished; I'm just testing with two records here
 resources[0..1].each do |resource|
   uri = resource.gsub!("resources", "resources/marc21") + ".xml"
   marc_record = @client.get(uri)
