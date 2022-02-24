@@ -10,6 +10,10 @@ filename = "out.xml"
 
 resources = get_all_resource_uris_for_institution
 #remove this filter when testing is finished; I'm just testing with two records here
+
+file =  File.open(filename, "w")
+file << '<collection xmlns="http://www.loc.gov/MARC21/slim" xmlns:marc="http://www.loc.gov/MARC21/slim" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.loc.gov/MARC21/slim http://www.loc.gov/standards/marcxml/schema/MARC21slim.xsd">'
+
 resources[0..1].each do |resource|
   uri = resource.gsub!("resources", "resources/marc21") + ".xml"
   marc_record = @client.get(uri)
@@ -73,21 +77,8 @@ resources[0..1].each do |resource|
   tags852.remove
 
   #append record to file
-  open(temp_file, 'a') { |f|
-    f << doc.at_xpath('//marc:record')
-    }
+  file << doc.at_xpath('//marc:record')
+  file.flush
 end
-
-#add wrapper element to file
-open(filename, 'w') do |f|
-  f << '<collection xmlns="http://www.loc.gov/MARC21/slim" xmlns:marc="http://www.loc.gov/MARC21/slim" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.loc.gov/MARC21/slim http://www.loc.gov/standards/marcxml/schema/MARC21slim.xsd">'
-  File.foreach(temp_file) do |line|
-    f << line
-  end
-  f << '</collection>'
-end
-
-
-# open(filename, 'a') { |f|
-#   f << '</collection>'
-#   }
+file << '</collection>'
+file.close
