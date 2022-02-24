@@ -50,7 +50,7 @@ def aspace_local_login()
   end
 
 def get_all_resource_records_for_institution(resolve = [])
-  #run through all repositories
+  #run through all repositories (1 and 2 are reserved for admin use)
   resources_endpoints = []
   repos_all = (3..12).to_a
   repos_all.each do |repo|
@@ -83,7 +83,7 @@ def get_all_resource_records_for_institution(resolve = [])
 end #close method
 
 def get_all_event_records_for_institution(resolve = [])
-  #run through all repositories
+  #run through all repositories (1 and 2 are reserved for admin use)
   resources_endpoints = []
   repos_all = (3..12).to_a
   repos_all.each do |repo|
@@ -250,7 +250,7 @@ endpoint_name = '/repositories/' + repo_id.to_s + '/archival_contexts/people/' +
 end
 
 def get_all_top_container_records_for_institution(resolve = [])
-  #run through all repositories
+  #run through all repositories (1 and 2 are reserved for admin use)
   resources_endpoints = []
   repos_all = (3..12).to_a
   repos_all.each do |repo|
@@ -294,7 +294,7 @@ def add_revision_statement(uri, description)
 end
 
 def get_all_resource_uris_for_institution()
-  #run through all repositories
+  #run through all repositories (1 and 2 are reserved for admin use)
   resources_endpoints = []
   repos_all = (3..12).to_a
   repos_all.each do |repo|
