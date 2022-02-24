@@ -1,30 +1,30 @@
-require_relative '../../helper_methods.rb'
-require_relative '../../csv_aspace_runner'
+require 'json'
+require 'csv'
+require 'byebug'
 
-client = aspace_login(@staging)
-
-runner = CSVASpaceRunner.new("set_end_date_new.csv", client)
-
-runner.run do |row, record|
-    #accessrestrict might need to be overwritten or created
-    new_accessrestrict =
-        {
-        "jsonmodel_type"=>"note_multipart",
-        "type"=>"accessrestrict",
-        "rights_restriction"=>{"end"=>row['end_date'],
-        "local_access_restriction_type"=>[row['restriction_type']]},
-        "subnotes"=>[{"jsonmodel_type"=>"note_text",
-        "content"=>"This is a test on 3/24",
-        "publish"=>true}],
-        "publish"=>true
-        }
-    accessrestrict = record['notes'].select { |note| note["type"] == "accessrestrict" }[0]
-    if accessrestrict.nil? == false
-      accessrestrict = accessrestrict.replace(new_accessrestrict)
-    else
-      if record['notes'].any?
-        then record['notes'] << new_accessrestrict
-      else record['notes'] = [new_accessrestrict]
-      end
-    end
+class CSVASpaceRunner
+  def initialize(filename, client)
+    @csv = CSV.parse(File.read(filename), :headers => true)
+    @client = client
+    log_filename = "log_#{filename}.txt"
+    @log = File.open(log_filename, mode: 'w')
   end
+  def run()
+    start_time = "Process started: #{Time.now}"
+    puts start_time
+    @csv.each do |row|
+        record = @client.get(row['uri']).parsed
+        yield row, record
+        post = @client.post(row['uri'], record.to_json)
+        #write to log
+        @log.write(post.body)
+        @log.flush
+      rescue Exception => msg
+        error = "Process ended: #{Time.now} with error '#{msg.class}: #{msg.message}''"
+        puts error
+      end
+      @log.close
+      end_time = "Process ended: #{Time.now}"
+      puts end_time
+  end
+end
