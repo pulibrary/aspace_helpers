@@ -1,5 +1,5 @@
 #!/usr/bin/env ruby
-#require 'archivesspace/client'
+require 'archivesspace/client'
 require_relative 'authentication'
 
 def aspace_login()
