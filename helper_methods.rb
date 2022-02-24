@@ -270,7 +270,6 @@ def get_all_resource_uris_for_institution()
   repos_all.each do |repo|
     resources_endpoints << 'repositories/'+repo.to_s+'/resources'
     end
-  #for each endpoint, get the count of records
   @uris = []
   resources_endpoints.each do |endpoint|
     ids_by_endpoint = []
