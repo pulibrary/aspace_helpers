@@ -2,10 +2,11 @@
 #require 'archivesspace/client'
 require_relative 'authentication'
 
-def aspace_login()
+#takes base_uri as an argument to allow respective authentication to prod, staging, or local
+def aspace_login(uri)
   #configure access
   @config = ArchivesSpace::Configuration.new({
-    base_uri: @baseURL,
+    base_uri: uri,
     base_repo: "",
     username: @user,
     password: @password,
@@ -17,40 +18,9 @@ def aspace_login()
   #log in
   @client = ArchivesSpace::Client.new(@config).login
 end
-
-def aspace_staging_login()
-  #configure access
-  @config = ArchivesSpace::Configuration.new({
-    base_uri: @baseURL_staging,
-    base_repo: "",
-    username: @user,
-    password: @password,
-    #page_size: 50,
-    throttle: 0,
-    verify_ssl: false,
-  })
-
-  #log in
-  @client = ArchivesSpace::Client.new(@config).login
-end
-
-def aspace_local_login()
-  #configure access
-  @config = ArchivesSpace::Configuration.new({
-    base_uri: "http://localhost:3000/staff/api",
-    base_repo: "",
-    username: 'admin',
-    password: 'admin',
-    #page_size: 50,
-    throttle: 0,
-    verify_ssl: false,
-  })
-    #log in
-    @client = ArchivesSpace::Client.new(@config).login
-  end
 
 def get_all_resource_records_for_institution(resolve = [])
-  #run through all repositories
+  #run through all repositories (1 and 2 are reserved for admin use)
   resources_endpoints = []
   repos_all = (3..12).to_a
   repos_all.each do |repo|
@@ -83,7 +53,7 @@ def get_all_resource_records_for_institution(resolve = [])
 end #close method
 
 def get_all_event_records_for_institution(resolve = [])
-  #run through all repositories
+  #run through all repositories (1 and 2 are reserved for admin use)
   resources_endpoints = []
   repos_all = (3..12).to_a
   repos_all.each do |repo|
@@ -250,7 +220,7 @@ endpoint_name = '/repositories/' + repo_id.to_s + '/archival_contexts/people/' +
 end
 
 def get_all_top_container_records_for_institution(resolve = [])
-  #run through all repositories
+  #run through all repositories (1 and 2 are reserved for admin use)
   resources_endpoints = []
   repos_all = (3..12).to_a
   repos_all.each do |repo|
@@ -292,3 +262,25 @@ def add_revision_statement(uri, description)
   post = @client.post(uri, resource.to_json)
   puts post.body
 end
+
+def get_all_resource_uris_for_institution()
+  #run through all repositories (1 and 2 are reserved for admin use)
+  resources_endpoints = []
+  repos_all = (3..12).to_a
+  repos_all.each do |repo|
+    resources_endpoints << 'repositories/'+repo.to_s+'/resources'
+    end
+  @uris = []
+  resources_endpoints.each do |endpoint|
+    ids_by_endpoint = []
+    ids_by_endpoint << @client.get(endpoint, {
+      query: {
+       all_ids: true
+      }}).parsed
+    ids_by_endpoint = ids_by_endpoint.flatten!
+    ids_by_endpoint.each do |id|
+      @uris << "/#{endpoint}/#{id}"
+    end
+  end #close resources_endpoints.each
+  @uris
+end #close method
