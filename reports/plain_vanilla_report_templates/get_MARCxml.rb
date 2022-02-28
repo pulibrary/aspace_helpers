@@ -13,7 +13,7 @@ file =  File.open(filename, "w")
 file << '<collection xmlns="http://www.loc.gov/MARC21/slim" xmlns:marc="http://www.loc.gov/MARC21/slim" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.loc.gov/MARC21/slim http://www.loc.gov/standards/marcxml/schema/MARC21slim.xsd">'
 
 #remove this filter when testing is finished; I'm just testing with two records here
-resources[0..1].each do |resource|
+resources.each do |resource|
   uri = resource.gsub!("resources", "resources/marc21") + ".xml"
   marc_record = @client.get(uri)
   doc = Nokogiri::XML(marc_record.body)
@@ -22,9 +22,7 @@ resources[0..1].each do |resource|
   #use node.attributes.blank? for all attributes
   def remove_empty_elements(node)
     node.children.map { |child| remove_empty_elements(child) }
-    node.remove if node.content.blank? && (
-    (node.attribute('@ind1').blank? && node.attribute('@ind2').blank?) ||
-    node.attribute('code').blank?)
+    node.remove if node.content.blank?
   end
 
   # set up variables (these may return a sequence)
@@ -37,6 +35,7 @@ resources[0..1].each do |resource|
   tags852 = doc.xpath('//marc:datafield[@tag="852"]')
   tag856 = doc.at_xpath('//marc:datafield[@tag="856"]')
   tag500_a = doc.at_xpath('//marc:datafield[@tag="500"]/marc:subfield[@code="a"][contains(text(),"Location of resource:")]')
+  tags6xx = doc.xpath('//marc:datafield[@tag = "650" or @tag = "651"]')
 
   #do stuff
   ##################
@@ -51,6 +50,7 @@ resources[0..1].each do |resource|
   tag008.previous=("<controlfield tag='003'>PULFA</controlfield")
 
   #addresses github #144
+  #swap quotes so interpolation is possible
   tag008.next=("<datafield ind1=' ' ind2=' ' tag='035'>
     <subfield code='a'>(PULFA)#{tag099_a.content}</subfield>
     </controlfield")
@@ -66,7 +66,6 @@ resources[0..1].each do |resource|
   end
 
   #addresses github #134
-  #swap quotes so interpolation is possible
   tag041.next=("<datafield ind1=' ' ind2=' ' tag='046'>
         <subfield code='a'>i</subfield>
         <subfield code='c'>#{tag008.content[7..10]}</subfield>
@@ -77,6 +76,23 @@ resources[0..1].each do |resource|
   #NB node.children.before inserts new node as first of node's children; default for add_child is last
   tags544.each do |tag544|
     tag544.children.before('<subfield code="a">')
+  end
+
+  #addresses github #143
+  #adapted from Mark's implementation of Don's logic
+  tags6xx.each do |tag6xx|
+    subfield_a = tag6xx.at_xpath('marc:subfield[@code="a"]')
+    segments = subfield_a.content.split('--')
+    segments.each { |segment| segment.strip! }
+    subfa_text = segments[0]
+    new_subfield_a = subfield_a.replace("<subfield code='a'>#{subfa_text}</subfield")
+
+    segments[1..-1].each do |segment|
+      code = segment =~ /^[0-9]{2}/ ? 'y' : 'x'
+      #new_subfield_a is a node set of one
+      new_subfield_a[0].next=("<subfield code='#{code}'>#{segment}</subfield>")
+    end
+    tag6xx.children[-1].content << '.' unless ['?', '-', '.'].include?(tag6xx.children[-1].content[-1])
   end
 
   #addresses github #132
