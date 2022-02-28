@@ -36,12 +36,12 @@ resources[0..5].each do |resource|
   tag856 = doc.at_xpath('//marc:datafield[@tag="856"]')
   tag500_a = doc.at_xpath('//marc:datafield[@tag="500"]/marc:subfield[@code="a"]')
   location_note  =
-    if tag500_a[contains(text(),"Location of resource:")]
+    if tag500_a.content.match(/Location of resource: /)
       tag500_a.content.gsub(/.*[: ]([^.]+)[.].*/, "\\1")
-    elsif tag500_a.content.strip! =~ /anxb|ea|ex|flm|flmp|gax|hsvc|hsvm|mss|mudd|prnc|rarebooks|rcpph|rcppf|rcppl|rcpxc|rcpxg|rcpxm|rcpxr|st|thx|wa|review|oo|sc|sls/
+    elsif tag500_a.content.match(/anxb|ea|ex|flm|flmp|gax|hsvc|hsvm|mss|mudd|prnc|rarebooks|rcpph|rcppf|rcppl|rcpxc|rcpxg|rcpxm|rcpxr|st|thx|wa|review|oo|sc|sls/)
       tag500_a.content.strip!
     end
-  tags6xx = doc.xpath('//marc:datafield[@tag = "700" or @tag = "650" or @tag = "651" or @tag = "610" or @tag = "630" or @tag = "648" or @tag = "656" or @tag = "657" or (@tag = "655" and marc:subfield[@code="b"].nil?)]')
+  tags6xx = doc.xpath('//marc:datafield[@tag = "700" or @tag = "650" or @tag = "651" or @tag = "610" or @tag = "630" or @tag = "648" or @tag = "656" or @tag = "657"]')# or (@tag = "655" and marc:subfield[@code="b"].nil?)
 
   #do stuff
   ##################
@@ -106,8 +106,8 @@ resources[0..5].each do |resource|
 
   #addresses github #145
   tag856.next=("<datafield ind1=' ' ind2=' ' tag='982'>
-        <subfield code='c'>#{tag500_a.content.gsub(/.*[: ]([^.]+)[.].*/, "\\1")}</subfield>
-        </datafield>") unless tag500_a.nil?
+        <subfield code='c'>#{location_note.gsub(/.*[: ]([^.]+)[.].*/, "\\1")}</subfield>
+        </datafield>") unless location_note.nil?
 
   #append record to file
   file << doc.at_xpath('//marc:record')
