@@ -35,6 +35,8 @@ resources[0..1].each do |resource|
   tag099_a = doc.at_xpath('//marc:datafield[@tag="099"]/marc:subfield[@code="a"]')
   tags544 = doc.xpath('//marc:datafield[@tag="544"]')
   tags852 = doc.xpath('//marc:datafield[@tag="852"]')
+  tag856 = doc.at_xpath('//marc:datafield[@tag="856"]')
+  tag500_a = doc.at_xpath('//marc:datafield[@tag="500"]/marc:subfield[@code="a"]')
 
   #do stuff
   ##################
@@ -79,6 +81,11 @@ resources[0..1].each do |resource|
 
   #addresses github #132
   tags852.remove
+
+  #addresses github #145
+  tag856.next=("<datafield ind1=' ' ind2=' ' tag='982'>
+        <subfield code='c'>#{tag500_a.content.gsub(/.*[: ]([^.]+)[.].*/, "\\1")}</subfield>
+        </datafield>")
 
   #append record to file
   file << doc.at_xpath('//marc:record')
