@@ -13,7 +13,7 @@ file =  File.open(filename, "w")
 file << '<collection xmlns="http://www.loc.gov/MARC21/slim" xmlns:marc="http://www.loc.gov/MARC21/slim" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.loc.gov/MARC21/slim http://www.loc.gov/standards/marcxml/schema/MARC21slim.xsd">'
 
 #remove this filter when testing is finished; I'm just testing with two records here
-resources.each do |resource|
+resources[0..1].each do |resource|
   uri = resource.gsub!("resources", "resources/marc21") + ".xml"
   marc_record = @client.get(uri)
   doc = Nokogiri::XML(marc_record.body)
@@ -101,7 +101,7 @@ resources.each do |resource|
   #addresses github #145
   tag856.next=("<datafield ind1=' ' ind2=' ' tag='982'>
         <subfield code='c'>#{tag500_a.content.gsub(/.*[: ]([^.]+)[.].*/, "\\1")}</subfield>
-        </datafield>")
+        </datafield>") unless tag500_a.nil?
 
   #append record to file
   file << doc.at_xpath('//marc:record')
