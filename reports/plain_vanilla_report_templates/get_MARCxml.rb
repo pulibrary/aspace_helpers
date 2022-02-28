@@ -36,7 +36,7 @@ resources[0..1].each do |resource|
   tags544 = doc.xpath('//marc:datafield[@tag="544"]')
   tags852 = doc.xpath('//marc:datafield[@tag="852"]')
   tag856 = doc.at_xpath('//marc:datafield[@tag="856"]')
-  tag500_a = doc.at_xpath('//marc:datafield[@tag="500"]/marc:subfield[@code="a"]')
+  tag500_a = doc.at_xpath('//marc:datafield[@tag="500"]/marc:subfield[@code="a"][contains(text(),"Location of resource:")]')
 
   #do stuff
   ##################
