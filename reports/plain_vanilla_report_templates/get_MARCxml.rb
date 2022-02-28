@@ -3,7 +3,7 @@ require 'active_support/all'
 require 'nokogiri'
 require_relative '../../helper_methods.rb'
 
-aspace_staging_login()
+aspace_login(@staging)
 
 filename = "out.xml"
 
@@ -47,6 +47,11 @@ resources[0..1].each do |resource|
 
   #addresses github #130
   tag008.previous=("<controlfield tag='003'>PULFA</controlfield")
+
+  #addresses github #144
+  tag008.next=("<datafield ind1=' ' ind2=' ' tag='035'>
+    <subfield code='a'>(PULFA)#{tag099_a.content}</subfield>
+    </controlfield")
 
   #addresses github #131
   tags040.each do |tag040|
