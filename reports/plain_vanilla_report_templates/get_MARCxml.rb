@@ -13,7 +13,7 @@ file =  File.open(filename, "w")
 file << '<collection xmlns="http://www.loc.gov/MARC21/slim" xmlns:marc="http://www.loc.gov/MARC21/slim" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.loc.gov/MARC21/slim http://www.loc.gov/standards/marcxml/schema/MARC21slim.xsd">'
 
 #remove this filter when testing is finished; I'm just testing with two records here
-resources[0..1].each do |resource|
+resources[0..5].each do |resource|
   uri = resource.gsub!("resources", "resources/marc21") + ".xml"
   marc_record = @client.get(uri)
   doc = Nokogiri::XML(marc_record.body)
@@ -34,8 +34,14 @@ resources[0..1].each do |resource|
   tags544 = doc.xpath('//marc:datafield[@tag="544"]')
   tags852 = doc.xpath('//marc:datafield[@tag="852"]')
   tag856 = doc.at_xpath('//marc:datafield[@tag="856"]')
-  tag500_a = doc.at_xpath('//marc:datafield[@tag="500"]/marc:subfield[@code="a"][contains(text(),"Location of resource:")]')
-  tags6xx = doc.xpath('//marc:datafield[@tag = "650" or @tag = "651" or @tag = "610" or @tag = "630" or @tag = "648" or @tag = "656" or @tag = "657"]')
+  tag500_a = doc.at_xpath('//marc:datafield[@tag="500"]/marc:subfield[@code="a"]')
+  location_note  =
+    if tag500_a[contains(text(),"Location of resource:")]
+      tag500_a.content.gsub(/.*[: ]([^.]+)[.].*/, "\\1")
+    elsif tag500_a.content.strip! =~ /anxb|ea|ex|flm|flmp|gax|hsvc|hsvm|mss|mudd|prnc|rarebooks|rcpph|rcppf|rcppl|rcpxc|rcpxg|rcpxm|rcpxr|st|thx|wa|review|oo|sc|sls/
+      tag500_a.content.strip!
+    end
+  tags6xx = doc.xpath('//marc:datafield[@tag = "700" or @tag = "650" or @tag = "651" or @tag = "610" or @tag = "630" or @tag = "648" or @tag = "656" or @tag = "657" or (@tag = "655" and marc:subfield[@code="b"].nil?)]')
 
   #do stuff
   ##################
