@@ -34,8 +34,6 @@ resources[0..4].each do |resource|
   tags852 = doc.xpath('//marc:datafield[@tag="852"]')
   tag856 = doc.at_xpath('//marc:datafield[@tag="856"]')
   tags500_a = doc.xpath('//marc:datafield[@tag="500"]/marc:subfield[@code="a"]')
-  #   codes in use are: (/anxb|ea|ex|flm|flmp|gax|hsvc|hsvm|mss|mudd|prnc|rarebooks|rcpph|rcppf|rcppl|rcpxc|rcpxg|rcpxm|rcpxr|st|thx|wa|review|oo|sc|sls/)
-
   tags6xx = doc.xpath('//marc:datafield[@tag = "700" or @tag = "650" or
     @tag = "651" or @tag = "610" or @tag = "630" or @tag = "648" or
     @tag = "655" or @tag = "656" or @tag = "657"]')
@@ -110,6 +108,8 @@ resources[0..4].each do |resource|
   #addresses github 147
   unless tags500_a.nil?
     tags500_a.select do |tag500_a|
+      #the exporter adds preceding text and punctuation for each physloc.
+      #hardcode location codes because textual physlocs are patterned the same
       if tag500_a.content.match(/Location of resource: (anxb|ea|ex|flm|flmp|gax|hsvc|hsvm|mss|mudd|prnc|rarebooks|rcpph|rcppf|rcppl|rcpxc|rcpxg|rcpxm|rcpxr|st|thx|wa|review|oo|sc|sls)/)
         #strip text preceding and following code
         location_notes = tag500_a.content.gsub(/.*:\s(.+)[.]/, "\\1")
