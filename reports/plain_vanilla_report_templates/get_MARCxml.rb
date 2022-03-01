@@ -3,7 +3,7 @@ require 'active_support/all'
 require 'nokogiri'
 require_relative '../../helper_methods.rb'
 
-aspace_login(@production)
+aspace_login(@staging)
 
 filename = "out.xml"
 
@@ -12,7 +12,7 @@ resources = get_all_resource_uris_for_institution
 file =  File.open(filename, "w")
 file << '<collection xmlns="http://www.loc.gov/MARC21/slim" xmlns:marc="http://www.loc.gov/MARC21/slim" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.loc.gov/MARC21/slim http://www.loc.gov/standards/marcxml/schema/MARC21slim.xsd">'
 
-resources.each do |resource|
+resources[0..4].each do |resource|
   uri = resource.gsub!("resources", "resources/marc21") + ".xml"
   marc_record = @client.get(uri)
   doc = Nokogiri::XML(marc_record.body)
@@ -33,11 +33,9 @@ resources.each do |resource|
   tags544 = doc.xpath('//marc:datafield[@tag="544"]')
   tags852 = doc.xpath('//marc:datafield[@tag="852"]')
   tag856 = doc.at_xpath('//marc:datafield[@tag="856"]')
-  tag500_a = doc.at_xpath('//marc:datafield[@tag="500"]/marc:subfield[@code="a"]')
+  tags500_a = doc.xpath('//marc:datafield[@tag="500"]/marc:subfield[@code="a"]')
   #   codes in use are: (/anxb|ea|ex|flm|flmp|gax|hsvc|hsvm|mss|mudd|prnc|rarebooks|rcpph|rcppf|rcppl|rcpxc|rcpxg|rcpxm|rcpxr|st|thx|wa|review|oo|sc|sls/)
-  location_note = if tag500_a.content.match(/Location of resource: /)
-       tag500_a.content.gsub(/.*:\s(.+)[.]/, "\\1")
-     end
+
   tags6xx = doc.xpath('//marc:datafield[@tag = "700" or @tag = "650" or
     @tag = "651" or @tag = "610" or @tag = "630" or @tag = "648" or
     @tag = "655" or @tag = "656" or @tag = "657"]')
@@ -109,11 +107,21 @@ resources.each do |resource|
   #addresses github #132
   tags852.remove
 
-location_note.split.each do |tag|
-  tag856.next=("<datafield ind1=' ' ind2=' ' tag='982'>
-        <subfield code='c'>#{tag}</subfield>
-        </datafield>")
-      end unless location_note.nil?
+  #addresses github 147
+  unless tags500_a.nil?
+    tags500_a.select do |tag500_a|
+      if tag500_a.content.match(/Location of resource: (anxb|ea|ex|flm|flmp|gax|hsvc|hsvm|mss|mudd|prnc|rarebooks|rcpph|rcppf|rcppl|rcpxc|rcpxg|rcpxm|rcpxr|st|thx|wa|review|oo|sc|sls)/)
+        #strip text preceding and following code
+        location_notes = tag500_a.content.gsub(/.*:\s(.+)[.]/, "\\1")
+        puts location_notes
+        location_notes.split.each do |tag|
+            tag856.next=("<datafield ind1=' ' ind2=' ' tag='982'>
+                  <subfield code='c'>#{tag}</subfield>
+                  </datafield>")
+                end unless location_notes.nil?
+      end
+    end
+  end
 
   #append record to file
   file << doc.at_xpath('//marc:record')
