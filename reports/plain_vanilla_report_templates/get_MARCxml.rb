@@ -12,8 +12,7 @@ resources = get_all_resource_uris_for_institution
 file =  File.open(filename, "w")
 file << '<collection xmlns="http://www.loc.gov/MARC21/slim" xmlns:marc="http://www.loc.gov/MARC21/slim" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.loc.gov/MARC21/slim http://www.loc.gov/standards/marcxml/schema/MARC21slim.xsd">'
 
-#remove this filter when testing is finished; I'm just testing with two records here
-resources[0..99].each do |resource|
+resources.each do |resource|
   uri = resource.gsub!("resources", "resources/marc21") + ".xml"
   marc_record = @client.get(uri)
   doc = Nokogiri::XML(marc_record.body)
