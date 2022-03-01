@@ -39,7 +39,6 @@ resources[0..99].each do |resource|
   location_note = if tag500_a.content.match(/Location of resource: /)
        tag500_a.content.gsub(/.*:\s(.+)[.]/, "\\1")
      end
-  #remove ending period (it will be replaced in the last step)
   tags6xx = doc.xpath('//marc:datafield[@tag = "700" or @tag = "650" or
     @tag = "651" or @tag = "610" or @tag = "630" or @tag = "648" or
     @tag = "655" or @tag = "656" or @tag = "657"]')
