@@ -3,7 +3,7 @@ require 'active_support/all'
 require 'nokogiri'
 require_relative '../../helper_methods.rb'
 
-aspace_login(@staging)
+aspace_login(@production)
 
 filename = "out.xml"
 
@@ -13,7 +13,7 @@ file =  File.open(filename, "w")
 file << '<collection xmlns="http://www.loc.gov/MARC21/slim" xmlns:marc="http://www.loc.gov/MARC21/slim" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.loc.gov/MARC21/slim http://www.loc.gov/standards/marcxml/schema/MARC21slim.xsd">'
 
 #remove this filter when testing is finished; I'm just testing with two records here
-resources[0..5].each do |resource|
+resources[0..99].each do |resource|
   uri = resource.gsub!("resources", "resources/marc21") + ".xml"
   marc_record = @client.get(uri)
   doc = Nokogiri::XML(marc_record.body)
@@ -35,17 +35,15 @@ resources[0..5].each do |resource|
   tags852 = doc.xpath('//marc:datafield[@tag="852"]')
   tag856 = doc.at_xpath('//marc:datafield[@tag="856"]')
   tag500_a = doc.at_xpath('//marc:datafield[@tag="500"]/marc:subfield[@code="a"]')
+  #   codes in use are: (/anxb|ea|ex|flm|flmp|gax|hsvc|hsvm|mss|mudd|prnc|rarebooks|rcpph|rcppf|rcppl|rcpxc|rcpxg|rcpxm|rcpxr|st|thx|wa|review|oo|sc|sls/)
   location_note = if tag500_a.content.match(/Location of resource: /)
        tag500_a.content.gsub(/.*:\s(.+)[.]/, "\\1")
      end
-  # location_note  =
-  #   if tag500_a.content.match(/Location of resource: /)
-  #     tag500_a.content.gsub(/.*[: ]([^.]+)[.].*/, "\\1")
-  #   elsif tag500_a.content.match(/anxb|ea|ex|flm|flmp|gax|hsvc|hsvm|mss|mudd|prnc|rarebooks|rcpph|rcppf|rcppl|rcpxc|rcpxg|rcpxm|rcpxr|st|thx|wa|review|oo|sc|sls/)
-  #     tag500_a.content.strip!
-  #   end
-  tags6xx = doc.xpath('//marc:datafield[@tag = "700" or @tag = "650" or @tag = "651" or @tag = "610" or @tag = "630" or @tag = "648" or @tag = "656" or @tag = "657"]') ||
-            (doc.xpath('@tag = "655" and //marc:subfield[@code="b"]') if doc.xpath('//marc:subfield[@code="b"]').nil?)
+  #remove ending period (it will be replaced in the last step)
+  tags6xx = doc.xpath('//marc:datafield[@tag = "700" or @tag = "650" or
+    @tag = "651" or @tag = "610" or @tag = "630" or @tag = "648" or
+    @tag = "655" or @tag = "656" or @tag = "657"]')
+
 
   #do stuff
   ##################
@@ -94,24 +92,24 @@ resources[0..5].each do |resource|
     subfield_a = tag6xx.at_xpath('marc:subfield[@code="a"]')
     segments = subfield_a.content.split('--')
     segments.each { |segment| segment.strip! }
-    subfa_text = segments[0]
-    new_subfield_a = subfield_a.replace("<subfield code='a'>#{subfa_text}</subfield")
+    subfield_a_text = segments[0]
+    new_subfield_a = subfield_a.replace("<subfield code='a'>#{subfield_a_text}</subfield")
 
     segments[1..-1].each do |segment|
       code = segment =~ /^[0-9]{2}/ ? 'y' : 'x'
       #new_subfield_a is a node set of one
       new_subfield_a[0].next=("<subfield code='#{code}'>#{segment}</subfield>")
     end
-    tag6xx.children[-1].content << '.' unless ['?', '-', '.'].include?(tag6xx.children[-1].content[-1])
+    #add punctuation to the last subfield except $2
+    if tag6xx.children[-1].attribute('code') == '2'
+      tag6xx.children[-2].content << '.' unless ['?', '-', '.'].include?(tag6xx.children[-2].content[-1])
+    else
+      tag6xx.children[-1].content << '.' unless ['?', '-', '.'].include?(tag6xx.children[-1].content[-1])
+    end
   end
 
   #addresses github #132
   tags852.remove
-
-  #addresses github #145
-  # tag856.next=("<datafield ind1=' ' ind2=' ' tag='982'>
-  #       <subfield code='c'>#{location_note.gsub(/.*[: ]([^.]+)[.].*/, "\\1")}</subfield>
-  #       </datafield>") unless location_note.nil?
 
 location_note.split.each do |tag|
   tag856.next=("<datafield ind1=' ' ind2=' ' tag='982'>
