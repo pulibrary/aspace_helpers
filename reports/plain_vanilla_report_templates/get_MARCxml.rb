@@ -21,7 +21,9 @@ resources.each do |resource|
   #use node.attributes.blank? for all attributes
   def remove_empty_elements(node)
     node.children.map { |child| remove_empty_elements(child) }
-    node.remove if node.content.blank?
+    node.remove if node.content.blank? && (
+    (node.attribute('@ind1').blank? && node.attribute('@ind2').blank?) ||
+    node.attribute('code').blank?)
   end
 
   # set up variables (these may return a sequence)
@@ -37,7 +39,6 @@ resources.each do |resource|
   tags6xx = doc.xpath('//marc:datafield[@tag = "700" or @tag = "650" or
     @tag = "651" or @tag = "610" or @tag = "630" or @tag = "648" or
     @tag = "655" or @tag = "656" or @tag = "657"]')
-
 
   #do stuff
   ##################

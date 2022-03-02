@@ -1,22 +1,11 @@
-require 'archivesspace/client'
-require 'json'
-require 'csv'
-require 'pony'
 require_relative '../../helper_methods.rb'
+require_relative '../../csv_aspace_runner'
 
-aspace_login()
+client = aspace_login(@staging)
 
-start_time = "Process started: #{Time.now}"
-puts start_time
+runner = CSVASpaceRunner.new("set_end_date_new.csv", client)
 
-log = "log_set_end_date.csv"
-csv = CSV.parse(File.read("set_end_date.csv"), :headers => true)
-
-#get ao's for one collection
-#ao_tree = @client.get("/repositories/#{repo}/resources/#{resource_id}/ordered_records").parsed
-
-  csv.each do |row|
-    record = @client.get(row['uri']).parsed
+runner.run do |row, record|
     #accessrestrict might need to be overwritten or created
     new_accessrestrict =
         {
@@ -25,7 +14,7 @@ csv = CSV.parse(File.read("set_end_date.csv"), :headers => true)
         "rights_restriction"=>{"end"=>row['end_date'],
         "local_access_restriction_type"=>[row['restriction_type']]},
         "subnotes"=>[{"jsonmodel_type"=>"note_text",
-        "content"=>row['restriction_note'],
+        "content"=>"This is a test on 3/24",
         "publish"=>true}],
         "publish"=>true
         }
@@ -38,14 +27,4 @@ csv = CSV.parse(File.read("set_end_date.csv"), :headers => true)
       else record['notes'] = [new_accessrestrict]
       end
     end
-
-    post = @client.post(row['uri'], record.to_json)
-    #write to log
-    File.write(log, post.body, mode: 'a')
-    puts post.body
-    rescue Exception => msg
-    error = "Process ended: #{Time.now} with error '#{msg.class}: #{msg.message}''"
-    puts error
-   end
-
-puts "Process ended #{Time.now}."
+  end

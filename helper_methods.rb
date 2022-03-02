@@ -1,5 +1,5 @@
 #!/usr/bin/env ruby
-#require 'archivesspace/client'
+require 'archivesspace/client'
 require_relative 'authentication'
 
 #takes base_uri as an argument to allow respective authentication to prod, staging, or local
