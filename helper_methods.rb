@@ -284,3 +284,16 @@ def get_all_resource_uris_for_institution()
   end #close resources_endpoints.each
   @uris
 end #close method
+
+def get_users()
+  endpoint_name = '/users'
+  ids = @client.get(endpoint_name, {
+    query: {
+     all_ids: true
+    }}).parsed.join(',')
+  users = @client.get(endpoint_name, {
+    query: {
+      id_set: ids
+    }
+    }).parsed
+end
