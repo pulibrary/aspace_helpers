@@ -284,3 +284,29 @@ def get_all_resource_uris_for_institution()
   end #close resources_endpoints.each
   @uris
 end #close method
+
+#return a hash of users (does not include credentials)
+def get_users()
+  endpoint_name = '/users'
+  ids = @client.get(endpoint_name, {
+    query: {
+     all_ids: true
+    }}).parsed.join(',')
+  users = @client.get(endpoint_name, {
+    query: {
+      id_set: ids
+    }
+    }).parsed
+end
+
+#return a hash of user credentials
+def get_user_permissions()
+  ids = @client.get('/users', {
+      query: {
+       all_ids: true
+      }}).parsed
+  users = []
+  get_users = ids.each do |id|
+    users << @client.get('/users/'+id.to_s).parsed
+  end
+end
