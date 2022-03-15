@@ -305,9 +305,5 @@ def get_user_permissions()
       query: {
        all_ids: true
       }}).parsed
-  users = []
-  get_users = ids.each do |id|
-    users << @client.get('/users/'+id.to_s).parsed
-  end
-  return users
+  ids.map { |id| @client.get("/users/#{id}").parsed }
 end
