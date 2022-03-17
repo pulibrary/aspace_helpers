@@ -3,7 +3,7 @@ require 'active_support/all'
 require 'nokogiri'
 require_relative '../../helper_methods.rb'
 
-aspace_login(@staging)
+aspace_login(@production)
 
 filename = "out.xml"
 
@@ -23,7 +23,12 @@ resources.each do |resource|
     node.children.map { |child| remove_empty_elements(child) }
     node.remove if node.content.blank? && (
     (node.attribute('@ind1').blank? && node.attribute('@ind2').blank?) ||
-    node.attribute('code').blank?)
+    node.attribute('@code').blank?)
+  end
+
+  #remove linebreaks from notes
+  def remove_linebreaks(node)
+    node.xpath("//marc:subfield/text()").map { |text| text.content = text.content.gsub(/[\n\r]+/," ") }
   end
 
   # set up variables (these may return a sequence)
@@ -39,12 +44,16 @@ resources.each do |resource|
   tags6xx = doc.xpath('//marc:datafield[@tag = "700" or @tag = "650" or
     @tag = "651" or @tag = "610" or @tag = "630" or @tag = "648" or
     @tag = "655" or @tag = "656" or @tag = "657"]')
+  subfields = doc.xpath('//marc:subfield')
 
   #do stuff
   ##################
 
   #addresses github #128
   remove_empty_elements(doc)
+
+  #addresses github #159
+  remove_linebreaks(doc)
 
   #addresses github #129
   tag008.previous=("<controlfield tag='001'>#{tag099_a.content}</controlfield")
@@ -115,10 +124,10 @@ resources.each do |resource|
         #strip text preceding and following code
         location_notes = tag500_a.content.gsub(/.*:\s(.+)[.]/, "\\1")
         location_notes.split.each do |tag|
-            tag856.next=("<datafield ind1=' ' ind2=' ' tag='982'>
-                  <subfield code='c'>#{tag}</subfield>
-                  </datafield>")
-                end unless location_notes.nil?
+          #add as the last datafield
+          doc.xpath('//marc:datafield').last.next=
+          ("<datafield ind1=' ' ind2=' ' tag='982'><subfield code='c'>#{tag}</subfield></datafield>")
+          end unless location_notes.nil?
       end
     end
   end
