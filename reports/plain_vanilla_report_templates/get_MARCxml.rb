@@ -5,6 +5,7 @@ require_relative '../../helper_methods.rb'
 
 aspace_login(@production)
 
+puts Time.now
 filename = "out.xml"
 
 resources = get_all_resource_uris_for_institution
@@ -142,3 +143,4 @@ resources.each do |resource|
 end
 file << '</collection>'
 file.close
+puts Time.now
