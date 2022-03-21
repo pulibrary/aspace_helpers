@@ -3,21 +3,39 @@ require 'json'
 require 'csv'
 require_relative '../../helper_methods.rb'
 
-aspace_login()
+aspace_login(@production)
 
 start_time = "Process started: #{Time.now}"
 puts start_time
 
-eadid = "MC104"
-# resource_ids = [1716]
-resource_ids = [1863, 1860, 1861, 1862]
+eadid = "MC001.xx"
+resource_ids = [1717, 1718]
+# done: 1762, 1518, 1512, 1513, 1515, 1516, 1517, 1514, 1711, 1712, 1713, 1714, 1715, 1716
+#, , , , , ,
+#ACLU is comprised of the following resource records:
+# /repositories/3/resources/1762
+# /repositories/3/resources/1518
+# /repositories/3/resources/1512
+# /repositories/3/resources/1513
+# /repositories/3/resources/1515
+# /repositories/3/resources/1516
+# /repositories/3/resources/1517
+# /repositories/3/resources/1514
+# /repositories/3/resources/1711
+# /repositories/3/resources/1712
+# /repositories/3/resources/1713
+# /repositories/3/resources/1714
+# /repositories/3/resources/1715
+# /repositories/3/resources/1716
+# /repositories/3/resources/1717
+# /repositories/3/resources/1718
 
 repo = 3
 output_file = "#{eadid}.csv"
 
 CSV.open(output_file, "a",
          :write_headers => true,
-         :headers => ["uri", "eadid_or_ref_id", "title", "date", "level", "depth", "has_do?", "restriction_type", "restriction_note", "container"]) do |row|
+         :headers => ["uri", "eadid", "cid", "title", "date", "level", "depth", "has_do?", "restriction_type", "restriction_note", "container"]) do |row|
   resource_ids.each do |resource_id|
     ao_tree = @client.get("/repositories/#{repo}/resources/#{resource_id}/ordered_records").parsed
 
@@ -76,8 +94,8 @@ CSV.open(output_file, "a",
             end
             digital_object_exists = instance['instance_type'] == "digital_object"
           end # get_ao['instances'].each
-          row << [uri, "#{ead_id ||= ref_id}", title, date, level, @depth, "#{digital_object_exists}", "#{restriction_type || ""}", "#{restriction_note || ""}", "#{top_container || ""} #{sub_container || ""}"]
-          puts "#{uri}, #{ead_id ||= ref_id}, #{title}, #{date}, #{level}, #{@depth}, #{digital_object_exists}, #{restriction_type || ""}, #{restriction_note || ""}, #{top_container || ""} #{sub_container || ""}"
+          row << [uri, ead_id, ref_id, title, date, level, @depth, "#{digital_object_exists}", "#{restriction_type || ""}", "#{restriction_note || ""}", "#{top_container || ""} #{sub_container || ""}"]
+          puts "#{uri}, #{ead_id}, #{ref_id}, #{title}, #{date}, #{level}, #{@depth}, #{digital_object_exists}, #{restriction_type || ""}, #{restriction_note || ""}, #{top_container || ""} #{sub_container || ""}"
         rescue Exception => msg
           end_time = "Process interrupted at #{Time.now} with message '#{msg.class}: #{msg.message}''"
       end # uris.each
