@@ -37,6 +37,7 @@ resources.each do |resource|
   tags040 = doc.xpath('//marc:datafield[@tag="040"]')
   tag041 = doc.at_xpath('//marc:datafield[@tag="041"]')
   tag099_a = doc.at_xpath('//marc:datafield[@tag="099"]/marc:subfield[@code="a"]')
+  tags520 = doc.xpath('//marc:datafield[@tag="520"]')
   tags544 = doc.xpath('//marc:datafield[@tag="544"]')
   tags852 = doc.xpath('//marc:datafield[@tag="852"]')
   tag856 = doc.at_xpath('//marc:datafield[@tag="856"]')
@@ -83,6 +84,9 @@ resources.each do |resource|
         <subfield code='c'>#{tag008.content[7..10]}</subfield>
         <subfield code='e'>#{tag008.content[11..14]}</subfield>
       </datafield>")
+
+  #addresses github #186
+  tags520 = tags520.map.with_index { |tag520, index| tag520.remove if index > 0}
 
   #addresses github #133
   #NB node.children.before inserts new node as first of node's children; default for add_child is last
