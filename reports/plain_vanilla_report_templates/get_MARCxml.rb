@@ -86,7 +86,7 @@ resources.each do |resource|
         <subfield code='e'>#{tag008.content[11..14]}</subfield>
       </datafield>")
 
-  #addresses github #186
+  #addresses github #168
   tags520 = tags520.map.with_index { |tag520, index| tag520.remove if index > 0}
 
   #addresses github #133
