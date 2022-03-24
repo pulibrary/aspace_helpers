@@ -1,5 +1,5 @@
 # aspace_helpers
-Methods, post-ASpace transformation tools, and reports to support common SC activities around ArchivesSpace.
+Methods, post-ASpace transformation tools, and reports to support common SC activities around ArchivesSpace. For a detailed introduction to working with this repository, see [this workshop](https://github.com/pulibrary/ruby-for-archivesspace/tree/main/sessions/session2-aspace-intro).
 
 ## deploying code
 
