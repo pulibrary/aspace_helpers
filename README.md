@@ -28,7 +28,7 @@ Methods, post-ASpace transformation tools, and reports to support common SC acti
      NB: You may need to run this with `bundle exec`
      
      NB: You may also need to run `bundle install --path vendor/bundle` first
-   1. server: as deploy user, cd to current on server (lib-jobs-stagin1 or lib-jobs-prod1)
+   1. server (lib-jobs-stagin1 or lib-jobs-prod1): as deploy user, cd to /opt/aspace_helpers/current 
       1. `bundle install --path vendor/bundle`
       
       NB: if it gets into a weird state (can't find a gem):
