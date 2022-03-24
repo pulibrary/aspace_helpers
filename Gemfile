@@ -1,6 +1,7 @@
 source "https://rubygems.org"
 
 gem 'archivesspace-client'
+gem 'activesupport'
 gem 'rake'
 gem 'rubocop', require: false
 gem 'nokogiri'
