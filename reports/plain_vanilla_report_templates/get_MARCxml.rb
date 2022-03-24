@@ -1,4 +1,5 @@
 require 'archivesspace/client'
+require 'active_support/all'
 require 'nokogiri'
 require_relative '../../helper_methods.rb'
 
