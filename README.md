@@ -17,17 +17,19 @@ Methods, post-ASpace transformation tools, and reports to support common SC acti
      bundle install
      ```
   1. locally: run capistrano
-     1. to install the default branch run
+     1. run
         ```
-        cap staging deploy
+        bundle install --path vendor/bundle
+        ```
+     3. to install the default branch run
+        ```
+        bundle exec cap staging deploy
         ```
      1. to deploy a different branch run
         ```
         BRANCH=<name> cap staging deploy
         ```
-     NB: You may need to run this with `bundle exec`
      
-     NB: You may also need to run `bundle install --path vendor/bundle` first
    1. server (lib-jobs-staging1 or lib-jobs-prod1): as deploy user, cd to /opt/aspace_helpers/current 
       1. `bundle install --path vendor/bundle`
       
