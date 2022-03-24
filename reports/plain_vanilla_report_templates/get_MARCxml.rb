@@ -1,12 +1,11 @@
 require 'archivesspace/client'
-require 'active_support/all'
 require 'nokogiri'
 require_relative '../../helper_methods.rb'
 
 aspace_login(@production)
 
 puts Time.now
-filename = "out.xml"
+filename = "MARC_out.xml"
 
 resources = get_all_resource_uris_for_institution
 
