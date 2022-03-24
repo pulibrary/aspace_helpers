@@ -10,13 +10,13 @@ Methods, post-ASpace transformation tools, and reports to support common SC acti
 
 ### deploying
 
-  1. push a change to git
+  1. locally: push a change to git
   
-  1. get the latest capistrano on your local machine
+  1. locally: get the latest capistrano on your local machine
      ```
      bundle install
      ```
-  1. run capistrano on your local machine
+  1. locally: run capistrano
      1. to install the default branch run
         ```
         cap staging deploy
@@ -28,7 +28,7 @@ Methods, post-ASpace transformation tools, and reports to support common SC acti
      NB: You may need to run this with `bundle exec`
      
      NB: You may also need to run `bundle install --path vendor/bundle` first
-   1. cd to current on server (lib-jobs-stagin1 or lib-jobs-prod1)
+   1. server (lib-jobs-staging1 or lib-jobs-prod1): as deploy user, cd to /opt/aspace_helpers/current 
       1. `bundle install --path vendor/bundle`
       
       NB: if it gets into a weird state (can't find a gem):
