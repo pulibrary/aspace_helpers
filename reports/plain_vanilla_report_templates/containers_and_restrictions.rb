@@ -25,11 +25,8 @@ CSV.open(output_file, "a",
       ao_uris = []
       #toggle collection-level line on or off
       ao_uris << ao_ref['ref'] #unless ao_ref.dig('level') == 'collection'
-      # puts ao_uri
 
       ao_uris.each do |uri|
-        # puts uri.class
-        # puts uri
         get_ao = @client.get(uri).parsed
           ead_id = get_ao.dig('ead_id')
           ref_id = get_ao['ref_id']
@@ -74,15 +71,15 @@ CSV.open(output_file, "a",
               end
             end
             digital_object_exists = instance['instance_type'] == "digital_object"
-          end # get_ao['instances'].each
+          end
           row << [uri, "#{ead_id ||= ref_id}", title, date, level, @depth, "#{digital_object_exists}", "#{restriction_type || ""}", "#{restriction_note || ""}", "#{top_container || ""} #{sub_container || ""}"]
           puts "#{uri}, #{ead_id ||= ref_id}, #{title}, #{date}, #{level}, #{@depth}, #{digital_object_exists}, #{restriction_type || ""}, #{restriction_note || ""}, #{top_container || ""} #{sub_container || ""}"
         rescue Exception => msg
           end_time = "Process interrupted at #{Time.now} with message '#{msg.class}: #{msg.message}''"
-      end # uris.each
-    end # csv
-  end # tree.each
-end # resource_ids.each
+      end
+    end
+  end
+end 
 
 end_time = "Process ended: #{Time.now}"
 puts end_time
