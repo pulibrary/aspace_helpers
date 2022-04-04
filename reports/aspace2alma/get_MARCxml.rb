@@ -138,7 +138,8 @@ resources.each do |resource|
   end
 
   #append record to file
-  file << doc.at_xpath('//marc:record')
+  #the unless clause addresses #186
+  file << doc.at_xpath('//marc:record') unless tag099_a.content == "C0140"
   file.flush
 end
 file << '</collection>'
