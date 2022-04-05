@@ -3,7 +3,7 @@ require 'active_support/all'
 require 'nokogiri'
 require_relative '../../helper_methods.rb'
 
-aspace_login(@staging)
+aspace_login(@production)
 
 puts Time.now
 filename = "MARC_out.xml"
