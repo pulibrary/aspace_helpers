@@ -27,13 +27,11 @@ Methods, post-ASpace transformation tools, and reports to support common SC acti
         ```
         BRANCH=<name> bundle exec cap staging deploy
         ```
-     
-   1. server (lib-jobs-staging1 or lib-jobs-prod1): as deploy user, cd to /opt/aspace_helpers/current 
-      1. `bundle install --path vendor/bundle`
-      
-      NB: if it gets into a weird state (can't find a gem):
-      `bundle config set --local path 'vendor/cache'`
-   1. cd out and back into current as needed to get the latest current
+
+###  running a script on the server
+   1. SSH to the server (lib-jobs-staging1 or lib-jobs-prod1): as deploy user
+   1. `cd to /opt/aspace_helpers/current`
+      * (Or if you stayed on the server in between deploys) cd out and back into current as needed to get the latest current
    1. run your script and see it go! E.g.:
       ```
       bundle exec ruby my_script_name >> my_script.log 2>&1 &
