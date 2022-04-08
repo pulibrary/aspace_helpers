@@ -1,15 +1,15 @@
 #!/usr/bin/env ruby
 require 'archivesspace/client'
-require_relative 'authentication'
+#require_relative 'authentication'
 
 #takes base_uri as an argument to allow respective authentication to prod, staging, or local
-def aspace_login(uri)
+def aspace_login()
   #configure access
   @config = ArchivesSpace::Configuration.new({
-    base_uri: uri,
+    base_uri: ENV['ASPACE_URL'],
     base_repo: "",
-    username: @user,
-    password: @password,
+    username: ENV['ASPACE_USER'],
+    password: ENV['ASPACE_PASSWORD'],
     #page_size: 50,
     throttle: 0,
     verify_ssl: false,
