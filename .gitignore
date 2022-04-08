@@ -1,4 +1,6 @@
 authentication.rb
+authentication-production.sh
+authentication-staging.sh
 test.rb
 Gemfile
 Gemfile.lock
