@@ -4,7 +4,7 @@ require_relative 'helper_methods.rb'
 start_time = "Process started: #{Time.now}"
 puts start_time
 
-client = aspace_login(@production)
+client = aspace_login
 resources = get_all_resource_records_for_institution
 
 output_file = "userestrict.csv"
