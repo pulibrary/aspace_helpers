@@ -27,6 +27,8 @@ Methods, post-ASpace transformation tools, and reports to support common SC acti
         ```
         BRANCH=<name> bundle exec cap staging deploy
         ```
+
+###  running a script on the server
      
    1. server (`lib-jobs-staging1` or `lib-jobs-prod1`): as `deploy` user:
       1. `cd /opt/aspace_helpers/current`
