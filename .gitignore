@@ -4,3 +4,5 @@ authentication-staging.sh
 test.rb
 Gemfile
 Gemfile.lock
+*.csv
+*.xml
