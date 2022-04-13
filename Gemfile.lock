@@ -37,6 +37,8 @@ GEM
     multi_xml (0.6.0)
     net-scp (3.0.0)
       net-ssh (>= 2.6.5, < 7.0.0)
+    net-sftp (3.0.0)
+      net-ssh (>= 5.0.0, < 7.0.0)
     net-ssh (6.1.0)
     nokogiri (1.12.5)
       mini_portile2 (~> 2.6.1)
@@ -79,6 +81,7 @@ DEPENDENCIES
   archivesspace-client
   capistrano (~> 3.16)
   capistrano-bundler
+  net-sftp
   nokogiri
   rake
   rubocop
