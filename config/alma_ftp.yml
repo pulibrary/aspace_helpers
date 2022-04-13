@@ -1,0 +1,17 @@
+default: &default
+  host: <%= ENV['SFTP_HOST'] || 'localhost2' %>
+  username: <%= ENV['SFTP_USERNAME'] || 'alma' %>
+  password: <%= ENV['SFTP_PASSWORD'] || 'change_me' %>
+  aspace_path: '/alma/sandbox/aspace/'
+
+development:
+  <<: *default
+
+test:
+  <<: *default
+
+staging: &staging
+  <<: *default
+
+production:
+  <<: *staging
