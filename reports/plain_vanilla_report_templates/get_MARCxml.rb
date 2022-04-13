@@ -4,9 +4,6 @@ require 'nokogiri'
 require 'net/sftp'
 require_relative '../../helper_methods.rb'
 
-<<<<<<< HEAD:reports/plain_vanilla_report_templates/get_MARCxml.rb
-aspace_login(@production)
-=======
 def alma_sftp (filename)
   Net::SFTP.start(ENV['SFTP_HOST'], ENV['SFTP_USERNAME'], { password: ENV['SFTP_PASSWORD'] }) do |sftp|
     sftp.upload!(filename, File.join('/alma/sandbox/aspace/', File.basename(filename)))
@@ -14,12 +11,11 @@ def alma_sftp (filename)
 end
 
 aspace_login
->>>>>>> 0557de7... send output to lib-sftp:reports/aspace2alma/get_MARCxml.rb
 
 puts Time.now
 filename = "MARC_out.xml"
 
-# resources = get_all_resource_uris_for_institution
+resources = get_all_resource_uris_for_institution
 
 file =  File.open(filename, "w")
 file << '<collection xmlns="http://www.loc.gov/MARC21/slim" xmlns:marc="http://www.loc.gov/MARC21/slim" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.loc.gov/MARC21/slim http://www.loc.gov/standards/marcxml/schema/MARC21slim.xsd">'
