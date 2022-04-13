@@ -1,5 +1,5 @@
 # config valid for current version and patch releases of Capistrano
-lock "~> 3.16.0"
+lock "~> 3.17.0"
 
 set :application, "aspace_helpers"
 set :repo_url, "https://github.com/pulibrary/aspace_helpers.git"
@@ -9,6 +9,8 @@ set :branch, ENV['BRANCH'] || 'main'
 
 # Default deploy_to directory is /var/www/my_app_name
 set :deploy_to, "/opt/aspace_helpers"
+
+set :bundle_path, -> { shared_path.join('vendor/bundle') } 
 
 # Default value for :format is :airbrussh.
 # set :format, :airbrussh
@@ -21,10 +23,9 @@ set :deploy_to, "/opt/aspace_helpers"
 # set :pty, true
 
 # Default value for :linked_files is []
-append :linked_files, "authentication.rb"
 
 # Default value for linked_dirs is []
-append :linked_dirs, "log", "tmp/pids", "tmp/cache", "vendor/cache", "data"
+append :linked_dirs, "log", "tmp/pids", "tmp/cache", "vendor/cache", "data", "vendor/bundle"
 
 # Default value for default_env is {}
 # set :default_env, { path: "/opt/ruby/bin:$PATH" }

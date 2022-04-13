@@ -1,7 +1,7 @@
 require_relative '../../helper_methods.rb'
 require_relative '../../csv_aspace_runner'
 
-client = aspace_login(@staging)
+client = aspace_login
 
 runner = CSVASpaceRunner.new("set_end_date_new.csv", client)
 
