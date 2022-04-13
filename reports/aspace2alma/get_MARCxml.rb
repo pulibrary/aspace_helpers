@@ -152,6 +152,6 @@ resources.each do |resource|
 end
 file << '</collection>'
 file.close
-#as a final step, send to alma
+#send to alma
 alma_sftp(filename)
 puts Time.now
