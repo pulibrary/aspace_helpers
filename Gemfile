@@ -5,6 +5,7 @@ gem 'activesupport'
 gem 'rake'
 gem 'rubocop', require: false
 gem 'nokogiri'
+gem 'net-sftp'
 
 gem 'whenever', require: false
 
