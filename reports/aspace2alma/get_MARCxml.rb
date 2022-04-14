@@ -1,7 +1,15 @@
 require 'archivesspace/client'
 require 'active_support/all'
 require 'nokogiri'
+require 'net/sftp'
 require_relative '../../helper_methods.rb'
+
+#configure sendoff to alma
+def alma_sftp (filename)
+  Net::SFTP.start(ENV['SFTP_HOST'], ENV['SFTP_USERNAME'], { password: ENV['SFTP_PASSWORD'] }) do |sftp|
+    sftp.upload!(filename, File.join('/alma/sandbox/aspace/', File.basename(filename)))
+  end
+end
 
 aspace_login
 
@@ -144,4 +152,8 @@ resources.each do |resource|
 end
 file << '</collection>'
 file.close
+
+#send to alma
+alma_sftp(filename)
+
 puts Time.now
