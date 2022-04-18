@@ -17,7 +17,7 @@ Methods, post-ASpace transformation tools, and reports to support common SC acti
      bundle install
      ```
   1. locally: run capistrano
-     1. `bundle install --path vendor/bundle`
+     1. `bundle install`
      
      1. to install the default branch run
         ```
@@ -32,10 +32,8 @@ Methods, post-ASpace transformation tools, and reports to support common SC acti
      
    1. server (`lib-jobs-staging1` or `lib-jobs-prod1`): as `deploy` user:
       1. `cd /opt/aspace_helpers/current`
-      1. `bundle install --path vendor/bundle`
+      1. `bundle install`
       
-      NB: if it gets into a weird state (can't find a gem):
-      `bundle config set --local path 'vendor/cache'`
    1. cd out and back into current as needed to get the latest current
    1. run your script and see it go! E.g.:
       ```

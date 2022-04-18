@@ -10,8 +10,6 @@ set :branch, ENV['BRANCH'] || 'main'
 # Default deploy_to directory is /var/www/my_app_name
 set :deploy_to, "/opt/aspace_helpers"
 
-set :bundle_path, -> { shared_path.join('vendor/bundle') } 
-
 # Default value for :format is :airbrussh.
 # set :format, :airbrussh
 
@@ -25,7 +23,7 @@ set :bundle_path, -> { shared_path.join('vendor/bundle') }
 # Default value for :linked_files is []
 
 # Default value for linked_dirs is []
-append :linked_dirs, "log", "tmp/pids", "tmp/cache", "vendor/cache", "data", "vendor/bundle"
+append :linked_dirs, "log", "tmp/pids", "tmp/cache", '.bundle', "data"
 
 # Default value for default_env is {}
 # set :default_env, { path: "/opt/ruby/bin:$PATH" }
