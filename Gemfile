@@ -6,6 +6,7 @@ gem 'rake'
 gem 'rubocop', require: false
 gem 'nokogiri'
 gem 'net-sftp'
+gem 'net-ssh'
 
 gem 'whenever', require: false
 
