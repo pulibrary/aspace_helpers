@@ -13,15 +13,15 @@ replace_string = ENV['REPLACE_STRING']
 resources = get_all_records_for_repo_endpoint(5, "resources")
 resources.each do |resource|
   processinfo_all = resource['notes'].select { |note| note["type"] == "processinfo" }
-  unless processinfo_all[0].nil?
-    #FIX THIS: MULTIPLE PROCESSING NOTES ARE POSSIBLE
-    processinfo_text = processinfo_all[0]['subnotes'][0]['content']
-    processinfo_all[0]['subnotes'][0]['content'] =
+  processinfo_all.each do |processinfo|
+    processinfo_text = processinfo['subnotes'][0]['content']
+    processinfo['subnotes'][0]['content'] =
       if processinfo_text.match(match_string)
         processinfo_text.gsub!(match_string, replace_string)
         uri = resource['uri']
         post = @client.post(uri, resource.to_json)
         puts post.body
+      else processinfo_text
       end
   end
 rescue Exception => msg
