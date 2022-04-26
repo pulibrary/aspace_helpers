@@ -18,6 +18,22 @@ def aspace_login()
   @client = ArchivesSpace::Client.new(@config).login
 end
 
+def aspace_staging_login()
+  #configure access
+  @config = ArchivesSpace::Configuration.new({
+    base_uri: ENV['ASPACE_STAGING_URL'],
+    base_repo: "",
+    username: ENV['ASPACE_USER'],
+    password: ENV['ASPACE_PASSWORD'],
+    #page_size: 50,
+    throttle: 0,
+    verify_ssl: false,
+  })
+
+  #log in
+  @client = ArchivesSpace::Client.new(@config).login
+end
+
 def get_all_resource_records_for_institution(resolve = [])
   #run through all repositories (1 and 2 are reserved for admin use)
   resources_endpoints = []
