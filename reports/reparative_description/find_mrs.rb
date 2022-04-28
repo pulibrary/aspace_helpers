@@ -54,7 +54,6 @@ CSV.open(output_file, "a",
     unless match.empty?
       row << [agent['uri'], agent['title'], "'"+match.join("', '")+"'"]
       puts "#{agent['uri']}, #{agent['title']}, '#{match.join("', '")}'"
-    else "not found"
     end
   end
 end
