@@ -21,7 +21,7 @@ CSV.open(output_file, "a",
 
   #get full records for agent ids
   agents = []
-  agent_ids.last(2000).map do |agent|
+  agent_ids.map do |agent|
     agent_record = @client.get("/agents/people/#{agent}").parsed
     agents << agent_record
   end
@@ -50,7 +50,7 @@ CSV.open(output_file, "a",
       end
     end
 
-    match = name_forms.grep(/mrs\.|ms\.\s|miss[,\s]/i)
+    match = name_forms.grep(/((mrs\.?|miss)([,\s]|$))|((,?\sms\.?)(\s|$))|(^ms\.?\s)/i)
     unless match.empty?
       row << [agent['uri'], agent['title'], "'"+match.join("', '")+"'"]
       puts "#{agent['uri']}, #{agent['title']}, '#{match.join("', '")}'"
