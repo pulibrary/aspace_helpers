@@ -101,3 +101,7 @@ agents = @client.get("/agents/corporate_entities", {
    id_set: 4984
   }}).parsed
 puts agents
+
+#use the resolve parameter to get e.g. digital object instance records
+ao = get_single_archival_object_by_id(5, 4016, ['digital_object'])
+puts ao
