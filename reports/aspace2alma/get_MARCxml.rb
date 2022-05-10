@@ -46,11 +46,19 @@ resources.each do |resource|
   tags040 = doc.xpath('//marc:datafield[@tag="040"]')
   tag041 = doc.at_xpath('//marc:datafield[@tag="041"]')
   tag099_a = doc.at_xpath('//marc:datafield[@tag="099"]/marc:subfield[@code="a"]')
+  tag351 = doc.at_xpath('//marc:datafield[@tag="351"]')
+  tags500 = doc.xpath('//marc:datafield[@tag="500"]')
+  tags500_a = doc.xpath('//marc:datafield[@tag="500"]/marc:subfield[@code="a"]')
   tags520 = doc.xpath('//marc:datafield[@tag="520"]')
+  tag524 = doc.at_xpath('//marc:datafield[@tag="524"]')
+  tag535 = doc.at_xpath('//marc:datafield[@tag="535"]')
+  tag540 = doc.at_xpath('//marc:datafield[@tag="540"]')
+  tag541 = doc.at_xpath('//marc:datafield[@tag="541"]')
   tags544 = doc.xpath('//marc:datafield[@tag="544"]')
+  tag561 = doc.at_xpath('//marc:datafield[@tag="561"]')
+  tag583 = doc.at_xpath('//marc:datafield[@tag="583"]')
   tags852 = doc.xpath('//marc:datafield[@tag="852"]')
   tag856 = doc.at_xpath('//marc:datafield[@tag="856"]')
-  tags500_a = doc.xpath('//marc:datafield[@tag="500"]/marc:subfield[@code="a"]')
   tags6xx = doc.xpath('//marc:datafield[@tag = "700" or @tag = "650" or
     @tag = "651" or @tag = "610" or @tag = "630" or @tag = "648" or
     @tag = "655" or @tag = "656" or @tag = "657"]')
@@ -98,10 +106,11 @@ resources.each do |resource|
   tags520 = tags520.map.with_index { |tag520, index| tag520.remove if index > 0}
 
   #addresses github #133
+  #superseded by github #205
   #NB node.children.before inserts new node as first of node's children; default for add_child is last
-  tags544.each do |tag544|
-    tag544.children.before('<subfield code="a">')
-  end
+  # tags544.each do |tag544|
+  #   tag544.children.before('<subfield code="a">')
+  # end
 
   #addresses github #143
   #adapted from Mark's implementation of Don's logic
@@ -145,6 +154,17 @@ resources.each do |resource|
     end
   end
 
+  #addresses github #205 351, 500 (there are five different 500 fields), 524, 535, 540, 541, 544, 561, 583
+  tag351.remove unless tag351.nil?
+  tags500.remove unless tags500.nil?
+  tag524.remove unless tag524.nil?
+  tag535.remove unless tag535.nil?
+  tag540.remove unless tag540.nil?
+  tag541.remove unless tag541.nil?
+  tags544.remove unless tags544.nil?
+  tag561.remove unless tag561.nil?
+  tag583.remove unless tag583.nil?
+
   #append record to file
   #the unless clause addresses #186
   file << doc.at_xpath('//marc:record') unless tag099_a.content == "C0140"
@@ -152,8 +172,6 @@ resources.each do |resource|
 end
 file << '</collection>'
 file.close
-
 #send to alma
 alma_sftp(filename)
-
 puts Time.now
