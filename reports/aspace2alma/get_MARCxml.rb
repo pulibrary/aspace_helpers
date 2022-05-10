@@ -154,7 +154,7 @@ resources.each do |resource|
     end
   end
 
-  #addresses github #205 351, 500 (there are five different 500 fields), 524, 535, 540, 541, 544, 561, 583
+  #addresses github #205
   tag351.remove unless tag351.nil?
   tags500.remove unless tags500.nil?
   tag524.remove unless tag524.nil?
