@@ -7,7 +7,7 @@ require_relative '../../helper_methods.rb'
 #configure sendoff to alma
 def alma_sftp (filename)
   Net::SFTP.start(ENV['SFTP_HOST'], ENV['SFTP_USERNAME'], { password: ENV['SFTP_PASSWORD'] }) do |sftp|
-    sftp.upload!(filename, File.join('/alma/sandbox/aspace/', File.basename(filename)))
+    sftp.upload!(filename, File.join('/alma/aspace/', File.basename(filename)))
   end
 end
 
