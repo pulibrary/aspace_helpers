@@ -3,7 +3,7 @@ require 'active_support/all'
 require 'nokogiri'
 require_relative '../../helper_methods.rb'
 
-@client = aspace_staging_login
+@client = aspace_login
 
 start_time = "Process started: #{Time.now}"
 puts start_time
@@ -12,7 +12,7 @@ output_file = "mrs_out.csv"
 
 CSV.open(output_file, "a",
          :write_headers => true,
-         :headers => ["uri", "title", "matching_strings"]) do |row|
+         :headers => ["uri", "title", "match_in_names", "match_in_bioghist"]) do |row|
 
   #get all ids for person agents
   agent_ids = @client.get('/agents/people', {
@@ -27,11 +27,13 @@ CSV.open(output_file, "a",
   end
 
   agents.map do |agent|
-  #check name fields
+  #check name fields and bioghist
     name_forms = []
+    bioghist = []
     name_forms << agent['display_name']['primary_name']
     name_forms << agent['display_name']['sort_name']
     name_forms << agent['title']
+    bioghist << agent['notes'].map { |note| note['subnotes'].map {|subnote| subnote['content'] if note['jsonmodel_type'] == "note_bioghist"}}
     agent['names'].map do |name|
       name_forms << name['primary_name']
       name_forms << name['rest_of_name']
@@ -50,10 +52,12 @@ CSV.open(output_file, "a",
       end
     end
 
-    match = name_forms.grep(/((mrs\.?|miss)([,\s]|$))|((,?\sms\.?)(\s|$))|(^ms\.?\s)/i)
-    unless match.empty?
-      row << [agent['uri'], agent['title'], "'"+match.join("', '")+"'"]
-      puts "#{agent['uri']}, #{agent['title']}, '#{match.join("', '")}'"
+    match_name = name_forms.grep(/((mrs\.?|miss)([,\s]|$))|((,?\sms\.?)(\s|$))|(^ms\.?\s)/i)
+    #don't use start or end of field to filter notes
+    match_note = bioghist.flatten!.grep(/((mrs\.?|miss)[,\s])|(,?\sms\.?\s)|(ms\.?\s)/i)
+    unless match_name.empty? && match_note.empty?
+      row << [agent['uri'], agent['title'], "'"+match_name.join("', '")+"'", "'"+match_note.join("', '")+"'"]
+      puts "#{agent['uri']}, #{agent['title']}, '#{match_name.join("', '")}', '#{match_note.join("', '")}'"
     end
   end
 end
