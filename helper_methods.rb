@@ -322,3 +322,18 @@ def get_user_permissions()
       }}).parsed
   ids.map { |id| @client.get("/users/#{id}").parsed }
 end
+
+#add a revision statement
+def add_revision_statement(uri, text)
+  record = @client.get(uri).parsed
+  record['revision_statements'] << {
+    "date"=>"#{Time.now}",
+    "description"=>text.to_s,
+    "created_by"=>"system",
+    "publish"=>true,
+    "jsonmodel_type"=>"revision_statement",
+    "repository"=>{"ref"=>"/repositories/3"}
+  }
+  post = @client.post(uri, record.to_json)
+  puts post.body
+end
