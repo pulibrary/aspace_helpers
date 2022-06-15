@@ -337,3 +337,21 @@ def add_revision_statement(uri, text)
   post = @client.post(uri, record.to_json)
   puts post.body
 end
+
+#add a maintenance statement to agent records
+def add_maintenance_history(uri, text)
+  record = @client.get(uri).parsed
+  record['agent_maintenance_histories'] << {
+    "maintenance_event_type"=>"updated",
+    "maintenance_agent_type"=>"machine",
+    "agent"=>"system",
+    "event_date"=>"#{Time.now}",
+    "descriptive_note"=>text.to_s,
+    "created_by"=>"system",
+    "publish"=>true,
+    "jsonmodel_type"=>"agent_maintenance_history",
+  }
+
+  post = @client.post(uri, record.to_json)
+  puts post.body
+end

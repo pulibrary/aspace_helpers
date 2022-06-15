@@ -3,13 +3,13 @@ require 'json'
 require 'csv'
 require_relative '../../helper_methods.rb'
 
-@client = aspace_staging_login()
+@client = aspace_login()
 
 start_time = "Process started: #{Time.now}"
 puts start_time
 
-log = "log_aclu_restrictions_20220426.csv"
-csv = CSV.parse(File.read("aclu_restrictions_20220426.csv"), :headers => true)
+log = "log_aclu_restrictions_20220428.csv"
+csv = CSV.parse(File.read("aclu_restrictions_20220428.csv"), :headers => true)
 
   csv.each do |row|
     record = @client.get(row['uri']).parsed
