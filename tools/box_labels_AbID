@@ -60,7 +60,7 @@
                         text-align="center" span="none" padding-after="12pt">
                         <xsl:value-of select="//ead:archdesc/ead:did/ead:unittitle"/>
                     </fo:block>
-                	<fo:block font-weight="bold" font-size="12pt" font-family="Arial"
+                	<fo:block font-weight="bold" font-size="16pt" font-family="Arial"
                 		text-align="center" span="none" padding-after="16pt" padding-before="6pt">
                 		<xsl:value-of select="//ead:eadheader/ead:eadid"/>
                 	</fo:block>
