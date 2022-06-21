@@ -331,8 +331,7 @@ def add_revision_statement(uri, text)
     "description"=>text.to_s,
     "created_by"=>"system",
     "publish"=>true,
-    "jsonmodel_type"=>"revision_statement",
-    "repository"=>{"ref"=>"/repositories/3"}
+    "jsonmodel_type"=>"revision_statement"
   }
   post = @client.post(uri, record.to_json)
   puts post.body
@@ -349,7 +348,7 @@ def add_maintenance_history(uri, text)
     "descriptive_note"=>text.to_s,
     "created_by"=>"system",
     "publish"=>true,
-    "jsonmodel_type"=>"agent_maintenance_history",
+    "jsonmodel_type"=>"agent_maintenance_history"
   }
 
   post = @client.post(uri, record.to_json)
