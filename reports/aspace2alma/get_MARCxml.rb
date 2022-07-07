@@ -74,16 +74,15 @@ resources.each do |resource|
   remove_linebreaks(doc)
 
   #addresses github #129
-  tag008.previous=("<controlfield tag='001'>#{tag099_a.content}</controlfield")
+  tag008.previous=("<controlfield tag='001'>#{tag099_a.content}</controlfield>")
 
   #addresses github #130
-  tag008.previous=("<controlfield tag='003'>PULFA</controlfield")
+  tag008.previous=("<controlfield tag='003'>PULFA</controlfield>")
 
   #addresses github #144
   #swap quotes so interpolation is possible
   tag008.next=("<datafield ind1=' ' ind2=' ' tag='035'>
-    <subfield code='a'>(PULFA)#{tag099_a.content}</subfield>
-    </controlfield")
+    <subfield code='a'>(PULFA)#{tag099_a.content}</subfield>)
 
   #addresses github #131
   tags040.each do |tag040|
