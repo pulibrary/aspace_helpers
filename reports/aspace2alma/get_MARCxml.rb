@@ -82,7 +82,8 @@ resources.each do |resource|
   #addresses github #144
   #swap quotes so interpolation is possible
   tag008.next=("<datafield ind1=' ' ind2=' ' tag='035'>
-    <subfield code='a'>(PULFA)#{tag099_a.content}</subfield>)
+    <subfield code='a'>(PULFA)#{tag099_a.content}</subfield>
+    </datafield>")
 
   #addresses github #131
   tags040.each do |tag040|
