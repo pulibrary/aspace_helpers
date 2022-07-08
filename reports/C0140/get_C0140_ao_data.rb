@@ -43,15 +43,15 @@ resource_ids.each do |resource_id|
           end
         date1 = if get_ao.dig('dates', 0, 'begin')
                   get_ao['dates'][0]['begin']
-                else "____"
+                else "    " #4 blanks
                 end
         date2 = if get_ao.dig('dates', 0, 'end')
                   get_ao['dates'][0]['end']
-                else "____"
+                else "    " #4 blanks
                 end
         date_expression = get_ao['dates'][0]['expression']
         language = get_ao.dig('lang_materials', 0, 'language_and_script', 'language')
-        =tag008_langcode =
+        tag008_langcode =
           if language
             language
           else "eng"
@@ -103,14 +103,16 @@ resource_ids.each do |resource_id|
           end
         end
         #puts "#{uri}, #{ead_id ||= ref_id}, #{title}, #{date_type}, #{date1 ||= date_expression}, #{date2 ||= ''}, #{language ||= ''}, #{level}, #{depth}, #{restriction_type || ""}, #{restriction_note || "Open for research"}, #{scope_note}, #{extents.join(', ')}, #{top_container}"
+        leader = "<leader>00000nadaa22000002u 4500</leader>"
         tag001 = "<controlfield tag='001'>#{ref_id}</controlfield>"
         tag003 = "<controlfield tag='003'>PULFA</controlfield>"
-        tag008 = "<controlfield tag='008'>000000#{tag008_date_type}#{date1}#{date2}xxx______|___________#{tag008_langcode}_d</controlfield>"
+        tag008 = "<controlfield tag='008'>000000#{tag008_date_type}#{date1}#{date2}xxx      |           #{tag008_langcode} d</controlfield>"
         tag035 = "<datafield ind1=' ' ind2=' ' tag='035'>
         <subfield code='a'>(PULFA)#{ref_id}</subfield>
         </datafield>"
 
         record = "<record>
+        #{leader}
         #{tag001}
         #{tag003}
         #{tag008}
