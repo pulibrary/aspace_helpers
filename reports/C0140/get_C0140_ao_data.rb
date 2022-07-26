@@ -122,6 +122,11 @@ resource_ids.each do |resource_id|
         tag520 = "<datafield ind1=' ' ind2=' ' tag='520'>
           <subfield code = 'a'>#{scope_note}</subfield>
           </datafield>"
+        tags544 = related_notes.map do |related_note|
+          "<datafield ind1=' ' ind2=' ' tag='544'>
+            <subfield code = 'a'>#{related_note}</subfield>
+            </datafield>"
+        end
 
         record = Nokogiri::XML.fragment(
         "<record>
@@ -132,6 +137,7 @@ resource_ids.each do |resource_id|
           #{tag035}
           #{tag046}
           #{tag520}
+          #{tags544.join(' ')}
         </record>"
 )
         file << record
