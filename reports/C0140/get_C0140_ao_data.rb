@@ -3,7 +3,7 @@ require 'json'
 require 'nokogiri'
 require_relative '../../helper_methods.rb'
 
-aspace_login()
+aspace_staging_login()
 
 start_time = "Process started: #{Time.now}"
 puts start_time
@@ -70,6 +70,9 @@ resource_ids.each do |resource_id|
                 scope_hash.dig(0, 'subnotes', 0, 'jsonmodel_type') != "note_text"
                 scope_hash.dig(0, 'subnotes', 0, 'content').gsub(/[\r\n]+/, ' ')
               end #unless
+        related_hash = notes.select { |hash| hash['type'] == "relatedmaterial"}
+        related_notes = related_hash.map { |related| related['subnotes'][0]['content'].gsub(/[\r\n]+/, ' ')}
+
         extents = get_ao['extents'].map { |extent| "#{extent['number']} #{extent['extent_type']}" }
         #initialize instance objects
         top_container = nil
@@ -103,22 +106,34 @@ resource_ids.each do |resource_id|
           end
         end
         #puts "#{uri}, #{ead_id ||= ref_id}, #{title}, #{date_type}, #{date1 ||= date_expression}, #{date2 ||= ''}, #{language ||= ''}, #{level}, #{depth}, #{restriction_type || ""}, #{restriction_note || "Open for research"}, #{scope_note}, #{extents.join(', ')}, #{top_container}"
-        leader = "<leader>00000nadaa22000002u 4500</leader>"
+        leader = "<leader>00000namaa22000002u 4500</leader>"
         tag001 = "<controlfield tag='001'>#{ref_id}</controlfield>"
         tag003 = "<controlfield tag='003'>PULFA</controlfield>"
-        tag008 = "<controlfield tag='008'>000000#{tag008_date_type}#{date1}#{date2}xxx      |           #{tag008_langcode} d</controlfield>"
+        tag008 = Nokogiri::XML.fragment("<controlfield tag='008'>000000#{tag008_date_type}#{date1}#{date2}xxx      |           #{tag008_langcode} d</controlfield>")
         tag035 = "<datafield ind1=' ' ind2=' ' tag='035'>
         <subfield code='a'>(PULFA)#{ref_id}</subfield>
         </datafield>"
+        tag046 = "<datafield ind1=' ' ind2=' ' tag='046'>
+          <subfield code='a'>i</subfield>
+          <subfield code='c'>#{tag008.content[7..10]}</subfield>
+          <subfield code='e'>#{tag008.content[11..14]}</subfield>
+        </datafield>"
+        #scope_note's are singletons and terse, so no further massaging necessary for this collection
+        tag520 = "<datafield ind1=' ' ind2=' ' tag='520'>
+          <subfield code = 'a'>#{scope_note}</subfield>
+          </datafield>"
 
-        record = "<record>
-        #{leader}
-        #{tag001}
-        #{tag003}
-        #{tag008}
-        #{tag035}
+        record = Nokogiri::XML.fragment(
+        "<record>
+          #{leader}
+          #{tag001}
+          #{tag003}
+          #{tag008}
+          #{tag035}
+          #{tag046}
+          #{tag520}
         </record>"
-
+)
         file << record
 
         rescue Exception => msg
