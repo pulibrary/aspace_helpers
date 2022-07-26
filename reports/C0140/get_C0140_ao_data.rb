@@ -12,8 +12,10 @@ filename = "C0140_out.xml"
 file =  File.open(filename, "w")
 file << '<collection xmlns="http://www.loc.gov/MARC21/slim" xmlns:marc="http://www.loc.gov/MARC21/slim" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.loc.gov/MARC21/slim http://www.loc.gov/standards/marcxml/schema/MARC21slim.xsd">'
 
+#set these manually before running
 resource_ids = [3950]
 repo = 5
+default_restriction = "Collection is open for research use."
 
 #get components
 resource_ids.each do |resource_id|
@@ -64,6 +66,10 @@ resource_ids.each do |resource_id|
         scope_notes = scope_hash.map { |related| related['subnotes'][0]['content'].gsub(/[\r\n]+/, ' ')}
         related_hash = notes.select { |hash| hash['type'] == "relatedmaterial"}
         related_notes = related_hash.map { |related| related['subnotes'][0]['content'].gsub(/[\r\n]+/, ' ')}
+        acq_hash = notes.select { |hash| hash['type'] == "acqinfo"}
+        acq_notes = acq_hash.map { |related| related['subnotes'][0]['content'].gsub(/[\r\n]+/, ' ')}
+        bioghist_hash = notes.select { |hash| hash['type'] == "bioghist"}
+        bioghist_notes = bioghist_hash.map { |related| related['subnotes'][0]['content'].gsub(/[\r\n]+/, ' ')}
 
         extents = get_ao['extents']
         #initialize instance objects
@@ -101,10 +107,6 @@ resource_ids.each do |resource_id|
 
         # Agent/Creator/Persname or Famname	100
         # Agent/Creator/Corpname	110
-        # Extents	300
-        # Conditions Governing Access (can this be pulled from the collection-level note if there is none at the component level?)	506
-        # Immediate Source of Acquisition	541
-        # Agents/Biographical/Historical note	545
         # Processing Information	583
         # Agent/Subject	600
         # Subjects	610
@@ -165,7 +167,7 @@ resource_ids.each do |resource_id|
           end
         #addresses github 181 'Conditions Governing Access (can this be pulled from the collection-level note if there is none at the component level?)	506'
         tag506 = "<datafield ind1=' ' ind2=' ' tag='506'>
-        <subfield code = 'a'>#{restriction_note[0]}</subfield>
+        <subfield code = 'a'>#{restriction_note[0] ||= default_restriction}</subfield>
         </datafield>"
         # addresses github 181 'Scope and contents	520'
         tags520 = scope_notes.map do |scope_note|
@@ -173,10 +175,22 @@ resource_ids.each do |resource_id|
           <subfield code = 'a'>#{scope_note}</subfield>
           </datafield>"
         end
+        # addresses github 181 'Immediate Source of Acquisition	541'
+        tags541 = acq_notes.map do |acq_note|
+          "<datafield ind1=' ' ind2=' ' tag='541'>
+            <subfield code = 'a'>#{acq_note}</subfield>
+            </datafield>"
+        end
         # adds related materials note
         tags544 = related_notes.map do |related_note|
           "<datafield ind1=' ' ind2=' ' tag='544'>
             <subfield code = 'a'>#{related_note}</subfield>
+            </datafield>"
+        end
+        #addresses github 181 '# Agents/Biographical/Historical note	545'
+        tags545 = bioghist_notes.map do |bioghist_note|
+          "<datafield ind1=' ' ind2=' ' tag='545'>
+            <subfield code = 'a'>#{bioghist_note}</subfield>
             </datafield>"
         end
 
@@ -191,10 +205,12 @@ resource_ids.each do |resource_id|
           #{tag046}
           #{tag099}
           #{tag245}
-          #{tag300 ||= ''}
-          #{tag506 unless restriction_note[0].nil?}
+          #{tag300}
+          #{tag506}
           #{tags520.join(' ')}
+          #{tags541.join(' ')}
           #{tags544.join(' ')}
+          #{tags545.join(' ')}
         </record>"
 )
         file << record
