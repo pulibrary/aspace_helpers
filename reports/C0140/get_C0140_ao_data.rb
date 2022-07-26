@@ -117,7 +117,7 @@ resource_ids.each do |resource_id|
           <subfield code='c'>#{tag008.content[7..10]}</subfield>
           <subfield code='e'>#{tag008.content[11..14]}</subfield>
         </datafield>"
-        #scope_note's are singletons and terse, so no further massaging necessary for this collection
+        tag099 = "<datafield ind1=' ' ind2=' ' tag='099'>#{ref_id}</datafield>"
         tags520 = scope_notes.map do |scope_note|
           "<datafield ind1=' ' ind2=' ' tag='520'>
           <subfield code = 'a'>#{scope_note}</subfield>
