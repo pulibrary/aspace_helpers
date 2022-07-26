@@ -65,11 +65,7 @@ resource_ids.each do |resource_id|
                 restrictions_hash.dig(0, 'subnotes', 0, 'content').gsub(/[\r\n]+/, ' ')
               end #unless
         scope_hash = notes.select { |hash| hash['type'] == "scopecontent"}
-        scope_note =
-              unless
-                scope_hash.dig(0, 'subnotes', 0, 'jsonmodel_type') != "note_text"
-                scope_hash.dig(0, 'subnotes', 0, 'content').gsub(/[\r\n]+/, ' ')
-              end #unless
+        scope_notes = scope_hash.map { |related| related['subnotes'][0]['content'].gsub(/[\r\n]+/, ' ')}
         related_hash = notes.select { |hash| hash['type'] == "relatedmaterial"}
         related_notes = related_hash.map { |related| related['subnotes'][0]['content'].gsub(/[\r\n]+/, ' ')}
 
@@ -119,9 +115,11 @@ resource_ids.each do |resource_id|
           <subfield code='e'>#{tag008.content[11..14]}</subfield>
         </datafield>"
         #scope_note's are singletons and terse, so no further massaging necessary for this collection
-        tag520 = "<datafield ind1=' ' ind2=' ' tag='520'>
+        tags520 = scope_notes.map do |scope_note|
+          "<datafield ind1=' ' ind2=' ' tag='520'>
           <subfield code = 'a'>#{scope_note}</subfield>
           </datafield>"
+        end
         tags544 = related_notes.map do |related_note|
           "<datafield ind1=' ' ind2=' ' tag='544'>
             <subfield code = 'a'>#{related_note}</subfield>
@@ -136,7 +134,7 @@ resource_ids.each do |resource_id|
           #{tag008}
           #{tag035}
           #{tag046}
-          #{tag520}
+          #{tags520.join(' ')}
           #{tags544.join(' ')}
         </record>"
 )
