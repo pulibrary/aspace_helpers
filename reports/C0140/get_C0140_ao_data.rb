@@ -102,29 +102,55 @@ resource_ids.each do |resource_id|
           end
         end
         #puts "#{uri}, #{ead_id ||= ref_id}, #{title}, #{date_type}, #{date1 ||= date_expression}, #{date2 ||= ''}, #{language ||= ''}, #{level}, #{depth}, #{restriction_type || ""}, #{restriction_note || "Open for research"}, #{scope_note}, #{extents.join(', ')}, #{top_container}"
+
+        # Agent/Creator/Persname or Famname	100
+        # Agent/Creator/Corpname	110
+        # Title	245
+        # Extents	300
+        # Conditions Governing Access (can this be pulled from the collection-level note if there is none at the component level?)	506
+        # Immediate Source of Acquisition	541
+        # Agents/Biographical/Historical note	545
+        # Processing Information	583
+        # Agent/Subject	600
+        # Subjects	610
+        # Subjects	611
+        # Subjects	650
+        # Subjects	651
+        # Subjects	655
+        # Agent/Creator	700
+        # URL ?? + RefID (ex: https://findingaids.princeton.edu/catalog/C0140_c25673-42817)	856
+        # Physical Location (can this be pulled from the collection-level note?)	982
+
+        #adds controlfields
         leader = "<leader>00000namaa22000002u 4500</leader>"
         tag001 = "<controlfield tag='001'>#{ref_id}</controlfield>"
         tag003 = "<controlfield tag='003'>PULFA</controlfield>"
         tag008 = Nokogiri::XML.fragment("<controlfield tag='008'>000000#{tag008_date_type}#{date1}#{date2}xx      |           #{tag008_langcode} d</controlfield>")
+        # addresses github 181 'Archival object URI??	035'
         tag035 = "<datafield ind1=' ' ind2=' ' tag='035'>
         <subfield code='a'>(PULFA)#{ref_id}</subfield>
         </datafield>"
-        tag041 = "<datafield ind1=' ' ind2=' ' tag='046'>
+        # addresses github 181 'Language	041'
+        tag041 = "<datafield ind1=' ' ind2=' ' tag='041'>
           <subfield code='c'>#{tag008.content[35..37]}</subfield>
         </datafield>"
+        # addresses github 181 'Dates/Expression	046'
         tag046 = "<datafield ind1=' ' ind2=' ' tag='046'>
           <subfield code='a'>i</subfield>
           <subfield code='c'>#{tag008.content[7..10]}</subfield>
           <subfield code='e'>#{tag008.content[11..14]}</subfield>
         </datafield>"
+        # addresses github 181 'RefID (collection code?)/ Archival object URI??	099'
         tag099 = "<datafield ind1=' ' ind2=' ' tag='099'>
         <subfield code = 'a'>#{ref_id}</subfield>
         </datafield>"
+        # addresses github 181 'Scope and contents	520'
         tags520 = scope_notes.map do |scope_note|
           "<datafield ind1=' ' ind2=' ' tag='520'>
           <subfield code = 'a'>#{scope_note}</subfield>
           </datafield>"
         end
+        # adds related materials note
         tags544 = related_notes.map do |related_note|
           "<datafield ind1=' ' ind2=' ' tag='544'>
             <subfield code = 'a'>#{related_note}</subfield>
