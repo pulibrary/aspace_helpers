@@ -58,19 +58,14 @@ resource_ids.each do |resource_id|
           end
         notes = get_ao.dig('notes')
         restrictions_hash = notes.select { |hash| hash['type'] == "accessrestrict"}
-        restriction_type = restrictions_hash.dig(0, 'rights_restriction', 'local_access_restriction_type', 0)
-        restriction_note =
-              unless
-                restrictions_hash.dig(0, 'subnotes', 0, 'jsonmodel_type') != "note_text"
-                restrictions_hash.dig(0, 'subnotes', 0, 'content').gsub(/[\r\n]+/, ' ')
-              end #unless
+        #restriction_type = restrictions_hash.map { |restriction| restriction['rights_restriction']['local_access_restriction_type'][0]}
+        restriction_note = restrictions_hash.map { |restriction| restriction['subnotes'][0]['content'].gsub(/[\r\n]+/, ' ')}
         scope_hash = notes.select { |hash| hash['type'] == "scopecontent"}
         scope_notes = scope_hash.map { |related| related['subnotes'][0]['content'].gsub(/[\r\n]+/, ' ')}
         related_hash = notes.select { |hash| hash['type'] == "relatedmaterial"}
         related_notes = related_hash.map { |related| related['subnotes'][0]['content'].gsub(/[\r\n]+/, ' ')}
 
         extents = get_ao['extents']
-        puts extents
         #initialize instance objects
         top_container = nil
         sub_container = nil
@@ -168,7 +163,10 @@ resource_ids.each do |resource_id|
             <subfield code = 'f'>#{extents[0]['extent_type']}</subfield>
             </datafield>")
           end
-
+        #addresses github 181 'Conditions Governing Access (can this be pulled from the collection-level note if there is none at the component level?)	506'
+        tag506 = "<datafield ind1=' ' ind2=' ' tag='506'>
+        <subfield code = 'a'>#{restriction_note[0]}</subfield>
+        </datafield>"
         # addresses github 181 'Scope and contents	520'
         tags520 = scope_notes.map do |scope_note|
           "<datafield ind1=' ' ind2=' ' tag='520'>
@@ -194,6 +192,7 @@ resource_ids.each do |resource_id|
           #{tag099}
           #{tag245}
           #{tag300 ||= ''}
+          #{tag506 unless restriction_note[0].nil?}
           #{tags520.join(' ')}
           #{tags544.join(' ')}
         </record>"
