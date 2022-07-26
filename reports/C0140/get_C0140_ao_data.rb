@@ -117,7 +117,9 @@ resource_ids.each do |resource_id|
           <subfield code='c'>#{tag008.content[7..10]}</subfield>
           <subfield code='e'>#{tag008.content[11..14]}</subfield>
         </datafield>"
-        tag099 = "<datafield ind1=' ' ind2=' ' tag='099'>#{ref_id}</datafield>"
+        tag099 = "<datafield ind1=' ' ind2=' ' tag='099'>
+        <subfield code = 'a'>#{ref_id}</subfield>
+        </datafield>"
         tags520 = scope_notes.map do |scope_note|
           "<datafield ind1=' ' ind2=' ' tag='520'>
           <subfield code = 'a'>#{scope_note}</subfield>
@@ -138,6 +140,7 @@ resource_ids.each do |resource_id|
           #{tag035}
           #{tag041}
           #{tag046}
+          #{tag099}
           #{tags520.join(' ')}
           #{tags544.join(' ')}
         </record>"
