@@ -69,7 +69,8 @@ resource_ids.each do |resource_id|
         related_hash = notes.select { |hash| hash['type'] == "relatedmaterial"}
         related_notes = related_hash.map { |related| related['subnotes'][0]['content'].gsub(/[\r\n]+/, ' ')}
 
-        extents = get_ao['extents'].map { |extent| "#{extent['number']} #{extent['extent_type']}" }
+        extents = get_ao['extents']
+        puts extents
         #initialize instance objects
         top_container = nil
         sub_container = nil
@@ -147,6 +148,27 @@ resource_ids.each do |resource_id|
         tag245 = "<datafield ind1=' ' ind2=' ' tag='245'>
         <subfield code = 'a'>#{title}</subfield>
         </datafield>"
+        # addresses github 181 Extents	300
+        # somewhat unelegant conditional but works without having to refactor the Nokogiri doc
+        tag300 =
+          if extents.count > 1
+            repeatable_subfields =
+              extents[1..].map do |extent|
+                "<subfield code = 'a'>#{extent['number']}</subfield>
+                 <subfield code = 'f'>#{extent['extent_type']})</subfield>"
+              end
+            Nokogiri::XML.fragment("<datafield ind1=' ' ind2=' ' tag='300'>
+            <subfield code = 'a'>#{extents[0]['number']}</subfield>
+            <subfield code = 'f'>#{extents[0]['extent_type']} (</subfield>
+            #{repeatable_subfields}
+          </datafield>")
+          else
+            Nokogiri::XML.fragment("<datafield ind1=' ' ind2=' ' tag='300'>
+            <subfield code = 'a'>#{extents[0]['number']}</subfield>
+            <subfield code = 'f'>#{extents[0]['extent_type']}</subfield>
+            </datafield>")
+          end
+
         # addresses github 181 'Scope and contents	520'
         tags520 = scope_notes.map do |scope_note|
           "<datafield ind1=' ' ind2=' ' tag='520'>
@@ -171,6 +193,7 @@ resource_ids.each do |resource_id|
           #{tag046}
           #{tag099}
           #{tag245}
+          #{tag300 ||= ''}
           #{tags520.join(' ')}
           #{tags544.join(' ')}
         </record>"
