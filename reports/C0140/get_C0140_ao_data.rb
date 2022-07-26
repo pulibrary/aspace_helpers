@@ -63,13 +63,13 @@ resource_ids.each do |resource_id|
         #restriction_type = restrictions_hash.map { |restriction| restriction['rights_restriction']['local_access_restriction_type'][0]}
         restriction_note = restrictions_hash.map { |restriction| restriction['subnotes'][0]['content'].gsub(/[\r\n]+/, ' ')}
         scope_hash = notes.select { |hash| hash['type'] == "scopecontent"}
-        scope_notes = scope_hash.map { |related| related['subnotes'][0]['content'].gsub(/[\r\n]+/, ' ')}
+        scope_notes = scope_hash.map { |related| related['subnotes'][0]['content'].gsub(/[\r\n]+/, ' ').gsub(/()<\/?p>/, '')}
         related_hash = notes.select { |hash| hash['type'] == "relatedmaterial"}
         related_notes = related_hash.map { |related| related['subnotes'][0]['content'].gsub(/[\r\n]+/, ' ')}
         acq_hash = notes.select { |hash| hash['type'] == "acqinfo"}
         acq_notes = acq_hash.map { |related| related['subnotes'][0]['content'].gsub(/[\r\n]+/, ' ')}
         bioghist_hash = notes.select { |hash| hash['type'] == "bioghist"}
-        bioghist_notes = bioghist_hash.map { |related| related['subnotes'][0]['content'].gsub(/[\r\n]+/, ' ')}
+        bioghist_notes = bioghist_hash.map { |related| related['subnotes'][0]['content'].gsub(/[\r\n]+/, ' ').gsub(/()<\/?p>/, '')}
 
         extents = get_ao['extents']
         #initialize instance objects
