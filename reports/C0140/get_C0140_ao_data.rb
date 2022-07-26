@@ -105,7 +105,6 @@ resource_ids.each do |resource_id|
 
         # Agent/Creator/Persname or Famname	100
         # Agent/Creator/Corpname	110
-        # Title	245
         # Extents	300
         # Conditions Governing Access (can this be pulled from the collection-level note if there is none at the component level?)	506
         # Immediate Source of Acquisition	541
@@ -144,6 +143,10 @@ resource_ids.each do |resource_id|
         tag099 = "<datafield ind1=' ' ind2=' ' tag='099'>
         <subfield code = 'a'>#{ref_id}</subfield>
         </datafield>"
+        # addresses github 181 'Title	245'
+        tag245 = "<datafield ind1=' ' ind2=' ' tag='245'>
+        <subfield code = 'a'>#{title}</subfield>
+        </datafield>"
         # addresses github 181 'Scope and contents	520'
         tags520 = scope_notes.map do |scope_note|
           "<datafield ind1=' ' ind2=' ' tag='520'>
@@ -167,6 +170,7 @@ resource_ids.each do |resource_id|
           #{tag041}
           #{tag046}
           #{tag099}
+          #{tag245}
           #{tags520.join(' ')}
           #{tags544.join(' ')}
         </record>"
