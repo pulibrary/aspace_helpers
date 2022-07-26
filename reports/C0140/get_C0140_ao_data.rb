@@ -105,9 +105,12 @@ resource_ids.each do |resource_id|
         leader = "<leader>00000namaa22000002u 4500</leader>"
         tag001 = "<controlfield tag='001'>#{ref_id}</controlfield>"
         tag003 = "<controlfield tag='003'>PULFA</controlfield>"
-        tag008 = Nokogiri::XML.fragment("<controlfield tag='008'>000000#{tag008_date_type}#{date1}#{date2}xxx      |           #{tag008_langcode} d</controlfield>")
+        tag008 = Nokogiri::XML.fragment("<controlfield tag='008'>000000#{tag008_date_type}#{date1}#{date2}xx      |           #{tag008_langcode} d</controlfield>")
         tag035 = "<datafield ind1=' ' ind2=' ' tag='035'>
         <subfield code='a'>(PULFA)#{ref_id}</subfield>
+        </datafield>"
+        tag041 = "<datafield ind1=' ' ind2=' ' tag='046'>
+          <subfield code='c'>#{tag008.content[35..37]}</subfield>
         </datafield>"
         tag046 = "<datafield ind1=' ' ind2=' ' tag='046'>
           <subfield code='a'>i</subfield>
@@ -133,6 +136,7 @@ resource_ids.each do |resource_id|
           #{tag003}
           #{tag008}
           #{tag035}
+          #{tag041}
           #{tag046}
           #{tags520.join(' ')}
           #{tags544.join(' ')}
