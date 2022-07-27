@@ -38,7 +38,8 @@ resource_ids.each do |resource_id|
       ao_uris.each do |uri|
         id = uri.gsub!(/(.*\/)+/, '')
         #get ao
-        get_ao = get_single_archival_object_by_id(repo, id, resolve = ['subjects', 'top_container'])
+        get_ao = get_single_archival_object_by_id(repo, id, resolve = ['subjects', 'linked_agents', 'top_container'])
+        puts get_ao
         ref_id = get_ao['ref_id']
         title = get_ao['title']
         date_type = get_ao['dates'][0]['date_type']
