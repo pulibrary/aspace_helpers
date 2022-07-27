@@ -3,6 +3,10 @@ require 'json'
 require 'nokogiri'
 require_relative '../../helper_methods.rb'
 
+def remove_tags(text_node)
+  text_node.to_s.gsub!(/<\/?[\D\S]+?>/,'')
+end
+
 aspace_staging_login()
 
 start_time = "Process started: #{Time.now}"
@@ -58,18 +62,19 @@ resource_ids.each do |resource_id|
             language
           else "eng"
           end
+        #process the notes requested
         notes = get_ao.dig('notes')
         restrictions_hash = notes.select { |hash| hash['type'] == "accessrestrict"}
         #restriction_type = restrictions_hash.map { |restriction| restriction['rights_restriction']['local_access_restriction_type'][0]}
-        restriction_note = restrictions_hash.map { |restriction| restriction['subnotes'][0]['content'].gsub(/[\r\n]+/, ' ')}
+        restriction_note = restrictions_hash.map { |restriction| remove_tags(restriction['subnotes'][0]['content'].gsub(/[\r\n]+/, ' '))}
         scope_hash = notes.select { |hash| hash['type'] == "scopecontent"}
-        scope_notes = scope_hash.map { |related| related['subnotes'][0]['content'].gsub(/[\r\n]+/, ' ').gsub(/()<\/?p>/, '')}
+        scope_notes = scope_hash.map { |scope| remove_tags(scope['subnotes'][0]['content'].gsub(/[\r\n]+/, ' ').gsub(/()<\/?p>/, ''))}
         related_hash = notes.select { |hash| hash['type'] == "relatedmaterial"}
-        related_notes = related_hash.map { |related| related['subnotes'][0]['content'].gsub(/[\r\n]+/, ' ')}
+        related_notes = related_hash.map { |related| remove_tags(related['subnotes'][0]['content'].gsub(/[\r\n]+/, ' '))}
         acq_hash = notes.select { |hash| hash['type'] == "acqinfo"}
-        acq_notes = acq_hash.map { |related| related['subnotes'][0]['content'].gsub(/[\r\n]+/, ' ')}
+        acq_notes = acq_hash.map { |acq| remove_tags(acq['subnotes'][0]['content'].gsub(/[\r\n]+/, ' '))}
         bioghist_hash = notes.select { |hash| hash['type'] == "bioghist"}
-        bioghist_notes = bioghist_hash.map { |related| related['subnotes'][0]['content'].gsub(/[\r\n]+/, ' ').gsub(/()<\/?p>/, '')}
+        bioghist_notes = bioghist_hash.map { |bioghist| remove_tags(bioghist['subnotes'][0]['content'].gsub(/[\r\n]+/), ' ')}
 
         extents = get_ao['extents']
         #initialize instance objects
