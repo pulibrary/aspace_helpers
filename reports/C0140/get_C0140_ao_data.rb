@@ -39,6 +39,7 @@ resource_ids.each do |resource_id|
         id = uri.gsub!(/(.*\/)+/, '')
         #get ao
         get_ao = get_single_archival_object_by_id(repo, id, resolve = ['subjects', 'linked_agents', 'top_container'])
+#puts get_ao
         ref_id = get_ao['ref_id']
         title = get_ao['title']
         date_type = get_ao['dates'][0]['date_type']
@@ -75,6 +76,8 @@ resource_ids.each do |resource_id|
         acq_notes = acq_hash.map { |acq| remove_tags(acq['subnotes'][0]['content'].gsub(/[\r\n]+/, ' '))}
         bioghist_hash = notes.select { |hash| hash['type'] == "bioghist"}
         bioghist_notes = bioghist_hash.map { |bioghist| remove_tags(bioghist['subnotes'][0]['content'].gsub(/[\r\n]+/, ' '))}
+        processinfo_hash = notes.select { |hash| hash['type'] == "processinfo"}
+        processinfo_notes = processinfo_hash.map { |processinfo| remove_tags(processinfo['subnotes'][0]['content'].gsub(/[\r\n]+/, ' '))}
 
         extents = get_ao['extents']
         #initialize instance objects
@@ -108,11 +111,9 @@ resource_ids.each do |resource_id|
             "#{term['term']} #{term['term_type']}"
           end
         end
-        #puts "#{uri}, #{ead_id ||= ref_id}, #{title}, #{date_type}, #{date1 ||= date_expression}, #{date2 ||= ''}, #{language ||= ''}, #{level}, #{depth}, #{restriction_type || ""}, #{restriction_note || "Open for research"}, #{scope_note}, #{extents.join(', ')}, #{top_container}"
 
         # Agent/Creator/Persname or Famname	100
         # Agent/Creator/Corpname	110
-        # Processing Information	583
         # Agent/Subject	600
         # Subjects	610
         # Subjects	611
@@ -120,7 +121,6 @@ resource_ids.each do |resource_id|
         # Subjects	651
         # Subjects	655
         # Agent/Creator	700
-        # URL ?? + RefID (ex: https://findingaids.princeton.edu/catalog/C0140_c25673-42817)	856
         # Physical Location (can this be pulled from the collection-level note?)	982
 
         #adds controlfields
@@ -199,6 +199,13 @@ resource_ids.each do |resource_id|
             </datafield>"
         end
 
+        # addresses github 181 'Processing Information	583'
+        tags583 = processinfo_notes.map do |processinfo_note|
+          "<datafield ind1=' ' ind2=' ' tag='583'>
+            <subfield code = 'a'>#{processinfo_note}</subfield>
+            </datafield>"
+        end
+
         #addresses github 181 'URL ?? + RefID (ex: https://findingaids.princeton.edu/catalog/C0140_c25673-42817)	856'
         tag856 = "<datafield ind1='4' ind2='2' tag='856'>
           <subfield code = 'z'>Finding aid online: </subfield>
@@ -222,6 +229,7 @@ resource_ids.each do |resource_id|
           #{tags541.join(' ')}
           #{tags544.join(' ')}
           #{tags545.join(' ')}
+          #{tags583.join(' ')}
           #{tag856}
         </record>"
 )
