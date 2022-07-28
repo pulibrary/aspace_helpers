@@ -105,23 +105,26 @@ resource_ids.each do |resource_id|
           #digital_object_exists = instance['instance_type'] == "digital_object"
         end
         subjects = get_ao.dig('subjects')
-        subjects_resolved = subjects.map do |subject|
-          "#{subject['_resolved']['source']}"
-          subject['_resolved']['terms'].map do |term|
-            "#{term['term']} #{term['term_type']}"
+        subjects_filtered = subjects.select { |subject| subject['_resolved']['terms'][0]['term_type'] == "topical" || "geographic" || "genreform" }
+        subjects_topical = subjects_filtered.map do |subject|
+          if subject['_resolved']['terms'][0]['term_type'] == "topical"
+            {
+              "source" => subject['_resolved']['source'],
+              "term" => subject['_resolved']['terms'][0]['term']
+            }
           end
         end
 
         # Agent/Creator/Persname or Famname	100
         # Agent/Creator/Corpname	110
         # Agent/Subject	600
+        # Agent/Creator	700
         # Subjects	610
         # Subjects	611
         # Subjects	650
         # Subjects	651
         # Subjects	655
-        # Agent/Creator	700
-        # Physical Location (can this be pulled from the collection-level note?)	982
+
 
         #adds controlfields
         leader = "<leader>00000namaa22000002u 4500</leader>"
@@ -206,6 +209,22 @@ resource_ids.each do |resource_id|
             </datafield>"
         end
 
+        #addresses github 181 'Subjects	655'
+        tags655 = subjects_topical.map do |subject_topical|
+          source = subject_topical['source'] == "lcsh" ? 0 : 7
+          tokens = subject_topical['term'].split('--')
+          tokens.each { |token| token.strip! }
+          main = tokens[0]
+          subfields =
+            tokens[1..-1].map do |token|
+              code = token =~ /^[0-9]{2}/ ? 'y' : 'x'
+              "<subfield code = '#{code}'>#{token}</subfield>"
+            end
+          "<datafield ind1=' ' ind2='#{source}' tag='655'>
+            <subfield code = 'a'>#{main}</subfield>
+            #{subfields.join(' ')}
+          </datafield>"
+        end
         #addresses github 181 'URL ?? + RefID (ex: https://findingaids.princeton.edu/catalog/C0140_c25673-42817)	856'
         tag856 = "<datafield ind1='4' ind2='2' tag='856'>
           <subfield code = 'z'>Finding aid online: </subfield>
@@ -230,6 +249,7 @@ resource_ids.each do |resource_id|
           #{tags544.join(' ')}
           #{tags545.join(' ')}
           #{tags583.join(' ')}
+          #{tags655.join(' ')}
           #{tag856}
         </record>"
 )
