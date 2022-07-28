@@ -222,6 +222,7 @@ resource_ids.each do |resource_id|
           #{tags541.join(' ')}
           #{tags544.join(' ')}
           #{tags545.join(' ')}
+          #{tag856}
         </record>"
 )
         file << record
