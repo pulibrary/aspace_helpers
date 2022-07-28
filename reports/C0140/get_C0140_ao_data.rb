@@ -114,6 +114,22 @@ resource_ids.each do |resource_id|
             }
           end
         end
+        subjects_geog = subjects_filtered.map do |subject|
+          if subject['_resolved']['terms'][0]['term_type'] == "geogname"
+            {
+              "source" => subject['_resolved']['source'],
+              "term" => subject['_resolved']['terms'][0]['term']
+            }
+          end
+        end
+        subjects_genre = subjects_filtered.map do |subject|
+          if subject['_resolved']['terms'][0]['term_type'] == "genreform"
+            {
+              "source" => subject['_resolved']['source'],
+              "term" => subject['_resolved']['terms'][0]['term']
+            }
+          end
+        end
 
         # Agent/Creator/Persname or Famname	100
         # Agent/Creator/Corpname	110
@@ -220,11 +236,14 @@ resource_ids.each do |resource_id|
               code = token =~ /^[0-9]{2}/ ? 'y' : 'x'
               "<subfield code = '#{code}'>#{token}</subfield>"
             end
+          subfield_2 = source == 7 ? "<subfield code = '2'>#{subject_topical['source']}</subfield>" : nil
           "<datafield ind1=' ' ind2='#{source}' tag='655'>
             <subfield code = 'a'>#{main}</subfield>
             #{subfields.join(' ')}
+            #{subfield_2 ||= ''}
           </datafield>"
         end
+
         #addresses github 181 'URL ?? + RefID (ex: https://findingaids.princeton.edu/catalog/C0140_c25673-42817)	856'
         tag856 = "<datafield ind1='4' ind2='2' tag='856'>
           <subfield code = 'z'>Finding aid online: </subfield>
