@@ -105,30 +105,13 @@ resource_ids.each do |resource_id|
           #digital_object_exists = instance['instance_type'] == "digital_object"
         end
         subjects = get_ao.dig('subjects')
-        subjects_filtered = subjects.select { |subject| subject['_resolved']['terms'][0]['term_type'] == "topical" || "geographic" || "genreform" }
-        subjects_topical = subjects_filtered.map do |subject|
-          if subject['_resolved']['terms'][0]['term_type'] == "topical"
+        subjects_filtered = subjects.select { |subject| subject['_resolved']['terms'][0]['term_type'] == "topical" || "geographic" || "genre_form" }
+        subjects_processed = subjects_filtered.map do |subject|
             {
+              "type" => subject['_resolved']['terms'][0]['term_type'],
               "source" => subject['_resolved']['source'],
               "term" => subject['_resolved']['terms'][0]['term']
             }
-          end
-        end
-        subjects_geog = subjects_filtered.map do |subject|
-          if subject['_resolved']['terms'][0]['term_type'] == "geogname"
-            {
-              "source" => subject['_resolved']['source'],
-              "term" => subject['_resolved']['terms'][0]['term']
-            }
-          end
-        end
-        subjects_genre = subjects_filtered.map do |subject|
-          if subject['_resolved']['terms'][0]['term_type'] == "genreform"
-            {
-              "source" => subject['_resolved']['source'],
-              "term" => subject['_resolved']['terms'][0]['term']
-            }
-          end
         end
 
         # Agent/Creator/Persname or Famname	100
@@ -225,24 +208,33 @@ resource_ids.each do |resource_id|
             </datafield>"
         end
 
-        #addresses github 181 'Subjects	655'
-        tags655 = subjects_topical.map do |subject_topical|
-          source = subject_topical['source'] == "lcsh" ? 0 : 7
-          tokens = subject_topical['term'].split('--')
-          tokens.each { |token| token.strip! }
-          main = tokens[0]
-          subfields =
-            tokens[1..-1].map do |token|
-              code = token =~ /^[0-9]{2}/ ? 'y' : 'x'
-              "<subfield code = '#{code}'>#{token}</subfield>"
-            end
-          subfield_2 = source == 7 ? "<subfield code = '2'>#{subject_topical['source']}</subfield>" : nil
-          "<datafield ind1=' ' ind2='#{source}' tag='655'>
-            <subfield code = 'a'>#{main}</subfield>
-            #{subfields.join(' ')}
-            #{subfield_2 ||= ''}
-          </datafield>"
-        end
+        #addresses github 181 'Subjects	650'
+        tags6xx =
+          subjects_processed.map do |subject|
+            tag =
+              if subject['type'] == "topical"
+                655
+              elsif subject['type'] == "geographic"
+                650
+              elsif subject['type'] == "genre_form"
+                651
+              end
+            source = subject['source'] == "lcsh" ? 0 : 7
+            tokens = subject['term'].split('--')
+            tokens.each { |token| token.strip! }
+            main = tokens[0]
+            subfields =
+              tokens[1..-1].map do |token|
+                code = token =~ /^[0-9]{2}/ ? 'y' : 'x'
+                "<subfield code = '#{code}'>#{token}</subfield>"
+              end
+            subfield_2 = source == 7 ? "<subfield code = '2'>#{subject['source']}</subfield>" : nil
+            "<datafield ind1=' ' ind2='#{source}' tag='#{tag}'>
+              <subfield code = 'a'>#{main}</subfield>
+              #{subfields.join(' ')}
+              #{subfield_2 ||= ''}
+            </datafield>"
+          end
 
         #addresses github 181 'URL ?? + RefID (ex: https://findingaids.princeton.edu/catalog/C0140_c25673-42817)	856'
         tag856 = "<datafield ind1='4' ind2='2' tag='856'>
@@ -268,7 +260,7 @@ resource_ids.each do |resource_id|
           #{tags544.join(' ')}
           #{tags545.join(' ')}
           #{tags583.join(' ')}
-          #{tags655.join(' ')}
+          #{tags6xx.join(' ')}
           #{tag856}
         </record>"
 )
