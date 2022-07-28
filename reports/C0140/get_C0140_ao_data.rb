@@ -3,8 +3,8 @@ require 'json'
 require 'nokogiri'
 require_relative '../../helper_methods.rb'
 
-def remove_tags(text_node)
-  text_node.to_s.gsub!(/<\/?[\D\S]+?>/,'')
+def remove_tags(text)
+  text.to_s.gsub(/<\/?[\D\S]+?>/,'')
 end
 
 aspace_staging_login()
@@ -39,7 +39,6 @@ resource_ids.each do |resource_id|
         id = uri.gsub!(/(.*\/)+/, '')
         #get ao
         get_ao = get_single_archival_object_by_id(repo, id, resolve = ['subjects', 'linked_agents', 'top_container'])
-        puts get_ao
         ref_id = get_ao['ref_id']
         title = get_ao['title']
         date_type = get_ao['dates'][0]['date_type']
@@ -69,13 +68,13 @@ resource_ids.each do |resource_id|
         #restriction_type = restrictions_hash.map { |restriction| restriction['rights_restriction']['local_access_restriction_type'][0]}
         restriction_note = restrictions_hash.map { |restriction| remove_tags(restriction['subnotes'][0]['content'].gsub(/[\r\n]+/, ' '))}
         scope_hash = notes.select { |hash| hash['type'] == "scopecontent"}
-        scope_notes = scope_hash.map { |scope| remove_tags(scope['subnotes'][0]['content'].gsub(/[\r\n]+/, ' ').gsub(/()<\/?p>/, ''))}
+        scope_notes = scope_hash.map { |scope| remove_tags(scope['subnotes'][0]['content'].gsub(/[\r\n]+/, ' '))}
         related_hash = notes.select { |hash| hash['type'] == "relatedmaterial"}
         related_notes = related_hash.map { |related| remove_tags(related['subnotes'][0]['content'].gsub(/[\r\n]+/, ' '))}
         acq_hash = notes.select { |hash| hash['type'] == "acqinfo"}
         acq_notes = acq_hash.map { |acq| remove_tags(acq['subnotes'][0]['content'].gsub(/[\r\n]+/, ' '))}
         bioghist_hash = notes.select { |hash| hash['type'] == "bioghist"}
-        bioghist_notes = bioghist_hash.map { |bioghist| remove_tags(bioghist['subnotes'][0]['content'].gsub(/[\r\n]+/), ' ')}
+        bioghist_notes = bioghist_hash.map { |bioghist| remove_tags(bioghist['subnotes'][0]['content'].gsub(/[\r\n]+/, ' '))}
 
         extents = get_ao['extents']
         #initialize instance objects
@@ -199,6 +198,12 @@ resource_ids.each do |resource_id|
             <subfield code = 'a'>#{bioghist_note}</subfield>
             </datafield>"
         end
+
+        #addresses github 181 'URL ?? + RefID (ex: https://findingaids.princeton.edu/catalog/C0140_c25673-42817)	856'
+        tag856 = "<datafield ind1='4' ind2='2' tag='856'>
+          <subfield code = 'z'>Finding aid online: </subfield>
+          <subfield code = 'u'>https://findingaids.princeton.edu/catalog/#{ref_id}</subfield>
+          </datafield>"
 
         record = Nokogiri::XML.fragment(
         "<record>
