@@ -110,10 +110,11 @@ resource_ids.each do |resource_id|
             {
               "type" => subject['_resolved']['terms'][0]['term_type'],
               "source" => subject['_resolved']['source'],
-              "term" => subject['_resolved']['terms'][0]['term']
+              "full_first_term" => subject['_resolved']['terms'][0]['term'],
+              "main_term" => subject['_resolved']['terms'][0]['term'].split('--')[0],
+              "terms" => subject['_resolved']['terms']
             }
         end
-
         # Agent/Creator/Persname or Famname	100
         # Agent/Creator/Corpname	110
         # Agent/Subject	600
@@ -209,7 +210,7 @@ resource_ids.each do |resource_id|
         end
 
         #addresses github 181 'Subjects	650'
-        tags6xx =
+         tags6xx =
           subjects_processed.map do |subject|
             tag =
               if subject['type'] == "topical"
@@ -219,21 +220,38 @@ resource_ids.each do |resource_id|
               elsif subject['type'] == "genre_form"
                 651
               end
-            source = subject['source'] == "lcsh" ? 0 : 7
-            tokens = subject['term'].split('--')
-            tokens.each { |token| token.strip! }
-            main = tokens[0]
+             source_code = subject['source'] == "lcsh" ? 0 : 7
+             main_term = subject['main_term']
             subfields =
-              tokens[1..-1].map do |token|
-                code = token =~ /^[0-9]{2}/ ? 'y' : 'x'
-                "<subfield code = '#{code}'>#{token}</subfield>"
+            if subject['terms'].count > 1
+              subject['terms'][1..-1].map do |term|
+                subfield_code =
+                  if term['term_type'] == "temporal" || term['term_type'] == "style_period"
+                    "y"
+                  elsif term['term_type'] == "genre_form"
+                    "v"
+                  elsif term['term_type'] == "geographic"
+                    "z"
+                  else
+                    "x"
+                  end
+                "<subfield code = '#{subfield_code}'>#{term['term']}</subfield>"
               end
-            subfield_2 = source == 7 ? "<subfield code = '2'>#{subject['source']}</subfield>" : nil
-            "<datafield ind1=' ' ind2='#{source}' tag='#{tag}'>
-              <subfield code = 'a'>#{main}</subfield>
-              #{subfields.join(' ')}
-              #{subfield_2 ||= ''}
-            </datafield>"
+            elsif subject['full_first_term'] =~ /--/
+              tokens = subject['full_first_term'].split('--')
+              tokens.each { |token| token.strip! }
+              tokens[1..-1].map do |token|
+                subfield_code = token =~ /^[0-9]{2}/ ? 'y' : 'x'
+                "<subfield code = '#{subfield_code}'>#{token}</subfield>"
+                end
+              end
+           subfield_2 = source_code == 7 ? "<subfield code = '2'>#{subject['source']}</subfield>" : nil
+          # #put it together
+          "<datafield ind1=' ' ind2='#{source_code}' tag='#{tag}'>
+            <subfield code = 'a'>#{main_term}</subfield>
+            #{subfields.join(' ') || ''}
+            #{subfield_2 ||= ''}
+          </datafield>"
           end
 
         #addresses github 181 'URL ?? + RefID (ex: https://findingaids.princeton.edu/catalog/C0140_c25673-42817)	856'
