@@ -131,15 +131,6 @@ resource_ids.each do |resource_id|
               "terms" => subject['_resolved']['terms']
             }
         end
-        # Agent/Creator/Persname or Famname	100
-        # Agent/Creator/Corpname	110
-        # Agent/Creator	700
-        # Subjects	610
-        # Subjects	611
-        # Subjects	650
-        # Subjects	651
-        # Subjects	655
-
 
         #adds controlfields
         leader = "<leader>00000namaa22000002u 4500</leader>"
