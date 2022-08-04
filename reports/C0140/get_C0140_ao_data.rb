@@ -224,8 +224,10 @@ resource_ids.each do |resource_id|
             </datafield>"
         end
 
-        #addresses github 181 'Subjects	600'
-        #addresses github 181 'Subjects	610'
+        #addresses github 181 'Agent/Creator/Persname or Famname	100'
+        #addresses github 181 'Agent/Creator/Corpname	110'
+        #addresses github 181 'Agent/Subject	6xx'
+        #addresses github 181 'Agent/Subject	7xx'
         tags6xx_agents =
         #process tag number
         agents_processed.map do |agent|
@@ -261,6 +263,18 @@ resource_ids.each do |resource_id|
           subfield_2 = source_code == 7 ? "<subfield code = '2'>#{agent['source']}</subfield>" : nil
           add_punctuation = agent['name_dates'].empty? ? "." : ","
           subfield_0 = agent['identifier'].nil? ? nil : "<subfield code = '0'>#{agent['identifier']}</subfield>"
+          #create 1xx
+          @tag1xx =
+            if agent['role'] == "creator"
+              "<datafield ind1='#{name_type}' ind2='#{source_code}' tag='1#{tag.to_s[1..2]}'>
+                <subfield code = 'a'>#{name}#{add_punctuation unless name[-1] =~ /[.,)-]/}</subfield>
+                #{dates unless agent['name_dates'].empty?}
+                #{subfield_e ||= ''}
+                #{subfield_2 ||= ''}
+                #{subfield_0 ||= ''}
+              </datafield>"
+            else nil
+            end
           "<datafield ind1='#{name_type}' ind2='#{source_code}' tag='#{tag}'>
             <subfield code = 'a'>#{name}#{add_punctuation unless name[-1] =~ /[.,)-]/}</subfield>
             #{dates unless agent['name_dates'].empty?}
@@ -339,6 +353,7 @@ resource_ids.each do |resource_id|
           #{tag041}
           #{tag046}
           #{tag099}
+          #{@tag1xx ||= ''}
           #{tag245}
           #{tag300}
           #{tag506}
