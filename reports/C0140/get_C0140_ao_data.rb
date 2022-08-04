@@ -80,10 +80,26 @@ resource_ids.each do |resource_id|
         processinfo_notes = processinfo_hash.map { |processinfo| remove_tags(processinfo['subnotes'][0]['content'].gsub(/[\r\n]+/, ' '))}
 
         extents = get_ao['extents']
+
+        agents = get_ao.dig('linked_agents')
+        agents_processed = agents.map { |agent|
+          {
+          "role" => agent['role'],
+          "relator" => agent['relator'],
+          "type" => agent['_resolved']['jsonmodel_type'],
+          "source" => agent['_resolved']['names'][0]['source'],
+          "primary_name" => agent['_resolved']['names'][0]['primary_name'],
+          "rest_of_name" => agent['_resolved']['names'][0]['rest_of_name'],
+          "name_dates" => agent['_resolved']['names'][0]['use_dates'],
+          "sort_name" => agent['_resolved']['names'][0]['sort_name'],
+          "identifier" => agent['_resolved']['names'][0]['authority_id'],
+          "name_order" => agent['_resolved']['names'][0]['name_order']
+          }
+        }
         #initialize instance objects
-        top_container = nil
-        sub_container = nil
-        top_container_location = nil
+        # top_container = nil
+        # sub_container = nil
+        # top_container_location = nil
         #digital_object_exists = false
         get_ao.dig('instances').each do |instance|
           if instance['instance_type'] == "mixed_materials"
@@ -98,10 +114,10 @@ resource_ids.each do |resource_id|
               end
             end
           end
-          top_container =
-            unless top_container_record.nil?
-              top_container_record['long_display_string']
-            end
+          # top_container =
+          #   unless top_container_record.nil?
+          #     top_container_record['long_display_string']
+          #   end
           #digital_object_exists = instance['instance_type'] == "digital_object"
         end
         subjects = get_ao.dig('subjects')
@@ -117,7 +133,6 @@ resource_ids.each do |resource_id|
         end
         # Agent/Creator/Persname or Famname	100
         # Agent/Creator/Corpname	110
-        # Agent/Subject	600
         # Agent/Creator	700
         # Subjects	610
         # Subjects	611
@@ -209,8 +224,57 @@ resource_ids.each do |resource_id|
             </datafield>"
         end
 
+        #addresses github 181 'Subjects	600'
+        #addresses github 181 'Subjects	610'
+        tags6xx_agents =
+        #process tag number
+        agents_processed.map do |agent|
+          tag =
+            if agent['role'] == "creator" && (agent['type'] == "agent_person" || agent['relator'] == "agent_family")
+              700
+            elsif agent['role'] == "subject" && (agent['type'] == "agent_person" || agent['relator'] == "agent_family")
+              600
+            elsif agent['role'] == "creator" && agent['type'] == "agent_corporate_entity"
+              710
+            elsif agent['role'] == "subject" && agent['type'] == "agent_corporate_entity"
+              610
+            end
+          name_type =
+          #we don't know in ASpace whether a name is a jurisdication name or first name only
+            if agent['type'] == "agent_person"
+              1
+            elsif agent['type'] == "agent_family"
+              3
+            elsif agent['type'] == "agent_corporate_entity" && agent['name_order'] == "inverted"
+              0
+            elsif agent['type'] == "agent_corporate_entity"
+              2
+            end
+          source_code = agent['source'] == "lcnaf" ? 0 : 7
+          name =
+            if agent['rest_of_name'].nil?
+              agent['primary_name']
+            else "#{agent['primary_name']}, #{agent['rest_of_name']}"
+            end
+          dates = "<subfield code='d'>#{agent['name_dates']}</subfield>"
+          subfield_e = agent['relator'].nil? ? nil : "<subfield code='e'>#{agent['relator']}</subfield>"
+          subfield_2 = source_code == 7 ? "<subfield code = '2'>#{agent['source']}</subfield>" : nil
+          add_punctuation = agent['name_dates'].empty? ? "." : ","
+          subfield_0 = agent['identifier'].nil? ? nil : "<subfield code = '0'>#{agent['identifier']}</subfield>"
+          "<datafield ind1='#{name_type}' ind2='#{source_code}' tag='#{tag}'>
+            <subfield code = 'a'>#{name}#{add_punctuation unless name[-1] =~ /[.,)-]/}</subfield>
+            #{dates unless agent['name_dates'].empty?}
+            #{subfield_e ||= ''}
+            #{subfield_2 ||= ''}
+            #{subfield_0 ||= ''}
+          </datafield>"
+        end
+
         #addresses github 181 'Subjects	650'
-         tags6xx =
+        #addresses github 181 'Subjects	651'
+        #addresses github 181 'Subjects	655'
+         tags6xx_subjects =
+         #process tag number
           subjects_processed.map do |subject|
             tag =
               if subject['type'] == "topical"
@@ -220,8 +284,11 @@ resource_ids.each do |resource_id|
               elsif subject['type'] == "genre_form"
                 651
               end
+            #process source code
              source_code = subject['source'] == "lcsh" ? 0 : 7
+            #get main term
              main_term = subject['main_term']
+            #process subfields
             subfields =
             if subject['terms'].count > 1
               subject['terms'][1..-1].map do |term|
@@ -237,6 +304,7 @@ resource_ids.each do |resource_id|
                   end
                 "<subfield code = '#{subfield_code}'>#{term['term']}</subfield>"
               end
+          #account for legacy terms imported from finding aids that have no subdivisions
             elsif subject['full_first_term'] =~ /--/
               tokens = subject['full_first_term'].split('--')
               tokens.each { |token| token.strip! }
@@ -245,6 +313,7 @@ resource_ids.each do |resource_id|
                 "<subfield code = '#{subfield_code}'>#{token}</subfield>"
                 end
               end
+          # add subfield 2 if source code is 7
            subfield_2 = source_code == 7 ? "<subfield code = '2'>#{subject['source']}</subfield>" : nil
           # #put it together
           "<datafield ind1=' ' ind2='#{source_code}' tag='#{tag}'>
@@ -278,7 +347,8 @@ resource_ids.each do |resource_id|
           #{tags544.join(' ')}
           #{tags545.join(' ')}
           #{tags583.join(' ')}
-          #{tags6xx.join(' ')}
+          #{tags6xx_subjects.join(' ')}
+          #{tags6xx_agents.join(' ')}
           #{tag856}
         </record>"
 )
