@@ -80,7 +80,7 @@ resource_ids.each do |resource_id|
         processinfo_notes = processinfo_hash.map { |processinfo| remove_tags(processinfo['subnotes'][0]['content'].gsub(/[\r\n]+/, ' '))}
 
         extents = get_ao['extents']
-
+        #process agents
         agents = get_ao.dig('linked_agents')
         agents_processed = agents.map { |agent|
           {
@@ -96,30 +96,22 @@ resource_ids.each do |resource_id|
           "name_order" => agent['_resolved']['names'][0]['name_order']
           }
         }
-        #initialize instance objects
-        # top_container = nil
-        # sub_container = nil
-        # top_container_location = nil
-        #digital_object_exists = false
-        get_ao.dig('instances').each do |instance|
-          if instance['instance_type'] == "mixed_materials"
-          top_container_record =
-            if instance.dig('sub_container').nil? == false
-              #@client.get(instance['sub_container']['top_container']['ref']).parsed
-              instance['sub_container']['top_container']['_resolved']
-            else
-              if instance.dig('top_container')
-                #@client.get(instance['top_container']['ref']).parsed
-                instance['top_container']['_resolved']
-              end
+        #process locations
+        instances = get_ao.dig('instances')
+        top_containers = instances.map do |instance|
+          if instance.dig('sub_container').nil? == false
+            instance['sub_container']['top_container']['_resolved']
+          else
+            if instance.dig('top_container')
+              instance['top_container']['_resolved']
             end
           end
-          # top_container =
-          #   unless top_container_record.nil?
-          #     top_container_record['long_display_string']
-          #   end
-          #digital_object_exists = instance['instance_type'] == "digital_object"
         end
+        top_container_location_record = top_containers.map do |top_container|
+          @client.get(top_container['container_locations'][0]['ref']).parsed
+        end
+        top_container_location_code = top_container_location_record[0]['classification']
+
         subjects = get_ao.dig('subjects')
         subjects_filtered = subjects.select { |subject| subject['_resolved']['terms'][0]['term_type'] == "topical" || "geographic" || "genre_form" }
         subjects_processed = subjects_filtered.map do |subject|
@@ -334,6 +326,10 @@ resource_ids.each do |resource_id|
           <subfield code = 'u'>https://findingaids.princeton.edu/catalog/#{ref_id}</subfield>
           </datafield>"
 
+        #addesses github 181 'Physical Location (can this be pulled from the collection-level note?)	982'
+        tag982 = "<datafield ind1=' ' ind2=' ' tag='982'><subfield code='c'>#{top_container_location_code}</subfield></datafield>"
+
+        #assemble the record
         record = Nokogiri::XML.fragment(
         "<record>
           #{leader}
@@ -356,8 +352,9 @@ resource_ids.each do |resource_id|
           #{tags6xx_subjects.join(' ')}
           #{tags6xx_agents.join(' ')}
           #{tag856}
+          #{tag982}
         </record>"
-)
+      )
         file << record
 
         rescue Exception => msg
