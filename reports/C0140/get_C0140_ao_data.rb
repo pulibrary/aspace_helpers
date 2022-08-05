@@ -231,7 +231,7 @@ resource_ids.each do |resource_id|
               700
             elsif agent['role'] == 'subject' && (agent['type'] == 'agent_person' || agent['relator'] == 'agent_family')
               600
-            elsif agent['role'] == 'creator' && agent['type'] == 'agent_corporate_entity'
+            elsif (agent['role'] == 'creator' || 'source') && agent['type'] == 'agent_corporate_entity'
               710
             elsif agent['role'] == 'subject' && agent['type'] == 'agent_corporate_entity'
               610
