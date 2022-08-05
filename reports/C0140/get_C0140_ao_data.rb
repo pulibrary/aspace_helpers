@@ -29,9 +29,9 @@ resource_ids.each do |resource_id|
   # set up variables for each data point needed in the MARCxml
   # data coming from the collection-level
   ao_tree['uris'].each do |ao_ref|
-    level = ao_ref['level']
-    depth = ao_ref['depth']
-    ead_id = ao_ref['ead_id']
+    # level = ao_ref['level']
+    # depth = ao_ref['depth']
+    # ead_id = ao_ref['ead_id']
     ao_uris = []
     # exclude collection level
     ao_uris << ao_ref['ref'] unless ao_ref['level'] == 'collection'
@@ -290,6 +290,8 @@ resource_ids.each do |resource_id|
             when 'topical'
               655
             when 'geographic'
+              650
+            when 'temporal'
               650
             when 'genre_form'
               651
