@@ -133,7 +133,7 @@ resource_ids.each do |resource_id|
           'terms' => subject['_resolved']['terms']
         }
       end
-      # adds controlfields
+      # add controlfields
       leader = '<leader>00000namaa22000002u 4500</leader>'
       tag001 = "<controlfield tag='001'>#{ref_id}</controlfield>"
       tag003 = "<controlfield tag='003'>PULFA</controlfield>"
@@ -376,7 +376,7 @@ resource_ids.each do |resource_id|
           #{tags6xx_subjects.join(' ')}
           #{tags6xx_agents.join(' ')}
           #{tag856}
-          #{tag982}
+          #{tag982 ||= ''}
         </record>"
       )
       file << record
