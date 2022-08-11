@@ -29,9 +29,6 @@ resource_ids.each do |resource_id|
   # set up variables for each data point needed in the MARCxml
   # data coming from the collection-level
   ao_tree['uris'].each do |ao_ref|
-    # level = ao_ref['level']
-    # depth = ao_ref['depth']
-    # ead_id = ao_ref['ead_id']
     ao_uris = []
     # exclude collection level
     ao_uris << ao_ref['ref'] unless ao_ref['level'] == 'collection'
@@ -40,7 +37,6 @@ resource_ids.each do |resource_id|
       id = uri.gsub!(%r{(.*/)+}, '')
       # get ao
       get_ao = get_single_archival_object_by_id(repo, id, resolve = %w[subjects linked_agents top_container])
-      # puts get_ao
       ref_id = get_ao['ref_id']
       title = get_ao['title']
       date_type = get_ao['dates'][0]['date_type']
@@ -67,7 +63,6 @@ resource_ids.each do |resource_id|
       # process the notes requested
       notes = get_ao['notes']
       restrictions_hash = notes.select { |hash| hash['type'] == 'accessrestrict' }
-      # restriction_type = restrictions_hash.map { |restriction| restriction['rights_restriction']['local_access_restriction_type'][0]}
       restriction_note = restrictions_hash.map do |restriction|
         remove_tags(restriction['subnotes'][0]['content'].gsub(/[\r\n]+/, ' '))
       end
@@ -106,7 +101,7 @@ resource_ids.each do |resource_id|
         }
       end
       # process locations
-      instances = get_ao['instances']
+      instances = get_ao['instances'].select {|instance| instance['instance_type'] == "mixed_materials"}
       top_containers = instances.map do |instance|
         if instance['sub_container'].nil? == false
           instance['sub_container']['top_container']['_resolved']
@@ -121,9 +116,13 @@ resource_ids.each do |resource_id|
 
       subjects = get_ao['subjects']
       subjects_filtered = subjects.select do |subject|
-        subject['_resolved']['terms'][0]['term_type'] == 'topical' || 'geographic' || 'genre_form'
+        subject['_resolved']['terms'][0]['term_type'] == 'cultural_context' ||
+        subject['_resolved']['terms'][0]['term_type'] == 'topical' ||
+        subject['_resolved']['terms'][0]['term_type'] == 'geographic' ||
+        subject['_resolved']['terms'][0]['term_type'] == 'genre_form'
       end
       subjects_processed = subjects_filtered.map do |subject|
+        #index 0 here is wrong
         {
           'type' => subject['_resolved']['terms'][0]['term_type'],
           'source' => subject['_resolved']['source'],
@@ -132,7 +131,6 @@ resource_ids.each do |resource_id|
           'terms' => subject['_resolved']['terms']
         }
       end
-
       # adds controlfields
       leader = '<leader>00000namaa22000002u 4500</leader>'
       tag001 = "<controlfield tag='001'>#{ref_id}</controlfield>"
@@ -284,9 +282,12 @@ resource_ids.each do |resource_id|
       # addresses github 181 'Subjects	655'
       tags6xx_subjects =
         # process tag number
+        # puts "#{subjects_processed}: #{subjects_processed.count}"
         subjects_processed.map do |subject|
           tag =
             case subject['type']
+            when 'cultural_context'
+              647
             when 'topical'
               655
             when 'geographic'
@@ -296,29 +297,26 @@ resource_ids.each do |resource_id|
             when 'genre_form'
               651
             end
-          # process source code
           source_code = subject['source'] == 'lcsh' ? 0 : 7
-          # get main term
           main_term = subject['main_term']
-          # process subfields
-          subfields =
-            if subject['terms'].count > 1
-              subject['terms'][1..].map do |term|
-                subfield_code =
-                  case term['term_type']
-                  when 'temporal', 'style_period'
-                    'y'
-                  when 'genre_form'
-                    'v'
-                  when 'geographic'
-                    'z'
-                  else
-                    'x'
-                  end
-                "<subfield code = '#{subfield_code}'>#{term['term']}</subfield>"
+          subterms = subject['terms'][1..].map do |subterm|
+            subfield_code =
+              case subterm['term_type']
+              when 'temporal', 'style_period', 'cultural_context'
+                'y'
+              when 'genre_form'
+                'v'
+              when 'geographic'
+                'z'
+              else
+                'x'
               end
-            # account for legacy terms imported from finding aids that have no subdivisions
-            elsif subject['full_first_term'] =~ /--/
+            # "#{subterm['term_type']}: #{subfield_code}: #{subterm['term'].strip}"
+            "<subfield code = '#{subfield_code}'>#{subterm['term'].strip}</subfield>"
+          end
+          #if there are no subfields but the main term has double dashes, compute supfields
+          computed_subterms =
+            if subject['terms'].count == 1 && subject['full_first_term'] =~ /--/
               tokens = subject['full_first_term'].split('--')
               tokens.each(&:strip!)
               tokens[1..].map do |token|
@@ -326,14 +324,18 @@ resource_ids.each do |resource_id|
                 "<subfield code = '#{subfield_code}'>#{token}</subfield>"
               end
             end
-          # add subfield 2 if source code is 7
+          #add subfield 2 if source code is 7
           subfield_2 = source_code == 7 ? "<subfield code = '2'>#{subject['source']}</subfield>" : nil
-          # #put it together
+
+          #puts "#{main_term}: #{tag}: #{source_code}: #{subterms.join(', ')}"
+
+          #put the field together
           "<datafield ind1=' ' ind2='#{source_code}' tag='#{tag}'>
             <subfield code = 'a'>#{main_term}</subfield>
-            #{subfields.join(' ') || ''}
-            #{subfield_2 ||= ''}
-          </datafield>"
+              #{subterms.join(' ')}
+              #{computed_subterms.join(' ') unless computed_subterms.nil?}
+              #{subfield_2}
+            </datafield>"
         end
 
       # addresses github 181 'URL ?? + RefID (ex: https://findingaids.princeton.edu/catalog/C0140_c25673-42817)	856'
