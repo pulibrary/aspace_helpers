@@ -92,6 +92,7 @@ resource_ids.each do |resource_id|
           'relator' => agent['relator'],
           'type' => agent['_resolved']['jsonmodel_type'],
           'source' => agent['_resolved']['names'][0]['source'],
+          'family_name' => agent['_resolved']['names'][0]['family_name'],
           'primary_name' => agent['_resolved']['names'][0]['primary_name'],
           'rest_of_name' => agent['_resolved']['names'][0]['rest_of_name'],
           'name_dates' => agent['_resolved']['names'][0]['use_dates'],
@@ -244,13 +245,18 @@ resource_ids.each do |resource_id|
             elsif agent['type'] == 'agent_corporate_entity'
               2
             end
+
           source_code = agent['source'] == 'lcnaf' ? 0 : 7
+
           name =
-            if agent['rest_of_name'].nil?
+            if agent['family_name']
+              agent['family_name']
+            elsif agent['rest_of_name'].nil?
               agent['primary_name']
             else
               "#{agent['primary_name']}, #{agent['rest_of_name']}"
             end
+
           dates = "<subfield code='d'>#{agent['name_dates']}</subfield>"
           subfield_e = agent['relator'].nil? ? nil : "<subfield code='e'>#{agent['relator']}</subfield>"
           subfield_2 = source_code == 7 ? "<subfield code = '2'>#{agent['source']}</subfield>" : nil
@@ -372,7 +378,6 @@ resource_ids.each do |resource_id|
           #{tag982}
         </record>"
       )
-      puts record
       file << record
 
     rescue Exception => e
