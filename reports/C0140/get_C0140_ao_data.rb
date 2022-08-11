@@ -84,7 +84,7 @@ resource_ids.each do |resource_id|
       end
 
       extents = get_ao['extents']
-      # process agents
+      # process linked agents
       agents = get_ao['linked_agents']
       agents_processed = agents.map do |agent|
         {
@@ -103,7 +103,7 @@ resource_ids.each do |resource_id|
       end
       # process locations
       instances = get_ao['instances'].select {|instance| instance['instance_type'] == "mixed_materials"}
-      #process containers
+      #process containers first
       top_containers = instances.map do |instance|
         if instance['sub_container'].nil? == false
           instance['sub_container']['top_container']['_resolved']
@@ -116,6 +116,7 @@ resource_ids.each do |resource_id|
       end
       top_container_location_code = top_container_location_record[0]['classification']
 
+      #process linked subjects
       subjects = get_ao['subjects']
       subjects_filtered = subjects.select do |subject|
         subject['_resolved']['terms'][0]['term_type'] == 'cultural_context' ||
