@@ -173,7 +173,7 @@ resource_ids.each do |resource_id|
           Nokogiri::XML.fragment("<datafield ind1=' ' ind2=' ' tag='300'>
             <subfield code = 'a'>#{extents[0]['number']}</subfield>
             <subfield code = 'f'>#{extents[0]['extent_type']} (</subfield>
-            #{repeatable_subfields}
+            #{repeatable_subfields.join(' ')}
           </datafield>")
         else
           Nokogiri::XML.fragment("<datafield ind1=' ' ind2=' ' tag='300'>
