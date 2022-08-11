@@ -225,9 +225,9 @@ resource_ids.each do |resource_id|
         # process tag number
         agents_processed.map do |agent|
           tag =
-            if agent['role'] == 'creator' && (agent['type'] == 'agent_person' || agent['relator'] == 'agent_family')
+            if agent['role'] == 'creator' && (agent['type'] == 'agent_person' || agent['type'] == 'agent_family')
               700
-            elsif agent['role'] == 'subject' && (agent['type'] == 'agent_person' || agent['relator'] == 'agent_family')
+            elsif agent['role'] == 'subject' && (agent['type'] == 'agent_person' || agent['type'] == 'agent_family')
               600
             elsif (agent['role'] == 'creator' || agent['role'] == 'source') && agent['type'] == 'agent_corporate_entity'
               710
