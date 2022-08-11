@@ -122,7 +122,6 @@ resource_ids.each do |resource_id|
         subject['_resolved']['terms'][0]['term_type'] == 'genre_form'
       end
       subjects_processed = subjects_filtered.map do |subject|
-        #index 0 here is wrong
         {
           'type' => subject['_resolved']['terms'][0]['term_type'],
           'source' => subject['_resolved']['source'],
@@ -373,6 +372,7 @@ resource_ids.each do |resource_id|
           #{tag982}
         </record>"
       )
+      puts record
       file << record
 
     rescue Exception => e
