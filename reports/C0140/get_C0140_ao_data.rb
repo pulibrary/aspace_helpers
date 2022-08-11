@@ -103,6 +103,7 @@ resource_ids.each do |resource_id|
       end
       # process locations
       instances = get_ao['instances'].select {|instance| instance['instance_type'] == "mixed_materials"}
+      #process containers
       top_containers = instances.map do |instance|
         if instance['sub_container'].nil? == false
           instance['sub_container']['top_container']['_resolved']
@@ -256,7 +257,6 @@ resource_ids.each do |resource_id|
             else
               "#{agent['primary_name']}, #{agent['rest_of_name']}"
             end
-
           dates = "<subfield code='d'>#{agent['name_dates']}</subfield>"
           subfield_e = agent['relator'].nil? ? nil : "<subfield code='e'>#{agent['relator']}</subfield>"
           subfield_2 = source_code == 7 ? "<subfield code = '2'>#{agent['source']}</subfield>" : nil
