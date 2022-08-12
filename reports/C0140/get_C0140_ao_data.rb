@@ -111,10 +111,12 @@ resource_ids.each do |resource_id|
           instance['top_container']['_resolved']
         end
       end
+
       top_container_location_record = top_containers.map do |top_container|
         @client.get(top_container['container_locations'][0]['ref']).parsed
       end
-      top_container_location_code = top_container_location_record[0]['classification']
+
+      top_container_location_code = top_container_location_record.empty? ? nil : top_container_location_record[0]['classification']
 
       #process linked subjects
       subjects = get_ao['subjects']
@@ -332,8 +334,6 @@ resource_ids.each do |resource_id|
             end
           #add subfield 2 if source code is 7
           subfield_2 = source_code == 7 ? "<subfield code = '2'>#{subject['source']}</subfield>" : nil
-
-          #puts "#{main_term}: #{tag}: #{source_code}: #{subterms.join(', ')}"
 
           #put the field together
           "<datafield ind1=' ' ind2='#{source_code}' tag='#{tag}'>
