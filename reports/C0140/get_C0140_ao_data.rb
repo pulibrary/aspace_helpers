@@ -9,7 +9,7 @@ def remove_tags(text)
   text.to_s.gsub(%r{</?[\D\S]+?>}, '')
 end
 
-aspace_staging_login
+aspace_login
 
 start_time = "Process started: #{Time.now}"
 puts start_time
@@ -290,7 +290,6 @@ resource_ids.each do |resource_id|
       # addresses github 181 'Subjects	655'
       tags6xx_subjects =
         # process tag number
-        # puts "#{subjects_processed}: #{subjects_processed.count}"
         subjects_processed.map do |subject|
           tag =
             case subject['type']
