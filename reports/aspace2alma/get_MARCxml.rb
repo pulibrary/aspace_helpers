@@ -22,8 +22,13 @@ file =  File.open(filename, "w")
 file << '<collection xmlns="http://www.loc.gov/MARC21/slim" xmlns:marc="http://www.loc.gov/MARC21/slim" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.loc.gov/MARC21/slim http://www.loc.gov/standards/marcxml/schema/MARC21slim.xsd">'
 
 resources.each do |resource|
-  uri = resource.gsub!("resources", "resources/marc21") + ".xml"
-  marc_record = @client.get(uri)
+  # puts resource
+  # puts "retrieving from path: #{resource}/top_containers"
+  containers = @client.get("#{resource}/top_containers", { timeout: 1000 }).parsed
+  # json_record = @client.get("#{resource}/top_containers").parsed
+  #   puts json_record
+  marc_uri = resource.gsub!("resources", "resources/marc21") + ".xml"
+  marc_record = @client.get(marc_uri)
   doc = Nokogiri::XML(marc_record.body)
 
   #recursively remove truly empty elements (blank text and attributes)
