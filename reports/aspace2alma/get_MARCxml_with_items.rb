@@ -17,7 +17,7 @@ aspace_login
 puts Time.now
 filename = "MARC_out.xml"
 
-#front-load resource records
+#front-load resource uri's to iterate over
 resources = get_all_resource_uris_for_institution
 
 file =  File.open(filename, "w")
@@ -166,7 +166,7 @@ resources.each do |resource|
   #get container records for the resource
   #tried and true, this is the fastest way
   #this returns a response object; or it may be nil
-  containers_unfiltered = @client.get("repositories/#{repo}/top_containers/search", q: resource)
+  containers_unfiltered = @client.get("repositories/#{repo}/top_containers/search", q: resource, { timeout: 1000 })
   containers =
     containers_unfiltered.parsed['response']['docs'].select do |container|
       aspace_ctime = Date.parse(container['create_time'])
