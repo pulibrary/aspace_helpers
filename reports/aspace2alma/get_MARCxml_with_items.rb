@@ -17,6 +17,7 @@ aspace_login
 puts Time.now
 filename = "MARC_out.xml"
 
+#front-load resource records
 resources = get_all_resource_uris_for_institution
 
 file =  File.open(filename, "w")
@@ -25,7 +26,7 @@ file << '<collection xmlns="http://www.loc.gov/MARC21/slim" xmlns:marc="http://w
 resources.each do |resource|
   # puts resource
   # puts "retrieving from path: #{resource}/top_containers"
-  container_refs = @client.get("#{resource}/top_containers", { timeout: 1000 }).parsed
+  #container_refs = @client.get("#{resource}/top_containers", { timeout: 1000 }).parsed
   marc_uri = resource.gsub!("resources", "resources/marc21") + ".xml"
   marc_record = @client.get(marc_uri)
   doc = Nokogiri::XML(marc_record.body)
@@ -134,9 +135,9 @@ resources.each do |resource|
     end
     #add punctuation to the last subfield except $2
     if tag6xx.children[-1].attribute('code') == '2'
-      tag6xx.children[-2].content << '.' unless ['?', '-', '.'].include?(tag6xx.children[-2].content[-1])
+      tag6xx.children[-2].content << '.' unless ['?', '-', '.', ','].include?(tag6xx.children[-2].content[-1])
     else
-      tag6xx.children[-1].content << '.' unless ['?', '-', '.'].include?(tag6xx.children[-1].content[-1])
+      tag6xx.children[-1].content << '.' unless ['?', '-', '.', ','].include?(tag6xx.children[-1].content[-1])
     end
   end
 
@@ -160,31 +161,33 @@ resources.each do |resource|
     end
   end
 
-  container_refs.map do |container|
-    container_record = @client.get(container['ref']).parsed
-    aspace_ctime = Date.parse(container_record['create_time'])
-    #aspace timestamps are Z, i.e. zero offset from UTC
-    # mtime = "#{aspace_mtime.year}-#{aspace_mtime.month}-#{aspace_mtime.day}"
-    ctime = "#{aspace_ctime.year}-#{aspace_ctime.month}-#{aspace_ctime.day}"
-    #to make them comparable with current time, make sure we're comparing to utc
-    yesterday_raw = Time.now.utc.to_date - 1
-    yesterday = "#{yesterday_raw.year}-#{yesterday_raw.month}-#{yesterday_raw.day}"
-    #only get the container record if the record is new
-    #new is defined as has never been updated and was created within the last 24 hrs.
-    puts "calculated: #{Date.parse(ctime)} larger than #{Date.parse(yesterday)} is #{Date.parse(ctime) > Date.parse(yesterday)}"
-
-    if container_record['lock_version'] == 0 && (Date.parse(ctime) > Date.parse(yesterday))
-      top_container_location_record = @client.get(container_record['container_locations'][0]['ref']).parsed
-      top_container_location_code = top_container_location_record.empty? ? nil : top_container_location_record[0]['classification']
+  #get the repo so we don't check ALL container records every time
+  repo = resource.gsub(/(^\/repositories\/)(\d{1,2})(\/resources.*$)/, '\2')
+  #get container records for the resource
+  #tried and true, this is the fastest way
+  #this returns a response object; or it may be nil
+  containers_unfiltered = @client.get("repositories/#{repo}/top_containers/search", q: resource)
+  containers =
+    containers_unfiltered.parsed['response']['docs'].select do |container|
+      aspace_ctime = Date.parse(container['create_time'])
+      ctime = "#{aspace_ctime.year}-#{aspace_ctime.month}-#{aspace_ctime.day}"
+      yesterday_raw = Time.now.utc.to_date - 1
+      yesterday = "#{yesterday_raw.year}-#{yesterday_raw.month}-#{yesterday_raw.day}"
+      created_since_yesterday = Date.parse(ctime) > Date.parse(yesterday)
+      at_recap = container['long_display_string'] =~ /\[rcp\p{L}+?\]/
+      never_modified = container['json']['lock_version'] == 0
+      top_container_location_code = container['location_display_string_u_sstr'].nil? ? '' : container['location_display_string_u_sstr'][0].gsub(/(^.+\[)(.+)(\].*)/, '\2')
+      if
+      created_since_yesterday == true && at_recap == true && never_modified == true
       doc.xpath('//marc:datafield').last.next=
         ("<datafield ind1=' ' ind2=' ' tag='949'>
-            <subfield code='a'>#{container_record['barcode']}</subfield>
-            <subfield code='b'>#{container_record['type']} #{container_record['indicator']}</subfield>
+            <subfield code='a'>#{container['barcode_u_icusort']}</subfield>
+            <subfield code='b'>#{container['type_u_ssort']} #{container['indicator_u_icusort']}</subfield>
             <subfield code='c'>#{top_container_location_code}</subfield>
             <subfield code='d'>#{tag099_a.content}</subfield>
           </datafield>")
-    end
-  end unless container_refs.empty?
+        end
+      end unless containers_unfiltered.nil?
 
   #addresses github #205
   tag351.remove unless tag351.nil?
