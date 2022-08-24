@@ -221,7 +221,7 @@ resources.each do |resource|
             <subfield code='a'>#{container['barcode_u_icusort']}</subfield>
             <subfield code='b'>#{container['type_u_ssort']} #{container['indicator_u_icusort']}</subfield>
             <subfield code='c'>#{top_container_location_code}</subfield>
-            <subfield code='d'>#{tag099_a.content}</subfield>
+            <subfield code='d'>(PULFA)#{tag099_a.content}</subfield>
           </datafield>")
         end
       end unless containers_unfiltered.nil?
