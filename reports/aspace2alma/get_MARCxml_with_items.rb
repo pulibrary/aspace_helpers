@@ -3,6 +3,7 @@ require 'active_support/all'
 require 'nokogiri'
 require 'net/sftp'
 require 'date'
+require 'json'
 require_relative '../../helper_methods.rb'
 
 #configure sendoff to alma
@@ -12,7 +13,7 @@ def alma_sftp (filename)
   end
 end
 
-aspace_login
+aspace_staging_login
 
 puts Time.now
 filename = "MARC_out.xml"
@@ -166,19 +167,31 @@ resources.each do |resource|
   #get container records for the resource
   #tried and true, this is the fastest way
   #this returns a response object; or it may be nil
-  containers_unfiltered = @client.get("repositories/#{repo}/top_containers/search", q: resource, { timeout: 1000 })
+  containers_unfiltered = @client.get("repositories/#{repo}/top_containers/search", q: resource, timeout: 10000 )
   containers =
     containers_unfiltered.parsed['response']['docs'].select do |container|
       aspace_ctime = Date.parse(container['create_time'])
       ctime = "#{aspace_ctime.year}-#{aspace_ctime.month}-#{aspace_ctime.day}"
       yesterday_raw = Time.now.utc.to_date - 1
       yesterday = "#{yesterday_raw.year}-#{yesterday_raw.month}-#{yesterday_raw.day}"
-      created_since_yesterday = Date.parse(ctime) > Date.parse(yesterday)
-      at_recap = container['long_display_string'] =~ /\[rcp\p{L}+?\]/
-      never_modified = container['json']['lock_version'] == 0
+      created_since_yesterday = Date.parse(ctime) >= Date.parse(yesterday)
+      never_modified = JSON.parse(container['json'])['lock_version'] == 0
       top_container_location_code = container['location_display_string_u_sstr'].nil? ? '' : container['location_display_string_u_sstr'][0].gsub(/(^.+\[)(.+)(\].*)/, '\2')
+      at_recap = /^rcp\p{L}+/.match?(top_container_location_code)
+      # puts ""
+      # puts "#{tag099_a.content} #{container['type_u_ssort']} #{container['indicator_u_icusort']}"
+      # puts "times modified: #{JSON.parse(container['json'])['lock_version']}, so never modified is #{never_modified}"
+      # puts "location is: #{top_container_location_code}, so at recap is #{at_recap}"
+      # puts "created: #{ctime}; so created since #{yesterday} is #{created_since_yesterday}"
+
       if
       created_since_yesterday == true && at_recap == true && never_modified == true
+      puts "<datafield ind1=' ' ind2=' ' tag='949'>
+          <subfield code='a'>#{container['barcode_u_icusort']}</subfield>
+          <subfield code='b'>#{container['type_u_ssort']} #{container['indicator_u_icusort']}</subfield>
+          <subfield code='c'>#{top_container_location_code}</subfield>
+          <subfield code='d'>#{tag099_a.content}</subfield>
+        </datafield>"
       doc.xpath('//marc:datafield').last.next=
         ("<datafield ind1=' ' ind2=' ' tag='949'>
             <subfield code='a'>#{container['barcode_u_icusort']}</subfield>
