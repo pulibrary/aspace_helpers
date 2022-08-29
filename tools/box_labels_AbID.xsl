@@ -36,14 +36,14 @@
 		</fo:page-sequence>
 	</xsl:template>
 	<xsl:template
-		match="ead:container[@type = 'Box' or @type = 'box' or @type = 'volume' or @type = 'Volume']">
+		match="ead:container[@type and @encodinganalog]">
 		<xsl:for-each
-			select=".[not(. = preceding::ead:container[@type = 'Box' or @type = 'box' or @type = 'volume' or @type = 'Volume'])]">
+			select=".[not(. = preceding::ead:container[@type and @encodinganalog])]">
 			<xsl:apply-templates mode="single" select="."/>
 		</xsl:for-each>
 	</xsl:template>
 	<xsl:template mode="single"
-		match="ead:container[@type = 'Box' or @type = 'box' or @type = 'volume' or @type = 'Volume']">
+		match="ead:container[@type and @encodinganalog]">
 		<fo:table-row height="3.3in" padding-bottom=".2in" padding-top=".2in" margin-left="3mm"
 			margin-right="3mm">
 			<fo:table-cell>
