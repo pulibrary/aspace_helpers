@@ -21,7 +21,7 @@ file << '<collection xmlns="http://www.loc.gov/MARC21/slim" xmlns:marc="http://w
 # set these manually before running
 resource_ids = [3950]
 repo = 5
-default_restriction = 'Collection is open for research use.'
+default_restriction = 'Collection is open for research use.' 
 
 # get components
 resource_ids.each do |resource_id|
@@ -136,7 +136,7 @@ resource_ids.each do |resource_id|
         }
       end
       # add controlfields
-      leader = '<leader>00000namaa22000002u 4500</leader>'
+      leader = '<leader>00000npmaa22000002u 4500</leader>'
       tag001 = "<controlfield tag='001'>#{ref_id}</controlfield>"
       tag003 = "<controlfield tag='003'>PULFA</controlfield>"
       tag008 = Nokogiri::XML.fragment("<controlfield tag='008'>000000#{tag008_date_type}#{date1}#{date2}xx      |           #{tag008_langcode} d</controlfield>")
