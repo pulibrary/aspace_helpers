@@ -87,7 +87,6 @@ resource_ids.each do |resource_id|
       # process linked agents
       agents = get_ao['linked_agents']
       agents_processed = agents.map do |agent|
-        puts agent
         {
           'role' => agent['role'],
           'relator' => agent['relator'],
