@@ -9,7 +9,7 @@ def remove_tags(text)
   text.to_s.gsub(%r{</?[\D\S]+?>}, '')
 end
 
-aspace_login
+aspace_staging_login
 
 start_time = "Process started: #{Time.now}"
 puts start_time
@@ -87,6 +87,7 @@ resource_ids.each do |resource_id|
       # process linked agents
       agents = get_ao['linked_agents']
       agents_processed = agents.map do |agent|
+        puts agent
         {
           'role' => agent['role'],
           'relator' => agent['relator'],
@@ -95,7 +96,7 @@ resource_ids.each do |resource_id|
           'family_name' => agent['_resolved']['names'][0]['family_name'],
           'primary_name' => agent['_resolved']['names'][0]['primary_name'],
           'rest_of_name' => agent['_resolved']['names'][0]['rest_of_name'],
-          'name_dates' => agent['_resolved']['names'][0]['use_dates'],
+          'name_dates' => agent['_resolved']['names'][0]['use_dates'][0]['structured_date_range']['begin_date_expression'],
           'sort_name' => agent['_resolved']['names'][0]['sort_name'],
           'identifier' => agent['_resolved']['names'][0]['authority_id'],
           'name_order' => agent['_resolved']['names'][0]['name_order']
@@ -260,7 +261,7 @@ resource_ids.each do |resource_id|
             else
               "#{agent['primary_name']}, #{agent['rest_of_name']}"
             end
-          dates = "<subfield code='d'>#{agent['name_dates']}</subfield>"
+          dates = "<subfield code='d'>#{agent['name_dates']}</subfield>" unless agent['name_dates'].empty?
           subfield_e = agent['relator'].nil? ? nil : "<subfield code='e'>#{agent['relator']}</subfield>"
           subfield_2 = source_code == 7 ? "<subfield code = '2'>#{agent['source']}</subfield>" : nil
           add_punctuation = agent['name_dates'].empty? ? '.' : ','
@@ -283,6 +284,7 @@ resource_ids.each do |resource_id|
             #{subfield_2 ||= ''}
             #{subfield_0 ||= ''}
           </datafield>"
+          puts agent
         end
 
       # addresses github 181 'Subjects	650'
