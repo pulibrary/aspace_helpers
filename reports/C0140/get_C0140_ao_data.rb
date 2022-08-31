@@ -9,7 +9,7 @@ def remove_tags(text)
   text.to_s.gsub(%r{</?[\D\S]+?>}, '')
 end
 
-aspace_staging_login
+aspace_login
 
 start_time = "Process started: #{Time.now}"
 puts start_time
@@ -21,7 +21,7 @@ file << '<collection xmlns="http://www.loc.gov/MARC21/slim" xmlns:marc="http://w
 # set these manually before running
 resource_ids = [3950]
 repo = 5
-default_restriction = 'Collection is open for research use.' 
+default_restriction = 'Collection is open for research use.'
 
 # get components
 resource_ids.each do |resource_id|
@@ -95,7 +95,7 @@ resource_ids.each do |resource_id|
           'family_name' => agent['_resolved']['names'][0]['family_name'],
           'primary_name' => agent['_resolved']['names'][0]['primary_name'],
           'rest_of_name' => agent['_resolved']['names'][0]['rest_of_name'],
-          'name_dates' => agent['_resolved']['names'][0]['use_dates'][0]['structured_date_range']['begin_date_expression'],
+          'name_dates' => agent['_resolved']['names'][0]['use_dates'].empty? ? nil : agent['_resolved']['names'][0]['use_dates'][0]['structured_date_range']['begin_date_expression'],
           'sort_name' => agent['_resolved']['names'][0]['sort_name'],
           'identifier' => agent['_resolved']['names'][0]['authority_id'],
           'name_order' => agent['_resolved']['names'][0]['name_order']
@@ -260,17 +260,17 @@ resource_ids.each do |resource_id|
             else
               "#{agent['primary_name']}, #{agent['rest_of_name']}"
             end
-          dates = "<subfield code='d'>#{agent['name_dates']}</subfield>" unless agent['name_dates'].empty?
+          dates = "<subfield code='d'>#{agent['name_dates']}</subfield>" unless agent['name_dates'].nil?
           subfield_e = agent['relator'].nil? ? nil : "<subfield code='e'>#{agent['relator']}</subfield>"
           subfield_2 = source_code == 7 ? "<subfield code = '2'>#{agent['source']}</subfield>" : nil
-          add_punctuation = agent['name_dates'].empty? ? '.' : ','
+          add_punctuation = agent['name_dates'].nil? ? '.' : ','
           subfield_0 = agent['identifier'].nil? ? nil : "<subfield code = '0'>#{agent['identifier']}</subfield>"
           # create 1xx
           @tag1xx =
             if agent['role'] == 'creator'
               "<datafield ind1='#{name_type}' ind2='#{source_code}' tag='1#{tag.to_s[1..2]}'>
                 <subfield code = 'a'>#{name}#{add_punctuation unless name[-1] =~ /[.,)-]/}</subfield>
-                #{dates unless agent['name_dates'].empty?}
+                #{dates unless agent['name_dates'].nil?}
                 #{subfield_e ||= ''}
                 #{subfield_2 ||= ''}
                 #{subfield_0 ||= ''}
@@ -278,12 +278,11 @@ resource_ids.each do |resource_id|
             end
           "<datafield ind1='#{name_type}' ind2='#{source_code}' tag='#{tag}'>
             <subfield code = 'a'>#{name}#{add_punctuation unless name[-1] =~ /[.,)-]/}</subfield>
-            #{dates unless agent['name_dates'].empty?}
+            #{dates unless agent['name_dates'].nil?}
             #{subfield_e ||= ''}
             #{subfield_2 ||= ''}
             #{subfield_0 ||= ''}
           </datafield>"
-          puts agent
         end
 
       # addresses github 181 'Subjects	650'
@@ -385,7 +384,7 @@ resource_ids.each do |resource_id|
       end_time = "Process interrupted at #{Time.now} with message '#{e.class}: #{e.message}''"
     end
   end
-  file.flush
+  file.flush 
 end
 file << '</collection>'
 file.close
