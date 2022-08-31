@@ -9,7 +9,7 @@ def remove_tags(text)
   text.to_s.gsub(%r{</?[\D\S]+?>}, '')
 end
 
-aspace_login
+aspace_staging_login
 
 start_time = "Process started: #{Time.now}"
 puts start_time
@@ -54,7 +54,8 @@ resource_ids.each do |resource_id|
       date2 = if get_ao.dig('dates', 0, 'end')
                 get_ao['dates'][0]['end']
               else
-                '    ' # 4 blanks
+                date1
+                # # 4 blanks
               end
       date_expression = get_ao['dates'][0]['expression']
       language = get_ao.dig('lang_materials', 0, 'language_and_script', 'language')
@@ -101,6 +102,7 @@ resource_ids.each do |resource_id|
           'name_order' => agent['_resolved']['names'][0]['name_order']
         }
       end
+
       # process locations
       instances = get_ao['instances'].select {|instance| instance['instance_type'] == "mixed_materials"}
       #process containers first
@@ -136,7 +138,7 @@ resource_ids.each do |resource_id|
         }
       end
       # add controlfields
-      leader = '<leader>00000npmaa22000002u 4500</leader>'
+      leader = '<leader>00000ntmaa22000002u 4500</leader>'
       tag001 = "<controlfield tag='001'>#{ref_id}</controlfield>"
       tag003 = "<controlfield tag='003'>PULFA</controlfield>"
       tag008 = Nokogiri::XML.fragment("<controlfield tag='008'>000000#{tag008_date_type}#{date1}#{date2}xx      |           #{tag008_langcode} d</controlfield>")
@@ -225,6 +227,7 @@ resource_ids.each do |resource_id|
       # addresses github 181 'Agent/Creator/Corpname	110'
       # addresses github 181 'Agent/Subject	6xx'
       # addresses github 181 'Agent/Subject	7xx'
+      tag1xx = []
       tags6xx_agents =
         # process tag number
         agents_processed.map do |agent|
@@ -266,9 +269,9 @@ resource_ids.each do |resource_id|
           add_punctuation = agent['name_dates'].nil? ? '.' : ','
           subfield_0 = agent['identifier'].nil? ? nil : "<subfield code = '0'>#{agent['identifier']}</subfield>"
           # create 1xx
-          @tag1xx =
+          tag1xx <<
             if agent['role'] == 'creator'
-              "<datafield ind1='#{name_type}' ind2='#{source_code}' tag='1#{tag.to_s[1..2]}'>
+              "<datafield ind1='#{name_type}' ind2='#{tag.to_s[1] == '1' ? ' ' : source_code}' tag='1#{tag.to_s[1..2]}'>
                 <subfield code = 'a'>#{name}#{add_punctuation unless name[-1] =~ /[.,)-]/}</subfield>
                 #{dates unless agent['name_dates'].nil?}
                 #{subfield_e ||= ''}
@@ -284,7 +287,7 @@ resource_ids.each do |resource_id|
             #{subfield_0 ||= ''}
           </datafield>"
         end
-
+      
       # addresses github 181 'Subjects	650'
       # addresses github 181 'Subjects	651'
       # addresses github 181 'Subjects	655'
@@ -363,7 +366,7 @@ resource_ids.each do |resource_id|
           #{tag041}
           #{tag046 ||= ''}
           #{tag099}
-          #{@tag1xx ||= ''}
+          #{tag1xx[0] ||= ''}
           #{tag245}
           #{tag300}
           #{tag506}
@@ -384,7 +387,7 @@ resource_ids.each do |resource_id|
       end_time = "Process interrupted at #{Time.now} with message '#{e.class}: #{e.message}''"
     end
   end
-  file.flush 
+  file.flush
 end
 file << '</collection>'
 file.close
