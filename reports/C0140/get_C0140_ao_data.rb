@@ -9,13 +9,13 @@ def remove_tags(text)
   text.to_s.gsub(%r{</?[\D\S]+?>}, '')
 end
 
-aspace_staging_login
+aspace_login
 
 start_time = "Process started: #{Time.now}"
 puts start_time
 
 filename = 'C0140_out.xml'
-file =  File.open(filename, 'w')
+file =  File.open(filename, 'w:UTF-8')
 file << '<collection xmlns="http://www.loc.gov/MARC21/slim" xmlns:marc="http://www.loc.gov/MARC21/slim" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.loc.gov/MARC21/slim http://www.loc.gov/standards/marcxml/schema/MARC21slim.xsd">'
 
 # set these manually before running
@@ -47,17 +47,16 @@ resource_ids.each do |resource_id|
           'e'
         end
       date1 = if get_ao.dig('dates', 0, 'begin')
-                get_ao['dates'][0]['begin']
+                get_ao['dates'][0]['begin'].gsub(/(^)(\d{4})(.*$)/, '\2')
               else
                 '    ' # 4 blanks
               end
       date2 = if get_ao.dig('dates', 0, 'end')
-                get_ao['dates'][0]['end']
+                get_ao['dates'][0]['end'].gsub(/(^)(\d{4})(.*$)/, '\2')
               else
                 date1
                 # # 4 blanks
               end
-      date_expression = get_ao['dates'][0]['expression']
       language = get_ao.dig('lang_materials', 0, 'language_and_script', 'language')
       tag008_langcode =
         language || 'eng'
@@ -287,7 +286,7 @@ resource_ids.each do |resource_id|
             #{subfield_0 ||= ''}
           </datafield>"
         end
-      
+
       # addresses github 181 'Subjects	650'
       # addresses github 181 'Subjects	651'
       # addresses github 181 'Subjects	655'
@@ -356,7 +355,7 @@ resource_ids.each do |resource_id|
       tag982 = "<datafield ind1=' ' ind2=' ' tag='982'><subfield code='c'>#{top_container_location_code}</subfield></datafield>"
 
       # assemble the record
-      record = Nokogiri::XML.fragment(
+      record =
         "<record>
           #{leader}
           #{tag001}
@@ -379,8 +378,8 @@ resource_ids.each do |resource_id|
           #{tags6xx_agents.join(' ')}
           #{tag856}
           #{tag982 ||= ''}
-        </record>"
-      )
+        </record>" 
+
       file << record
 
     rescue Exception => e
