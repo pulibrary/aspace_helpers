@@ -163,8 +163,16 @@ resource_ids.each do |resource_id|
         <subfield code = 'a'>#{ref_id}</subfield>
         </datafield>"
       # addresses github 181 'Title	245'
+      subfield_f =
+        if date1 == date2 && date1 != '    '
+          "<subfield code = 'f'>#{date1}</subfield>"
+        elsif date2 && date1 != '    '
+          "<subfield code = 'f'>#{date1}-#{date2}</subfield>"
+        else nil
+        end
       tag245 = "<datafield ind1=' ' ind2=' ' tag='245'>
         <subfield code = 'a'>#{title}</subfield>
+        #{subfield_f ||= ''}
         </datafield>"
       # addresses github 181 Extents	300
       # somewhat unelegant conditional but works without having to refactor the Nokogiri doc
@@ -263,14 +271,21 @@ resource_ids.each do |resource_id|
               "#{agent['primary_name']}, #{agent['rest_of_name']}"
             end
           dates = "<subfield code='d'>#{agent['name_dates']}</subfield>" unless agent['name_dates'].nil?
-          subfield_e = agent['relator'].nil? ? nil : "<subfield code='e'>#{agent['relator']}</subfield>"
+          subfield_e =
+            if
+              agent['relator'].nil?
+              nil
+            elsif agent['relator'].length == 3
+              "<subfield code='4'>#{agent['relator']}</subfield>"
+            else "<subfield code='e'>#{agent['relator']}</subfield>"
+            end
           subfield_2 = source_code == 7 ? "<subfield code = '2'>#{agent['source']}</subfield>" : nil
           add_punctuation = agent['name_dates'].nil? ? '.' : ','
           subfield_0 = agent['identifier'].nil? ? nil : "<subfield code = '0'>#{agent['identifier']}</subfield>"
           # create 1xx
           tag1xx <<
             if agent['role'] == 'creator'
-              "<datafield ind1='#{name_type}' ind2='#{tag.to_s[1] == '1' ? ' ' : source_code}' tag='1#{tag.to_s[1..2]}'>
+              "<datafield ind1='#{name_type}' ind2='#{source_code}' tag='1#{tag.to_s[1..2]}'>
                 <subfield code = 'a'>#{name}#{add_punctuation unless name[-1] =~ /[.,)-]/}</subfield>
                 #{dates unless agent['name_dates'].nil?}
                 #{subfield_e ||= ''}
@@ -278,7 +293,7 @@ resource_ids.each do |resource_id|
                 #{subfield_0 ||= ''}
               </datafield>"
             end
-          "<datafield ind1='#{name_type}' ind2='#{source_code}' tag='#{tag}'>
+          "<datafield ind1='#{name_type}' ind2='#{tag.to_s[0]=='7' ? ' ' : source_code}' tag='#{tag}'>
             <subfield code = 'a'>#{name}#{add_punctuation unless name[-1] =~ /[.,)-]/}</subfield>
             #{dates unless agent['name_dates'].nil?}
             #{subfield_e ||= ''}
@@ -298,15 +313,19 @@ resource_ids.each do |resource_id|
             when 'cultural_context'
               647
             when 'topical'
-              655
-            when 'geographic'
               650
+            when 'geographic'
+              651
             when 'temporal'
               650
             when 'genre_form'
-              651
+              655
             end
-          source_code = subject['source'] == 'lcsh' ? 0 : 7
+          source_code =
+            if subject['source'] == 'lcsh' || subject['source'] == 'Library of Congress Subject Headings'
+              0
+            else 7
+            end
           main_term = subject['main_term']
           subterms = subject['terms'][1..].map do |subterm|
             subfield_code =
