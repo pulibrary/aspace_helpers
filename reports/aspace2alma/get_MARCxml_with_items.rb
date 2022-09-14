@@ -246,4 +246,4 @@ file << '</collection>'
 file.close
 #send to alma
 #alma_sftp(filename)
-puts Time.now
+puts Time.now 
