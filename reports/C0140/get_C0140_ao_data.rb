@@ -26,9 +26,7 @@ default_restriction = 'Collection is open for research use.'
 # get components
 resource_ids.each do |resource_id|
   ao_tree = @client.get("/repositories/#{repo}/resources/#{resource_id}/ordered_records").parsed
-  #############################
   # set up variables for each data point needed in the MARCxml
-  #############################
   # data coming from the collection-level
   ao_tree['uris'].each do |ao_ref|
     ao_uris = []
@@ -63,7 +61,6 @@ resource_ids.each do |resource_id|
       tag008_langcode =
         language || 'eng'
       # process the notes requested
-      # replace hard linebreaks with spaces; they throw off the import
       notes = get_ao['notes']
       restrictions_hash = notes.select { |hash| hash['type'] == 'accessrestrict' }
       restriction_note = restrictions_hash.map do |restriction|
@@ -139,9 +136,6 @@ resource_ids.each do |resource_id|
           'terms' => subject['_resolved']['terms']
         }
       end
-  #############################
-  #construct MARC fields
-  #############################
       # add controlfields
       leader = '<leader>00000ntmaa22000002u 4500</leader>'
       tag001 = "<controlfield tag='001'>#{ref_id}</controlfield>"
@@ -266,15 +260,7 @@ resource_ids.each do |resource_id|
               2
             end
 
-          #superseded by https://github.com/pulibrary/aspace_helpers/issues/181#issuecomment-1239846672
-          # source_code = agent['source'] == 'lcnaf' ? 0 : 7
-          source_code =
-            if agent['source'] == 'lcnaf' ||
-               (agent['source'] == 'viaf' && agent['identifier'].nil? == false)
-              0
-            else
-              4
-            end
+          source_code = agent['source'] == 'lcnaf' ? 0 : 7
 
           name =
             if agent['family_name']
@@ -293,18 +279,17 @@ resource_ids.each do |resource_id|
               "<subfield code='4'>#{agent['relator']}</subfield>"
             else "<subfield code='e'>#{agent['relator']}</subfield>"
             end
-          #superseded by https://github.com/pulibrary/aspace_helpers/issues/181#issuecomment-1239846672
-          #subfield_2 = source_code == 7 ? "<subfield code = '2'>#{agent['source']}</subfield>" : nil
+          subfield_2 = source_code == 7 ? "<subfield code = '2'>#{agent['source']}</subfield>" : nil
           add_punctuation = agent['name_dates'].nil? ? '.' : ','
           subfield_0 = agent['identifier'].nil? ? nil : "<subfield code = '0'>#{agent['identifier']}</subfield>"
           # create 1xx
-          #drop $2, superseded by https://github.com/pulibrary/aspace_helpers/issues/181#issuecomment-1239846672
           tag1xx <<
             if agent['role'] == 'creator'
-              "<datafield ind1='#{name_type}' ind2=' ' tag='1#{tag.to_s[1..2]}'>
+              "<datafield ind1='#{name_type}' ind2='#{source_code}' tag='1#{tag.to_s[1..2]}'>
                 <subfield code = 'a'>#{name}#{add_punctuation unless name[-1] =~ /[.,)-]/}</subfield>
                 #{dates unless agent['name_dates'].nil?}
                 #{subfield_e ||= ''}
+                #{subfield_2 ||= ''}
                 #{subfield_0 ||= ''}
               </datafield>"
             end
@@ -315,7 +300,7 @@ resource_ids.each do |resource_id|
             #{subfield_2 ||= ''}
             #{subfield_0 ||= ''}
           </datafield>"
-        end 
+        end
 
       # addresses github 181 'Subjects	650'
       # addresses github 181 'Subjects	651'
@@ -339,9 +324,7 @@ resource_ids.each do |resource_id|
           source_code =
             if subject['source'] == 'lcsh' || subject['source'] == 'Library of Congress Subject Headings'
               0
-            #superseded by https://github.com/pulibrary/aspace_helpers/issues/181#issuecomment-1239782520
-            #else 7
-          else 4
+            else 7
             end
           main_term = subject['main_term']
           subterms = subject['terms'][1..].map do |subterm|
@@ -370,15 +353,14 @@ resource_ids.each do |resource_id|
               end
             end
           #add subfield 2 if source code is 7
-          #superseded by https://github.com/pulibrary/aspace_helpers/issues/181#issuecomment-1239782520
-          #subfield_2 = source_code == 7 ? "<subfield code = '2'>#{subject['source']}</subfield>" : nil
+          subfield_2 = source_code == 7 ? "<subfield code = '2'>#{subject['source']}</subfield>" : nil
 
           #put the field together
-          #deleted call on superseded $2
           "<datafield ind1=' ' ind2='#{source_code}' tag='#{tag}'>
             <subfield code = 'a'>#{main_term}</subfield>
               #{subterms.join(' ')}
               #{computed_subterms.join(' ') unless computed_subterms.nil?}
+              #{subfield_2}
             </datafield>"
         end
 
@@ -390,9 +372,8 @@ resource_ids.each do |resource_id|
 
       # addesses github 181 'Physical Location (can this be pulled from the collection-level note?)	982'
       tag982 = "<datafield ind1=' ' ind2=' ' tag='982'><subfield code='c'>#{top_container_location_code}</subfield></datafield>"
-  ##############################
-  # assemble the record
-  ##############################
+
+      # assemble the record
       record =
         "<record>
           #{leader}
@@ -416,11 +397,10 @@ resource_ids.each do |resource_id|
           #{tags6xx_agents.join(' ')}
           #{tag856}
           #{tag982 ||= ''}
-        </record>"
-      #since Nokogiri fragment silently replaces ampersands with spaces,
-      #let's hacki-ly convert them to html entities
-      #with lookarounds that make sure the ampersand isn't part of an html entitiy already
-      file << record.gsub(/(?<=[\w\s])(\&)(?!\w{1,6};)/, '&amp;')
+        </record>" 
+
+      file << record
+
     rescue Exception => e
       end_time = "Process interrupted at #{Time.now} with message '#{e.class}: #{e.message}''"
     end
