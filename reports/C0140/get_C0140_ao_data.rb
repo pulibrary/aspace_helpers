@@ -5,6 +5,7 @@ require 'json'
 require 'nokogiri'
 require_relative '../../helper_methods'
 
+#removes EAD markup from the output
 def remove_tags(text)
   text.to_s.gsub(%r{</?[\D\S]+?>}, '')
 end
@@ -397,7 +398,7 @@ resource_ids.each do |resource_id|
           #{tags6xx_agents.join(' ')}
           #{tag856}
           #{tag982 ||= ''}
-        </record>" 
+        </record>"
 
       file << record
 
