@@ -5,17 +5,18 @@ require 'json'
 require 'nokogiri'
 require_relative '../../helper_methods'
 
+#removes EAD markup from the output
 def remove_tags(text)
   text.to_s.gsub(%r{</?[\D\S]+?>}, '')
 end
 
-aspace_staging_login
+aspace_login
 
 start_time = "Process started: #{Time.now}"
 puts start_time
 
 filename = 'C0140_out.xml'
-file =  File.open(filename, 'w')
+file =  File.open(filename, 'w:UTF-8')
 file << '<collection xmlns="http://www.loc.gov/MARC21/slim" xmlns:marc="http://www.loc.gov/MARC21/slim" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.loc.gov/MARC21/slim http://www.loc.gov/standards/marcxml/schema/MARC21slim.xsd">'
 
 # set these manually before running
@@ -47,16 +48,16 @@ resource_ids.each do |resource_id|
           'e'
         end
       date1 = if get_ao.dig('dates', 0, 'begin')
-                get_ao['dates'][0]['begin']
+                get_ao['dates'][0]['begin'].gsub(/(^)(\d{4})(.*$)/, '\2')
               else
                 '    ' # 4 blanks
               end
       date2 = if get_ao.dig('dates', 0, 'end')
-                get_ao['dates'][0]['end']
+                get_ao['dates'][0]['end'].gsub(/(^)(\d{4})(.*$)/, '\2')
               else
-                '    ' # 4 blanks
+                date1
+                # # 4 blanks
               end
-      date_expression = get_ao['dates'][0]['expression']
       language = get_ao.dig('lang_materials', 0, 'language_and_script', 'language')
       tag008_langcode =
         language || 'eng'
@@ -95,12 +96,13 @@ resource_ids.each do |resource_id|
           'family_name' => agent['_resolved']['names'][0]['family_name'],
           'primary_name' => agent['_resolved']['names'][0]['primary_name'],
           'rest_of_name' => agent['_resolved']['names'][0]['rest_of_name'],
-          'name_dates' => agent['_resolved']['names'][0]['use_dates'][0]['structured_date_range']['begin_date_expression'],
+          'name_dates' => agent['_resolved']['names'][0]['use_dates'].empty? ? nil : agent['_resolved']['names'][0]['use_dates'][0]['structured_date_range']['begin_date_expression'],
           'sort_name' => agent['_resolved']['names'][0]['sort_name'],
           'identifier' => agent['_resolved']['names'][0]['authority_id'],
           'name_order' => agent['_resolved']['names'][0]['name_order']
         }
       end
+
       # process locations
       instances = get_ao['instances'].select {|instance| instance['instance_type'] == "mixed_materials"}
       #process containers first
@@ -136,7 +138,7 @@ resource_ids.each do |resource_id|
         }
       end
       # add controlfields
-      leader = '<leader>00000namaa22000002u 4500</leader>'
+      leader = '<leader>00000ntmaa22000002u 4500</leader>'
       tag001 = "<controlfield tag='001'>#{ref_id}</controlfield>"
       tag003 = "<controlfield tag='003'>PULFA</controlfield>"
       tag008 = Nokogiri::XML.fragment("<controlfield tag='008'>000000#{tag008_date_type}#{date1}#{date2}xx      |           #{tag008_langcode} d</controlfield>")
@@ -162,8 +164,16 @@ resource_ids.each do |resource_id|
         <subfield code = 'a'>#{ref_id}</subfield>
         </datafield>"
       # addresses github 181 'Title	245'
+      subfield_f =
+        if date1 == date2 && date1 != '    '
+          "<subfield code = 'f'>#{date1}</subfield>"
+        elsif date2 && date1 != '    '
+          "<subfield code = 'f'>#{date1}-#{date2}</subfield>"
+        else nil
+        end
       tag245 = "<datafield ind1=' ' ind2=' ' tag='245'>
         <subfield code = 'a'>#{title}</subfield>
+        #{subfield_f ||= ''}
         </datafield>"
       # addresses github 181 Extents	300
       # somewhat unelegant conditional but works without having to refactor the Nokogiri doc
@@ -225,6 +235,7 @@ resource_ids.each do |resource_id|
       # addresses github 181 'Agent/Creator/Corpname	110'
       # addresses github 181 'Agent/Subject	6xx'
       # addresses github 181 'Agent/Subject	7xx'
+      tag1xx = []
       tags6xx_agents =
         # process tag number
         agents_processed.map do |agent|
@@ -260,30 +271,36 @@ resource_ids.each do |resource_id|
             else
               "#{agent['primary_name']}, #{agent['rest_of_name']}"
             end
-          dates = "<subfield code='d'>#{agent['name_dates']}</subfield>" unless agent['name_dates'].empty?
-          subfield_e = agent['relator'].nil? ? nil : "<subfield code='e'>#{agent['relator']}</subfield>"
+          dates = "<subfield code='d'>#{agent['name_dates']}</subfield>" unless agent['name_dates'].nil?
+          subfield_e =
+            if
+              agent['relator'].nil?
+              nil
+            elsif agent['relator'].length == 3
+              "<subfield code='4'>#{agent['relator']}</subfield>"
+            else "<subfield code='e'>#{agent['relator']}</subfield>"
+            end
           subfield_2 = source_code == 7 ? "<subfield code = '2'>#{agent['source']}</subfield>" : nil
-          add_punctuation = agent['name_dates'].empty? ? '.' : ','
+          add_punctuation = agent['name_dates'].nil? ? '.' : ','
           subfield_0 = agent['identifier'].nil? ? nil : "<subfield code = '0'>#{agent['identifier']}</subfield>"
           # create 1xx
-          @tag1xx =
+          tag1xx <<
             if agent['role'] == 'creator'
               "<datafield ind1='#{name_type}' ind2='#{source_code}' tag='1#{tag.to_s[1..2]}'>
                 <subfield code = 'a'>#{name}#{add_punctuation unless name[-1] =~ /[.,)-]/}</subfield>
-                #{dates unless agent['name_dates'].empty?}
+                #{dates unless agent['name_dates'].nil?}
                 #{subfield_e ||= ''}
                 #{subfield_2 ||= ''}
                 #{subfield_0 ||= ''}
               </datafield>"
             end
-          "<datafield ind1='#{name_type}' ind2='#{source_code}' tag='#{tag}'>
+          "<datafield ind1='#{name_type}' ind2='#{tag.to_s[0]=='7' ? ' ' : source_code}' tag='#{tag}'>
             <subfield code = 'a'>#{name}#{add_punctuation unless name[-1] =~ /[.,)-]/}</subfield>
-            #{dates unless agent['name_dates'].empty?}
+            #{dates unless agent['name_dates'].nil?}
             #{subfield_e ||= ''}
             #{subfield_2 ||= ''}
             #{subfield_0 ||= ''}
           </datafield>"
-          puts agent
         end
 
       # addresses github 181 'Subjects	650'
@@ -297,15 +314,19 @@ resource_ids.each do |resource_id|
             when 'cultural_context'
               647
             when 'topical'
-              655
-            when 'geographic'
               650
+            when 'geographic'
+              651
             when 'temporal'
               650
             when 'genre_form'
-              651
+              655
             end
-          source_code = subject['source'] == 'lcsh' ? 0 : 7
+          source_code =
+            if subject['source'] == 'lcsh' || subject['source'] == 'Library of Congress Subject Headings'
+              0
+            else 7
+            end
           main_term = subject['main_term']
           subterms = subject['terms'][1..].map do |subterm|
             subfield_code =
@@ -354,7 +375,7 @@ resource_ids.each do |resource_id|
       tag982 = "<datafield ind1=' ' ind2=' ' tag='982'><subfield code='c'>#{top_container_location_code}</subfield></datafield>"
 
       # assemble the record
-      record = Nokogiri::XML.fragment(
+      record =
         "<record>
           #{leader}
           #{tag001}
@@ -364,7 +385,7 @@ resource_ids.each do |resource_id|
           #{tag041}
           #{tag046 ||= ''}
           #{tag099}
-          #{@tag1xx ||= ''}
+          #{tag1xx[0] ||= ''}
           #{tag245}
           #{tag300}
           #{tag506}
@@ -378,7 +399,7 @@ resource_ids.each do |resource_id|
           #{tag856}
           #{tag982 ||= ''}
         </record>"
-      )
+
       file << record
 
     rescue Exception => e
