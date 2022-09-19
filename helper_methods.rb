@@ -345,7 +345,7 @@ def add_maintenance_history(record, text)
     "agent"=>"system",
     "event_date"=>"#{Time.now}",
     "descriptive_note"=>text.to_s,
-    "created_by"=>"system",
+    "created_by"=>"aspace_helpers",
     "publish"=>true,
     "jsonmodel_type"=>"agent_maintenance_history"
   }
@@ -358,7 +358,7 @@ def add_resource_revision_statement(record, text)
   rrecord['revision_statements'] << {
     "date"=>"#{Time.now}",
     "created_by"=>"system",
-    "last_modified_by"=>"system",
+    "last_modified_by"=>"aspace_helpers",
     "create_time"=>"#{Time.now}",
     "description"=>text.to_s,
     "publish"=>true,
