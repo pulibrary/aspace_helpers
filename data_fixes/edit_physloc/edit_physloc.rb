@@ -8,7 +8,7 @@ require_relative '../../helper_methods.rb'
 start_time = "Process started: #{Time.now}"
 puts start_time
 
-repos_all = (11..11).to_a
+repos_all = (3..12).to_a
 
 update_physloc = {
   "rcpxm" => "scarcpxm", # Manuscripts Remote Storage (ReCAP)
@@ -46,14 +46,14 @@ resources = get_all_records_for_repo_endpoint(repo, "resources")
       physloc_text = physloc['content'][0]
       update_physloc.each do |k,v|
         if k.match?(/^#{physloc_text}\s?$/)
-          puts "#{k} : '#{physloc_text}' : #{uri}"
+          # puts "#{k} : '#{physloc_text}' : #{uri}"
           update << true
           physloc['content'][0] = physloc_text.gsub!(k, v)
         else next
         end
       end
     end
-    puts "update after physlocs: #{update.include?(true)} : #{uri}"
+    #puts "update after physlocs: #{update.include?(true)} : #{uri}"
     if update.include?(true)
       add_resource_revision_statement(resource, "Updated physloc code")
       post = @client.post(uri, resource.to_json)
