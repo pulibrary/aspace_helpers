@@ -11,9 +11,8 @@ def aspace_login()
     password: ENV['ASPACE_PASSWORD'],
     #page_size: 50,
     throttle: 0,
-    verify_ssl: false,
+    verify_ssl: false
   })
-
   #log in
   @client = ArchivesSpace::Client.new(@config).login
 end
@@ -338,8 +337,8 @@ def add_revision_statement(uri, text)
 end
 
 #add a maintenance statement to agent records
-def add_maintenance_history(uri, text)
-  record = @client.get(uri).parsed
+def add_maintenance_history(record, text)
+  #record = @client.get(uri).parsed
   record['agent_maintenance_histories'] << {
     "maintenance_event_type"=>"updated",
     "maintenance_agent_type"=>"machine",
@@ -351,6 +350,42 @@ def add_maintenance_history(uri, text)
     "jsonmodel_type"=>"agent_maintenance_history"
   }
 
-  post = @client.post(uri, record.to_json)
-  puts post.body
+#
 end
+
+#add a revision statement to a resource record
+def add_resource_revision_statement(record, text)
+  rrecord['revision_statements'] << {
+    "date"=>"#{Time.now}",
+    "created_by"=>"system",
+    "last_modified_by"=>"system",
+    "create_time"=>"#{Time.now}",
+    "description"=>text.to_s,
+    "publish"=>true,
+    "jsonmodel_type"=>"revision_statement"
+  }
+  end
+
+
+#get resource uri's for specific repositories
+#add repositories in as an array of ids
+def get_all_resource_uris_for_repos(repos = [])
+  #run through all repositories (1 and 2 are reserved for admin use)
+  resources_endpoints = []
+  repos.each do |repo|
+    resources_endpoints << 'repositories/'+repo.to_s+'/resources'
+    end
+  @uris = []
+  resources_endpoints.each do |endpoint|
+    ids_by_endpoint = []
+    ids_by_endpoint << @client.get(endpoint, {
+      query: {
+       all_ids: true
+      }}).parsed
+    ids_by_endpoint = ids_by_endpoint.flatten!
+    ids_by_endpoint.each do |id|
+      @uris << "/#{endpoint}/#{id}"
+    end
+  end #close resources_endpoints.each
+  @uris
+end #close method
