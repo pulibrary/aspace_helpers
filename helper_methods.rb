@@ -338,7 +338,6 @@ end
 
 #add a maintenance statement to agent records
 def add_maintenance_history(record, text)
-  #record = @client.get(uri).parsed
   record['agent_maintenance_histories'] << {
     "maintenance_event_type"=>"updated",
     "maintenance_agent_type"=>"machine",
@@ -350,12 +349,11 @@ def add_maintenance_history(record, text)
     "jsonmodel_type"=>"agent_maintenance_history"
   }
 
-#
 end
 
 #add a revision statement to a resource record
 def add_resource_revision_statement(record, text)
-  rrecord['revision_statements'] << {
+  record['revision_statements'] << {
     "date"=>"#{Time.now}",
     "created_by"=>"system",
     "last_modified_by"=>"aspace_helpers",
@@ -364,13 +362,11 @@ def add_resource_revision_statement(record, text)
     "publish"=>true,
     "jsonmodel_type"=>"revision_statement"
   }
-  end
-
+end
 
 #get resource uri's for specific repositories
 #add repositories in as an array of ids
 def get_all_resource_uris_for_repos(repos = [])
-  #run through all repositories (1 and 2 are reserved for admin use)
   resources_endpoints = []
   repos.each do |repo|
     resources_endpoints << 'repositories/'+repo.to_s+'/resources'
