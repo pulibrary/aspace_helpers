@@ -137,6 +137,13 @@ resources.each do |resource|
   #addresses github #132
   tags852.remove
 
+  #addresses github #264 and #265
+  tag856.replace("<datafield ind1='4' ind2='2' tag='856'>
+    <subfield code='z'>Search and Request</subfield>
+    #{tag856.at_xpath('marc:subfield[@code="u"]')}
+    <subfield code='y'>Princeton University Library Finding Aids</subfield>
+  </datafield>")
+
   #addresses github 147
   unless tags500_a.nil?
     tags500_a.select do |tag500_a|
