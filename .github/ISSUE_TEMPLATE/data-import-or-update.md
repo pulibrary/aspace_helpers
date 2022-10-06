@@ -1,6 +1,6 @@
 ---
 name: Data Import or Update
-about: To request data to be imported or edited in bulk
+about: Request data to be imported or edited in bulk
 title: ''
 labels: ''
 assignees: ''

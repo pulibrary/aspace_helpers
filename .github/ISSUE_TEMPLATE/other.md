@@ -1,7 +1,7 @@
 ---
 name: Other
-about: Any requests that aren't bug reports or requests for features, data, or data
-  updates
+about: Request something that isn't a bug report, new idea, data request, or data
+  load
 title: ''
 labels: ''
 assignees: ''
