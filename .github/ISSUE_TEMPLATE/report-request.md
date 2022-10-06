@@ -1,6 +1,6 @@
 ---
 name: Report request
-about: To request data from ArchivesSpace
+about: Request data from ArchivesSpace
 title: ''
 labels: ''
 assignees: ''
