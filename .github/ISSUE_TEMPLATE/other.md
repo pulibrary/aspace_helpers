@@ -1,7 +1,6 @@
 ---
 name: Other
-about: Request something that isn't a bug report, new idea, data request, or data
-  load
+about: Something that isn't a bug report, new idea, data request, or data load
 title: ''
 labels: ''
 assignees: ''
