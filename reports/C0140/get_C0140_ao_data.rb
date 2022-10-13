@@ -367,8 +367,9 @@ resource_ids.each do |resource_id|
 
       # addresses github 181 'URL ?? + RefID (ex: https://findingaids.princeton.edu/catalog/C0140_c25673-42817)	856'
       tag856 = "<datafield ind1='4' ind2='2' tag='856'>
-          <subfield code = 'z'>Finding aid online: </subfield>
+          <subfield code='z'>Search and Request</subfield>
           <subfield code = 'u'>https://findingaids.princeton.edu/catalog/#{ref_id}</subfield>
+          <subfield code='y'>Princeton University Library Finding Aids</subfield>
           </datafield>"
 
       # addesses github 181 'Physical Location (can this be pulled from the collection-level note?)	982'
