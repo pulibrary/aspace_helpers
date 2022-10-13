@@ -11,7 +11,7 @@ def alma_sftp (filename)
   end
 end
 
-aspace_login
+aspace_staging_login
 
 puts Time.now
 filename = "MARC_out.xml"
@@ -152,6 +152,7 @@ end
     tags500_a.select do |tag500_a|
       #the exporter adds preceding text and punctuation for each physloc.
       #hardcode location codes because textual physlocs are patterned the same
+      #account for 'sca' prefix (#247)
       if tag500_a.content.match(/Location of resource: (sca)?(anxb|ea|ex|flm|flmp|gax|hsvc|hsvm|mss|mudd|prnc|rarebooks|rcpph|rcppf|rcppl|rcpxc|rcpxg|rcpxm|rcpxr|st|thx|wa|review|oo|sc|sls)/)
         #strip text preceding and following code
         location_notes = tag500_a.content.gsub(/.*:\s(.+)[.]/, "\\1")
