@@ -172,7 +172,7 @@ resource_ids.each do |resource_id|
         else nil
         end
       tag245 = "<datafield ind1=' ' ind2=' ' tag='245'>
-        <subfield code = 'a'>#{title}</subfield>
+        <subfield code = 'a'>#{title.gsub(/([\w\s])(\&)(?![\w\s]{2,6};)/, '\\1&amp;')}</subfield>
         #{subfield_f ||= ''}
         </datafield>"
       # addresses github 181 Extents	300
