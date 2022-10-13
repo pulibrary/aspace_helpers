@@ -11,6 +11,6 @@ gem 'net-ssh'
 gem 'whenever', require: false
 
 group :development do
-  gem "capistrano", "~> 3.16", require: false
+  gem "capistrano", "~> 3.16.0"
   gem "capistrano-bundler"
 end
