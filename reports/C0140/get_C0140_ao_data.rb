@@ -202,32 +202,32 @@ resource_ids.each do |resource_id|
       # addresses github 181 'Scope and contents	520'
       tags520 = scope_notes.map do |scope_note|
         "<datafield ind1=' ' ind2=' ' tag='520'>
-          <subfield code = 'a'>#{scope_note}</subfield>
+          <subfield code = 'a'>#{scope_note.gsub(/([\w\s])(\&)(?![\w\s]{2,6};)/, '\\1&amp;')}</subfield>
           </datafield>"
       end
       # addresses github 181 'Immediate Source of Acquisition	541'
       tags541 = acq_notes.map do |acq_note|
         "<datafield ind1=' ' ind2=' ' tag='541'>
-            <subfield code = 'a'>#{acq_note}</subfield>
+            <subfield code = 'a'>#{acq_note.gsub(/([\w\s])(\&)(?![\w\s]{2,6};)/, '\\1&amp;')}</subfield>
             </datafield>"
       end
       # adds related materials note
       tags544 = related_notes.map do |related_note|
         "<datafield ind1=' ' ind2=' ' tag='544'>
-            <subfield code = 'a'>#{related_note}</subfield>
+            <subfield code = 'a'>#{related_note.gsub(/([\w\s])(\&)(?![\w\s]{2,6};)/, '\\1&amp;')}</subfield>
             </datafield>"
       end
       # addresses github 181 '# Agents/Biographical/Historical note	545'
       tags545 = bioghist_notes.map do |bioghist_note|
         "<datafield ind1=' ' ind2=' ' tag='545'>
-            <subfield code = 'a'>#{bioghist_note}</subfield>
+            <subfield code = 'a'>#{bioghist_note.gsub(/([\w\s])(\&)(?![\w\s]{2,6};)/, '\\1&amp;')}</subfield>
             </datafield>"
       end
 
       # addresses github 181 'Processing Information	583'
       tags583 = processinfo_notes.map do |processinfo_note|
         "<datafield ind1=' ' ind2=' ' tag='583'>
-            <subfield code = 'a'>#{processinfo_note}</subfield>
+            <subfield code = 'a'>#{processinfo_note.gsub(/([\w\s])(\&)(?![\w\s]{2,6};)/, '\\1&amp;')}</subfield>
             </datafield>"
       end
 
