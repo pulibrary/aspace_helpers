@@ -284,10 +284,11 @@ resource_ids.each do |resource_id|
           add_punctuation = agent['name_dates'].nil? ? '.' : ','
           subfield_0 = agent['identifier'].nil? ? nil : "<subfield code = '0'>#{agent['identifier']}</subfield>"
           # create 1xx
+          # add lookahead to replace ampersands (but not entity names)
           tag1xx <<
             if agent['role'] == 'creator'
               "<datafield ind1='#{name_type}' ind2='#{source_code}' tag='1#{tag.to_s[1..2]}'>
-                <subfield code = 'a'>#{name}#{add_punctuation unless name[-1] =~ /[.,)-]/}</subfield>
+                <subfield code = 'a'>#{name.gsub(/([\w\s])(\&)(?![\w\s]+;)/, '\\1&amp;')}#{add_punctuation unless name[-1] =~ /[.,)-]/}</subfield>
                 #{dates unless agent['name_dates'].nil?}
                 #{subfield_e ||= ''}
                 #{subfield_2 ||= ''}
@@ -295,7 +296,7 @@ resource_ids.each do |resource_id|
               </datafield>"
             end
           "<datafield ind1='#{name_type}' ind2='#{tag.to_s[0]=='7' ? ' ' : source_code}' tag='#{tag}'>
-            <subfield code = 'a'>#{name}#{add_punctuation unless name[-1] =~ /[.,)-]/}</subfield>
+            <subfield code = 'a'>#{name.gsub(/([\w\s])(\&)(?![\w\s]+;)/, '\\1&amp;')}#{add_punctuation unless name[-1] =~ /[.,)-]/}</subfield>
             #{dates unless agent['name_dates'].nil?}
             #{subfield_e ||= ''}
             #{subfield_2 ||= ''}
@@ -367,8 +368,9 @@ resource_ids.each do |resource_id|
 
       # addresses github 181 'URL ?? + RefID (ex: https://findingaids.princeton.edu/catalog/C0140_c25673-42817)	856'
       tag856 = "<datafield ind1='4' ind2='2' tag='856'>
-          <subfield code = 'z'>Finding aid online: </subfield>
+          <subfield code='z'>Search and Request</subfield>
           <subfield code = 'u'>https://findingaids.princeton.edu/catalog/#{ref_id}</subfield>
+          <subfield code='y'>Princeton University Library Finding Aids</subfield>
           </datafield>"
 
       # addesses github 181 'Physical Location (can this be pulled from the collection-level note?)	982'
