@@ -1,6 +1,12 @@
 # aspace_helpers
 Methods, post-ASpace transformation tools, and reports to support common SC activities around ArchivesSpace. For a detailed introduction to working with this repository, see [this workshop](https://github.com/pulibrary/ruby-for-archivesspace/tree/main/sessions/session2-aspace-intro).
 
+The ArchivesSpace API documentation can be found here: https://archivesspace.github.io/archivesspace/api/?shell#get-a-list-of-preferences-for-a-repository-and-optionally-a-user
+
+The general data model and system architecture are described here: https://archivesspace.org/application/original-system-overview
+
+Dependencies: `aspace_helpers` depends on the archivesspace-client gem: https://github.com/lyrasis/archivesspace-client
+
 ## deploying code
 
 ### dependencies
@@ -40,3 +46,27 @@ Methods, post-ASpace transformation tools, and reports to support common SC acti
       bundle exec ruby my_script_name >> my_script.log 2>&1 &
       tail -300f my_script.log
       ```
+
+### Authenticating through environment variables
+
+aspace_helpers uses 4 environment variables to connect to Aspace:
+
+1. ASPACE_USER
+1. ASPACE_PASSWORD
+1. ASPACE_URL (uses the production aspace in prod environments, and the staging aspace in staging environments)
+1. ASPACE_STAGING_URL (only set in staging and dev environments)
+
+To test that your environment has the correct environment variables set,
+you can run:
+
+```
+$ bundle exec ruby test_connection.rb
+Successfully authenticated to aspace-staging.princeton.edu
+```
+
+You can also pass those environment variables over the command line as needed:
+```
+$ ASPACE_USER=wrong_user ASPACE_URL=http://example.com bundle exec ruby test_connection.rb
+API client login failed as user [wrong_user], check username and password are correct
+```
+

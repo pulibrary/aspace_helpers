@@ -2,9 +2,11 @@
 <xsl:stylesheet version="2.0" xmlns:ead="urn:isbn:1-931666-22-9"
 	xmlns:njp="http://diglib.princeton.edu" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
 	xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	xmlns:local="local.uri"
 	xmlns="http://www.w3.org/2005/xpath-functions">
 	<xsl:output method="xml" encoding="utf-8" indent="yes"/>
 	<xsl:strip-space elements="*"/>
+
 	<xsl:template match="/">
 		<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
 			<fo:layout-master-set>
@@ -29,21 +31,16 @@
 				<fo:table>
 					<fo:table-column column-width="96mm"/>
 					<fo:table-body font-family="Arial">
-						<xsl:apply-templates select="//ead:dsc"/>
+						<xsl:apply-templates select="//ead:container[@encodinganalog]"/>
 					</fo:table-body>
 				</fo:table>
 			</fo:flow>
 		</fo:page-sequence>
 	</xsl:template>
 	<xsl:template
-		match="ead:container[@type = 'Box' or @type = 'box' or @type = 'volume' or @type = 'Volume']">
-		<xsl:for-each
-			select=".[not(. = preceding::ead:container[@type = 'Box' or @type = 'box' or @type = 'volume' or @type = 'Volume'])]">
-			<xsl:apply-templates mode="single" select="."/>
-		</xsl:for-each>
-	</xsl:template>
-	<xsl:template mode="single"
-		match="ead:container[@type = 'Box' or @type = 'box' or @type = 'volume' or @type = 'Volume']">
+		match="//ead:container[@encodinganalog]">
+		<xsl:for-each select=".[not(concat(@type, text()) = preceding::ead:container[@encodinganalog]/concat(@type, text()))]">
+
 		<fo:table-row height="3.3in" padding-bottom=".2in" padding-top=".2in" margin-left="3mm"
 			margin-right="3mm">
 			<fo:table-cell>
@@ -85,6 +82,6 @@
 					</fo:block>
 				</fo:block>
 			</fo:table-cell>
-		</fo:table-row>
+		</fo:table-row></xsl:for-each>
 	</xsl:template>
 </xsl:stylesheet>

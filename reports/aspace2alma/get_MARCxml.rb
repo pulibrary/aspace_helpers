@@ -137,12 +137,23 @@ resources.each do |resource|
   #addresses github #132
   tags852.remove
 
+#addresses github #268
+unless tag856.nil?
+  #addresses github #264 and #265
+  tag856.replace("<datafield ind1='4' ind2='2' tag='856'>
+    <subfield code='z'>Search and Request</subfield>
+    #{tag856.at_xpath('marc:subfield[@code="u"]')}
+    <subfield code='y'>Princeton University Library Finding Aids</subfield>
+  </datafield>")
+end
+
   #addresses github 147
   unless tags500_a.nil?
     tags500_a.select do |tag500_a|
       #the exporter adds preceding text and punctuation for each physloc.
       #hardcode location codes because textual physlocs are patterned the same
-      if tag500_a.content.match(/Location of resource: (anxb|ea|ex|flm|flmp|gax|hsvc|hsvm|mss|mudd|prnc|rarebooks|rcpph|rcppf|rcppl|rcpxc|rcpxg|rcpxm|rcpxr|st|thx|wa|review|oo|sc|sls)/)
+      #account for 'sca' prefix (#247)
+      if tag500_a.content.match(/Location of resource: (sca)?(anxb|ea|ex|flm|flmp|gax|hsvc|hsvm|mss|mudd|prnc|rarebooks|rcpph|rcppf|rcppl|rcpxc|rcpxg|rcpxm|rcpxr|st|thx|wa|review|oo|sc|sls)/)
         #strip text preceding and following code
         location_notes = tag500_a.content.gsub(/.*:\s(.+)[.]/, "\\1")
         location_notes.split.each do |tag|
@@ -166,8 +177,8 @@ resources.each do |resource|
   tag583.remove unless tag583.nil?
 
   #append record to file
-  #the unless clause addresses #186
-  file << doc.at_xpath('//marc:record') unless tag099_a.content == "C0140"
+  #the unless clause addresses #186 and #268
+  file << doc.at_xpath('//marc:record') unless tag099_a.content == "C0140" || tag856.nil?
   file.flush
 end
 file << '</collection>'
