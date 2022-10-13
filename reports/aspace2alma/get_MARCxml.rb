@@ -11,7 +11,7 @@ def alma_sftp (filename)
   end
 end
 
-aspace_staging_login
+aspace_login
 
 puts Time.now
 filename = "MARC_out.xml"
