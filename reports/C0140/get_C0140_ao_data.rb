@@ -288,7 +288,7 @@ resource_ids.each do |resource_id|
           tag1xx <<
             if agent['role'] == 'creator'
               "<datafield ind1='#{name_type}' ind2='#{source_code}' tag='1#{tag.to_s[1..2]}'>
-                <subfield code = 'a'>#{name.gsub(/([\w\s])(\&)(?![\w\s]+;)/, '\\1&amp;')}#{add_punctuation unless name[-1] =~ /[.,)-]/}</subfield>
+                <subfield code = 'a'>#{name.gsub(/([\w\s])(\&)(?![\w\s]{2,6};)/, '\\1&amp;')}#{add_punctuation unless name[-1] =~ /[.,)-]/}</subfield>
                 #{dates unless agent['name_dates'].nil?}
                 #{subfield_e ||= ''}
                 #{subfield_2 ||= ''}
@@ -296,7 +296,7 @@ resource_ids.each do |resource_id|
               </datafield>"
             end
           "<datafield ind1='#{name_type}' ind2='#{tag.to_s[0]=='7' ? ' ' : source_code}' tag='#{tag}'>
-            <subfield code = 'a'>#{name.gsub(/([\w\s])(\&)(?![\w\s]+;)/, '\\1&amp;')}#{add_punctuation unless name[-1] =~ /[.,)-]/}</subfield>
+            <subfield code = 'a'>#{name.gsub(/([\w\s])(\&)(?![\w\s]{2,6};)/, '\\1&amp;')}#{add_punctuation unless name[-1] =~ /[.,)-]/}</subfield>
             #{dates unless agent['name_dates'].nil?}
             #{subfield_e ||= ''}
             #{subfield_2 ||= ''}
