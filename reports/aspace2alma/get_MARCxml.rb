@@ -152,7 +152,8 @@ end
     tags500_a.select do |tag500_a|
       #the exporter adds preceding text and punctuation for each physloc.
       #hardcode location codes because textual physlocs are patterned the same
-      if tag500_a.content.match(/Location of resource: (anxb|ea|ex|flm|flmp|gax|hsvc|hsvm|mss|mudd|prnc|rarebooks|rcpph|rcppf|rcppl|rcpxc|rcpxg|rcpxm|rcpxr|st|thx|wa|review|oo|sc|sls)/)
+      #account for 'sca' prefix (#247)
+      if tag500_a.content.match(/Location of resource: (sca)?(anxb|ea|ex|flm|flmp|gax|hsvc|hsvm|mss|mudd|prnc|rarebooks|rcpph|rcppf|rcppl|rcpxc|rcpxg|rcpxm|rcpxr|st|thx|wa|review|oo|sc|sls)/)
         #strip text preceding and following code
         location_notes = tag500_a.content.gsub(/.*:\s(.+)[.]/, "\\1")
         location_notes.split.each do |tag|
