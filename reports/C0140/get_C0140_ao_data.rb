@@ -172,7 +172,7 @@ resource_ids.each do |resource_id|
         else nil
         end
       tag245 = "<datafield ind1=' ' ind2=' ' tag='245'>
-        <subfield code = 'a'>#{title}</subfield>
+        <subfield code = 'a'>#{title.gsub(/([\w\s])(\&)(?![\w\s]{2,6};)/, '\\1&amp;')}</subfield>
         #{subfield_f ||= ''}
         </datafield>"
       # addresses github 181 Extents	300
@@ -202,32 +202,32 @@ resource_ids.each do |resource_id|
       # addresses github 181 'Scope and contents	520'
       tags520 = scope_notes.map do |scope_note|
         "<datafield ind1=' ' ind2=' ' tag='520'>
-          <subfield code = 'a'>#{scope_note}</subfield>
+          <subfield code = 'a'>#{scope_note.gsub(/([\w\s])(\&)(?![\w\s]{2,6};)/, '\\1&amp;')}</subfield>
           </datafield>"
       end
       # addresses github 181 'Immediate Source of Acquisition	541'
       tags541 = acq_notes.map do |acq_note|
         "<datafield ind1=' ' ind2=' ' tag='541'>
-            <subfield code = 'a'>#{acq_note}</subfield>
+            <subfield code = 'a'>#{acq_note.gsub(/([\w\s])(\&)(?![\w\s]{2,6};)/, '\\1&amp;')}</subfield>
             </datafield>"
       end
       # adds related materials note
       tags544 = related_notes.map do |related_note|
         "<datafield ind1=' ' ind2=' ' tag='544'>
-            <subfield code = 'a'>#{related_note}</subfield>
+            <subfield code = 'a'>#{related_note.gsub(/([\w\s])(\&)(?![\w\s]{2,6};)/, '\\1&amp;')}</subfield>
             </datafield>"
       end
       # addresses github 181 '# Agents/Biographical/Historical note	545'
       tags545 = bioghist_notes.map do |bioghist_note|
         "<datafield ind1=' ' ind2=' ' tag='545'>
-            <subfield code = 'a'>#{bioghist_note}</subfield>
+            <subfield code = 'a'>#{bioghist_note.gsub(/([\w\s])(\&)(?![\w\s]{2,6};)/, '\\1&amp;')}</subfield>
             </datafield>"
       end
 
       # addresses github 181 'Processing Information	583'
       tags583 = processinfo_notes.map do |processinfo_note|
         "<datafield ind1=' ' ind2=' ' tag='583'>
-            <subfield code = 'a'>#{processinfo_note}</subfield>
+            <subfield code = 'a'>#{processinfo_note.gsub(/([\w\s])(\&)(?![\w\s]{2,6};)/, '\\1&amp;')}</subfield>
             </datafield>"
       end
 
@@ -284,10 +284,11 @@ resource_ids.each do |resource_id|
           add_punctuation = agent['name_dates'].nil? ? '.' : ','
           subfield_0 = agent['identifier'].nil? ? nil : "<subfield code = '0'>#{agent['identifier']}</subfield>"
           # create 1xx
+          # add lookahead to replace ampersands (but not entity names)
           tag1xx <<
             if agent['role'] == 'creator'
               "<datafield ind1='#{name_type}' ind2='#{source_code}' tag='1#{tag.to_s[1..2]}'>
-                <subfield code = 'a'>#{name}#{add_punctuation unless name[-1] =~ /[.,)-]/}</subfield>
+                <subfield code = 'a'>#{name.gsub(/([\w\s])(\&)(?![\w\s]{2,6};)/, '\\1&amp;')}#{add_punctuation unless name[-1] =~ /[.,)-]/}</subfield>
                 #{dates unless agent['name_dates'].nil?}
                 #{subfield_e ||= ''}
                 #{subfield_2 ||= ''}
@@ -295,7 +296,7 @@ resource_ids.each do |resource_id|
               </datafield>"
             end
           "<datafield ind1='#{name_type}' ind2='#{tag.to_s[0]=='7' ? ' ' : source_code}' tag='#{tag}'>
-            <subfield code = 'a'>#{name}#{add_punctuation unless name[-1] =~ /[.,)-]/}</subfield>
+            <subfield code = 'a'>#{name.gsub(/([\w\s])(\&)(?![\w\s]{2,6};)/, '\\1&amp;')}#{add_punctuation unless name[-1] =~ /[.,)-]/}</subfield>
             #{dates unless agent['name_dates'].nil?}
             #{subfield_e ||= ''}
             #{subfield_2 ||= ''}
