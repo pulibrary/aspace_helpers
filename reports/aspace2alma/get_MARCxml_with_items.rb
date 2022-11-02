@@ -173,8 +173,8 @@ resources.each do |resource|
   unless tags500_a.nil?
     tags500_a.select do |tag500_a|
       #the exporter adds preceding text and punctuation for each physloc.
-      #hardcode location codes because textual physlocs are patterned the same
-      if tag500_a.content.match(/Location of resource: (anxb|ea|ex|flm|flmp|gax|hsvc|hsvm|mss|mudd|prnc|rarebooks|rcpph|rcppf|rcppl|rcpxc|rcpxg|rcpxm|rcpxr|st|thx|wa|review|oo|sc|sls)/)
+      #hardcode location codes because valid textual physlocs are patterned like this
+      if tag500_a.content.match(/Location of resource: (sca)?(anxb|ea|ex|flm|flmp|gax|hsvc|hsvm|mss|mudd|prnc|rarebooks|rcpph|rcppf|rcppl|rcpxc|rcpxg|rcpxmr?|rcpxr|st|thx|wa|review|oo|sc|sls)/)
         #strip text preceding and following code
         location_notes = tag500_a.content.gsub(/.*:\s(.+)[.]/, "\\1")
         location_notes.split.each do |tag|
@@ -201,21 +201,11 @@ resources.each do |resource|
       created_since_yesterday = Date.parse(ctime) >= Date.parse(yesterday)
       never_modified = JSON.parse(container['json'])['lock_version'] == 0
       top_container_location_code = container['location_display_string_u_sstr'].nil? ? '' : container['location_display_string_u_sstr'][0].gsub(/(^.+\[)(.+)(\].*)/, '\2')
-      at_recap = /^rcp\p{L}+/.match?(top_container_location_code)
-      # puts ""
-      # puts "#{tag099_a.content} #{container['type_u_ssort']} #{container['indicator_u_icusort']}"
-      # puts "times modified: #{JSON.parse(container['json'])['lock_version']}, so never modified is #{never_modified}"
-      # puts "location is: #{top_container_location_code}, so at recap is #{at_recap}"
-      # puts "created: #{ctime}; so created since #{yesterday} is #{created_since_yesterday}"
-
+      at_recap = /^(sca)?rcp\p{L}+/.match?(top_container_location_code)
+      #check whether container is new and at recap
+      #this can be toggled on or off depending on the use case
       if
       created_since_yesterday == true && at_recap == true && never_modified == true
-      # puts "<datafield ind1=' ' ind2=' ' tag='949'>
-      #     <subfield code='a'>#{container['barcode_u_icusort']}</subfield>
-      #     <subfield code='b'>#{container['type_u_ssort']} #{container['indicator_u_icusort']}</subfield>
-      #     <subfield code='c'>#{top_container_location_code}</subfield>
-      #     <subfield code='d'>#{tag099_a.content}</subfield>
-      #   </datafield>"
       doc.xpath('//marc:datafield').last.next=
         ("<datafield ind1=' ' ind2=' ' tag='949'>
             <subfield code='a'>#{container['barcode_u_icusort']}</subfield>
@@ -246,4 +236,4 @@ file << '</collection>'
 file.close
 #send to alma
 #alma_sftp(filename)
-puts Time.now 
+puts Time.now
