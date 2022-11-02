@@ -1,7 +1,7 @@
 require_relative '../../helper_methods.rb'
 require_relative '../../csv_aspace_runner'
 
-client = aspace_staging_login
+client = aspace_login
 
 runner = CSVASpaceRunner.new("import_09_28_22.csv", client)
 
@@ -11,7 +11,7 @@ runner.run do |row, record|
         {
         "jsonmodel_type"=>"note_multipart",
         "type"=>"accessrestrict",
-        "rights_restriction"=>{"end"=>row['end_date'] ||= '',
+        "rights_restriction"=>{"end"=>row['end_date'],
         "local_access_restriction_type"=>[row['restriction_type']]},
         "subnotes"=>[{"jsonmodel_type"=>"note_text",
         "content"=>row['restriction_note'],
