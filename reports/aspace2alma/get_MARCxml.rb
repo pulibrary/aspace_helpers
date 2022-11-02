@@ -120,7 +120,6 @@ resources.each do |resource|
     segments.each { |segment| segment.strip! }
     subfield_a_text = segments[0]
     new_subfield_a = subfield_a.replace("<subfield code='a'>#{subfield_a_text}</subfield")
-
     segments[1..-1].each do |segment|
       code = segment =~ /^[0-9]{2}/ ? 'y' : 'x'
       #new_subfield_a is a node set of one
@@ -154,7 +153,7 @@ end
       #hardcode location codes because textual physlocs are patterned the same
       #account for 'sca' prefix (#247)
       #account for trailing 'r' (#247)
-      if tag500_a.content.match(/Location of resource: (sca)?(anxb|ea|ex|flm|flmp|gax|hsvc|hsvm|mss|mudd|prnc|rarebooks|rcpph|rcppf|rcppl|rcpxc|rcpxg|rcpxmr?|rcpxr|st|thx|wa|review|oo|sc|sls)/)
+      if tag500_a.content.match(/Location of resource: (sca)?(anxb|ea|ex|flm|flmp|gax|hsvc|hsvm|mss|mudd|prnc|rarebooks|rcpph|rcppf|rcppl|rcpxc|rcpxg|rcpxm|rcpxr|st|thx|wa|review|oo|sc|sls)/)
         #strip text preceding and following code
         location_notes = tag500_a.content.gsub(/.*:\s(.+)[.]/, "\\1")
         location_notes.split.each do |tag|
