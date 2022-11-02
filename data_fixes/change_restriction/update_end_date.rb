@@ -3,7 +3,7 @@ require_relative '../../csv_aspace_runner'
 
 client = aspace_login
 
-runner = CSVASpaceRunner.new("set_end_date_new.csv", client)
+runner = CSVASpaceRunner.new("import_09_28_22.csv", client)
 
 runner.run do |row, record|
     #accessrestrict might need to be overwritten or created
@@ -14,7 +14,7 @@ runner.run do |row, record|
         "rights_restriction"=>{"end"=>row['end_date'],
         "local_access_restriction_type"=>[row['restriction_type']]},
         "subnotes"=>[{"jsonmodel_type"=>"note_text",
-        "content"=>"This is a test on 3/24",
+        "content"=>row['restriction_note'],
         "publish"=>true}],
         "publish"=>true
         }
