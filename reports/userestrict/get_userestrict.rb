@@ -1,11 +1,11 @@
 require 'archivesspace/client'
-require_relative 'helper_methods.rb'
+require_relative '../../helper_methods.rb'
 
 start_time = "Process started: #{Time.now}"
 puts start_time
 
 client = aspace_login
-resources = get_all_resource_records_for_institution
+resources = get_all_records_for_repo_endpoint(5, 'resources')
 
 output_file = "userestrict.csv"
 
@@ -32,5 +32,5 @@ CSV.open(output_file, "a",
           puts error
   end
 end
-end_time = "Process started: #{Time.now}"
+end_time = "Process ended: #{Time.now}"
 puts end_time

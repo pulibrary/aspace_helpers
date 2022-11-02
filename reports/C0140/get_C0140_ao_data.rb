@@ -15,13 +15,13 @@ aspace_login
 start_time = "Process started: #{Time.now}"
 puts start_time
 
-filename = 'C0140_out.xml'
+filename = 'AC214_out.xml'
 file =  File.open(filename, 'w:UTF-8')
 file << '<collection xmlns="http://www.loc.gov/MARC21/slim" xmlns:marc="http://www.loc.gov/MARC21/slim" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.loc.gov/MARC21/slim http://www.loc.gov/standards/marcxml/schema/MARC21slim.xsd">'
 
 # set these manually before running
-resource_ids = [3950]
-repo = 5
+resource_ids = [2168]
+repo = 4
 default_restriction = 'Collection is open for research use.'
 
 # get components
