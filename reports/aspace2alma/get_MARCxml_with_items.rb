@@ -2,6 +2,8 @@ require 'archivesspace/client'
 require 'active_support/all'
 require 'nokogiri'
 require 'net/sftp'
+require 'date'
+require 'json'
 require_relative '../../helper_methods.rb'
 
 #configure sendoff to alma
@@ -11,19 +13,47 @@ def alma_sftp (filename)
   end
 end
 
-aspace_login
+def get_all_resource_uris_for_repo()
+  #run through all repositories (1 and 2 are reserved for admin use)
+  resources_endpoints = []
+  repos_all = (12..12).to_a
+  repos_all.each do |repo|
+    resources_endpoints << 'repositories/'+repo.to_s+'/resources'
+    end
+  @uris = []
+  resources_endpoints.each do |endpoint|
+    ids_by_endpoint = []
+    ids_by_endpoint << @client.get(endpoint, {
+      query: {
+       all_ids: true
+      }}).parsed
+    ids_by_endpoint = ids_by_endpoint.flatten!
+    ids_by_endpoint.each do |id|
+      @uris << "/#{endpoint}/#{id}"
+    end
+  end #close resources_endpoints.each
+  @uris
+end #close method
+
+aspace_staging_login
 
 puts Time.now
 filename = "MARC_out.xml"
 
-resources = get_all_resource_uris_for_institution
+#front-load resource uri's to iterate over
+#resources = get_all_resource_uris_for_institution
+resources = get_all_resource_uris_for_repo
+
 
 file =  File.open(filename, "w")
 file << '<collection xmlns="http://www.loc.gov/MARC21/slim" xmlns:marc="http://www.loc.gov/MARC21/slim" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.loc.gov/MARC21/slim http://www.loc.gov/standards/marcxml/schema/MARC21slim.xsd">'
 
 resources.each do |resource|
-  uri = resource.gsub!("resources", "resources/marc21") + ".xml"
-  marc_record = @client.get(uri)
+  # puts resource
+  # puts "retrieving from path: #{resource}/top_containers"
+  #container_refs = @client.get("#{resource}/top_containers", { timeout: 1000 }).parsed
+  marc_uri = resource.gsub!("resources", "resources/marc21") + ".xml"
+  marc_record = @client.get(marc_uri)
   doc = Nokogiri::XML(marc_record.body)
 
   #recursively remove truly empty elements (blank text and attributes)
@@ -119,40 +149,29 @@ resources.each do |resource|
     segments = subfield_a.content.split('--')
     segments.each { |segment| segment.strip! }
     subfield_a_text = segments[0]
-    new_subfield_a = subfield_a.replace("<subfield code='a'>#{subfield_a_text}</subfield")
-    segments[1..-1].each do |segment|
+    new_subfield_a =
+      subfield_a.replace("<subfield code='a'>#{subfield_a_text}</subfield")
+      segments[1..-1].each do |segment|
       code = segment =~ /^[0-9]{2}/ ? 'y' : 'x'
       #new_subfield_a is a node set of one
       new_subfield_a[0].next=("<subfield code='#{code}'>#{segment}</subfield>")
     end
     #add punctuation to the last subfield except $2
     if tag6xx.children[-1].attribute('code') == '2'
-      tag6xx.children[-2].content << '.' unless ['?', '-', '.'].include?(tag6xx.children[-2].content[-1])
+      tag6xx.children[-2].content << '.' unless ['?', '-', '.', ','].include?(tag6xx.children[-2].content[-1])
     else
-      tag6xx.children[-1].content << '.' unless ['?', '-', '.'].include?(tag6xx.children[-1].content[-1])
+      tag6xx.children[-1].content << '.' unless ['?', '-', '.', ','].include?(tag6xx.children[-1].content[-1])
     end
   end
 
   #addresses github #132
   tags852.remove
 
-#addresses github #268
-unless tag856.nil?
-  #addresses github #264 and #265
-  tag856.replace("<datafield ind1='4' ind2='2' tag='856'>
-    <subfield code='z'>Search and Request</subfield>
-    #{tag856.at_xpath('marc:subfield[@code="u"]')}
-    <subfield code='y'>Princeton University Library Finding Aids</subfield>
-  </datafield>")
-end
-
   #addresses github 147
   unless tags500_a.nil?
     tags500_a.select do |tag500_a|
       #the exporter adds preceding text and punctuation for each physloc.
-      #hardcode location codes because textual physlocs are patterned the same
-      #account for 'sca' prefix (#247)
-      #account for trailing 'r' (#247)
+      #hardcode location codes because valid textual physlocs are patterned like this
       if tag500_a.content.match(/Location of resource: (sca)?(anxb|ea|ex|flm|flmp|gax|hsvc|hsvm|mss|mudd|prnc|rarebooks|rcpph|rcppf|rcppl|rcpxc|rcpxg|rcpxm|rcpxr|st|thx|wa|review|oo|sc|sls)/)
         #strip text preceding and following code
         location_notes = tag500_a.content.gsub(/.*:\s(.+)[.]/, "\\1")
@@ -164,6 +183,38 @@ end
       end
     end
   end
+
+  #get the repo so we don't check ALL container records every time
+  repo = resource.gsub(/(^\/repositories\/)(\d{1,2})(\/resources.*$)/, '\2')
+  #get container records for the resource
+  #tried and true, this is the fastest way
+  #this returns a response object; or it may be nil
+  containers_unfiltered = @client.get("repositories/#{repo}/top_containers/search", q: resource, timeout: 10000 )
+  containers =
+    containers_unfiltered.parsed['response']['docs'].select do |container|
+      aspace_ctime = Date.parse(container['create_time'])
+      ctime = "#{aspace_ctime.year}-#{aspace_ctime.month}-#{aspace_ctime.day}"
+      yesterday_raw = Time.now.utc.to_date - 1
+      yesterday = "#{yesterday_raw.year}-#{yesterday_raw.month}-#{yesterday_raw.day}"
+      created_since_yesterday = Date.parse(ctime) >= Date.parse(yesterday)
+      never_modified = JSON.parse(container['json'])['lock_version'] == 0
+      top_container_location_code = container['location_display_string_u_sstr'].nil? ? '' : container['location_display_string_u_sstr'][0].gsub(/(^.+\[)(.+)(\].*)/, '\2')
+      at_recap = /^(sca)?rcp\p{L}+/.match?(top_container_location_code)
+      #check whether container is new and at recap
+      #these can be toggled on or off depending on the use case
+      if
+      created_since_yesterday == true &&
+      at_recap == true &&
+      never_modified == true
+      doc.xpath('//marc:datafield').last.next=
+        ("<datafield ind1=' ' ind2=' ' tag='949'>
+            <subfield code='a'>#{container['barcode_u_icusort']}</subfield>
+            <subfield code='b'>#{container['type_u_ssort']} #{container['indicator_u_icusort']}</subfield>
+            <subfield code='c'>#{top_container_location_code}</subfield>
+            <subfield code='d'>(PULFA)#{tag099_a.content}</subfield>
+          </datafield>")
+        end
+      end unless containers_unfiltered.nil?
 
   #addresses github #205
   tag351.remove unless tag351.nil?
@@ -177,12 +228,11 @@ end
   tag583.remove unless tag583.nil?
 
   #append record to file
-  #the unless clause addresses #186 and #268 and #284
+  #the unless clause addresses #186, #268, #284
   file << doc.at_xpath('//marc:record') unless tag099_a.content =~ /C0140|AC214|AC364/ || tag856.nil?
-  file.flush
 end
 file << '</collection>'
 file.close
 #send to alma
-alma_sftp(filename)
+#alma_sftp(filename)
 puts Time.now
