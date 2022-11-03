@@ -177,8 +177,8 @@ end
   tag583.remove unless tag583.nil?
 
   #append record to file
-  #the unless clause addresses #186 and #268
-  file << doc.at_xpath('//marc:record') unless tag099_a.content == "C0140" || tag856.nil?
+  #the unless clause addresses #186 and #268 and #284
+  file << doc.at_xpath('//marc:record') unless tag099_a.content =~ /C0140|AC214|AC364/ || tag856.nil?
   file.flush
 end
 file << '</collection>'

@@ -226,9 +226,8 @@ resources.each do |resource|
   tag583.remove unless tag583.nil?
 
   #append record to file
-  #the unless clause addresses #186
-  file << doc.at_xpath('//marc:record') unless tag099_a.content == "C0140"
-  file.flush
+  #the unless clause addresses #186, #268, #284
+  file << doc.at_xpath('//marc:record') unless tag099_a.content =~ /C0140|AC214|AC364/ || tag856.nil?
 end
 file << '</collection>'
 file.close
