@@ -201,9 +201,11 @@ resources.each do |resource|
       top_container_location_code = container['location_display_string_u_sstr'].nil? ? '' : container['location_display_string_u_sstr'][0].gsub(/(^.+\[)(.+)(\].*)/, '\2')
       at_recap = /^(sca)?rcp\p{L}+/.match?(top_container_location_code)
       #check whether container is new and at recap
-      #this can be toggled on or off depending on the use case
+      #these can be toggled on or off depending on the use case
       if
-      created_since_yesterday == true && at_recap == true && never_modified == true
+      created_since_yesterday == true &&
+      at_recap == true &&
+      never_modified == true
       doc.xpath('//marc:datafield').last.next=
         ("<datafield ind1=' ' ind2=' ' tag='949'>
             <subfield code='a'>#{container['barcode_u_icusort']}</subfield>
