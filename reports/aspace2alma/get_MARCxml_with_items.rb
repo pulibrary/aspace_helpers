@@ -35,14 +35,15 @@ def get_all_resource_uris_for_repo()
   @uris
 end #close method
 
-aspace_staging_login
+aspace_login
 
 puts Time.now
 filename = "MARC_out.xml"
 
 #front-load resource uri's to iterate over
 #resources = get_all_resource_uris_for_institution
-resources = get_all_resource_uris_for_repo
+#resources = get_all_resource_uris_for_repo
+resources = ["/repositories/5/resources/3839", "/repositories/5/resources/3902"]
 
 
 file =  File.open(filename, "w")
@@ -197,19 +198,20 @@ resources.each do |resource|
       yesterday_raw = Time.now.utc.to_date - 1
       yesterday = "#{yesterday_raw.year}-#{yesterday_raw.month}-#{yesterday_raw.day}"
       created_since_yesterday = Date.parse(ctime) >= Date.parse(yesterday)
-      never_modified = JSON.parse(container['json'])['lock_version'] == 0
-      top_container_location_code = container['location_display_string_u_sstr'].nil? ? '' : container['location_display_string_u_sstr'][0].gsub(/(^.+\[)(.+)(\].*)/, '\2')
+      json = JSON.parse(container['json'])
+      never_modified = json['lock_version'] == 0
+      top_container_location_code = json['container_locations'][0]['_resolved']['classification']
       at_recap = /^(sca)?rcp\p{L}+/.match?(top_container_location_code)
       #check whether container is new and at recap
       #these can be toggled on or off depending on the use case
       if
-      created_since_yesterday == true &&
+      #created_since_yesterday == true &&
       at_recap == true &&
-      never_modified == true
+      #never_modified == true
       doc.xpath('//marc:datafield').last.next=
         ("<datafield ind1=' ' ind2=' ' tag='949'>
-            <subfield code='a'>#{container['barcode_u_icusort']}</subfield>
-            <subfield code='b'>#{container['type_u_ssort']} #{container['indicator_u_icusort']}</subfield>
+            <subfield code='a'>#{json['barcode']}</subfield>
+            <subfield code='b'>#{json['type']} #{json['indicator']}</subfield>
             <subfield code='c'>#{top_container_location_code}</subfield>
             <subfield code='d'>(PULFA)#{tag099_a.content}</subfield>
           </datafield>")
