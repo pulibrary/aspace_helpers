@@ -205,9 +205,9 @@ resources.each do |resource|
       #check whether container is new and at recap
       #these can be toggled on or off depending on the use case
       if
-      #created_since_yesterday == true &&
+      created_since_yesterday == true &&
       at_recap == true &&
-      #never_modified == true
+      never_modified == true
       doc.xpath('//marc:datafield').last.next=
         ("<datafield ind1=' ' ind2=' ' tag='949'>
             <subfield code='a'>#{json['barcode']}</subfield>
