@@ -42,9 +42,8 @@ filename = "MARC_out.xml"
 
 #front-load resource uri's to iterate over
 #resources = get_all_resource_uris_for_institution
-#resources = get_all_resource_uris_for_repo
-resources = ["/repositories/5/resources/3839", "/repositories/5/resources/3902"]
 
+resources = get_all_resource_uris_for_repo
 
 file =  File.open(filename, "w")
 file << '<collection xmlns="http://www.loc.gov/MARC21/slim" xmlns:marc="http://www.loc.gov/MARC21/slim" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.loc.gov/MARC21/slim http://www.loc.gov/standards/marcxml/schema/MARC21slim.xsd">'
@@ -198,6 +197,7 @@ resources.each do |resource|
       yesterday_raw = Time.now.utc.to_date - 1
       yesterday = "#{yesterday_raw.year}-#{yesterday_raw.month}-#{yesterday_raw.day}"
       created_since_yesterday = Date.parse(ctime) >= Date.parse(yesterday)
+
       json = JSON.parse(container['json'])
       never_modified = json['lock_version'] == 0
       top_container_location_code = json['container_locations'][0]['_resolved']['classification']
