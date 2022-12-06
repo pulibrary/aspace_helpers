@@ -1,0 +1,28 @@
+graph TD;
+    AbID-->ASpace-->AbID
+    ASpace-->aspace2alma
+    aspace2alma-->Alma
+    Alma-->Bibdata
+    Bibdata-->Orangelight
+    ASpace-->Pulfalight
+    Pulfalight-->Aeon
+
+    DACS{DACS} -. update .->aspace2alma 
+    DACS -. update .->Bibdata
+    DACS -. suppress request button .->Orangelight
+    DACS -. update notes in .->ASpace
+    DACS -.->AbID
+    DLS{DLS}-. update locations in .->AbID
+    DLS-. update locations in .->Pulfalight
+    CatOps{CatOps}-. update locations in .->Alma
+    SC{SC}-. update locations in .->ASpace
+
+    style DACS fill:#cff,stroke:#f66,stroke-width:2px,color:#bb,stroke-dasharray: 5 5
+    style DLS fill:#cff,stroke:#f66,stroke-width:2px,color:#bb,stroke-dasharray: 5 5
+    style CatOps fill:#cff,stroke:#f66,stroke-width:2px,color:#bb,stroke-dasharray: 5 5
+    style SC fill:#cff,stroke:#f66,stroke-width:2px,color:#bb,stroke-dasharray: 5 5
+
+    
+    
+
+    
