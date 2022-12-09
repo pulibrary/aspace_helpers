@@ -53,7 +53,7 @@ resources.each do |resource|
   # puts resource
   # puts "retrieving from path: #{resource}/top_containers"
   #container_refs = @client.get("#{resource}/top_containers", { timeout: 1000 }).parsed
-  marc_uri = resource.gsub!("resources", "resources/marc21") + ".xml"
+  marc_uri = resource.gsub("resources", "resources/marc21") + ".xml"
   marc_record = @client.get(marc_uri)
   doc = Nokogiri::XML(marc_record.body)
 
@@ -190,24 +190,31 @@ resources.each do |resource|
   #get container records for the resource
   #tried and true, this is the fastest way
   #this returns a response object; or it may be nil
-  containers_unfiltered = @client.get("repositories/#{repo}/top_containers/search", q: resource, timeout: 10000 )
+  #NB the quirky punctuation for the query syntax
+  containers_unfiltered = @client.get(
+    "repositories/5/top_containers/search",
+    query: { q: "collection_uri_u_sstr:\"#{resource}\"" }
+  )
   containers =
     containers_unfiltered.parsed['response']['docs'].select do |container|
+      json = JSON.parse(container['json'])
+      resource_uri = container['collection_uri_u_sstr'] unless container['collection_uri_u_sstr'].nil?
       aspace_ctime = Date.parse(container['create_time'])
       ctime = "#{aspace_ctime.year}-#{aspace_ctime.month}-#{aspace_ctime.day}"
       yesterday_raw = Time.now.utc.to_date - 1
       yesterday = "#{yesterday_raw.year}-#{yesterday_raw.month}-#{yesterday_raw.day}"
       created_since_yesterday = Date.parse(ctime) >= Date.parse(yesterday)
-      json = JSON.parse(container['json'])
       never_modified = json['lock_version'] == 0
       top_container_location_code = json['container_locations'][0]['_resolved']['classification']
       at_recap = /^(sca)?rcp\p{L}+/.match?(top_container_location_code)
       #check whether container is new and at recap
       #these can be toggled on or off depending on the use case
+      #puts "#{resource_uri} : #{resource}"
       if
-      created_since_yesterday == true &&
-      at_recap == true &&
-      never_modified == true
+      #resource_uri == resource.to_s &&
+      #created_since_yesterday == true &&
+      at_recap == true
+      #&& never_modified == true
       doc.xpath('//marc:datafield').last.next=
         ("<datafield ind1=' ' ind2=' ' tag='949'>
             <subfield code='a'>#{json['barcode']}</subfield>
