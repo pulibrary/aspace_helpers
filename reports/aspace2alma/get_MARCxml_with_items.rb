@@ -13,28 +13,6 @@ def alma_sftp (filename)
   end
 end
 
-def get_all_resource_uris_for_repo()
-  #run through all repositories (1 and 2 are reserved for admin use)
-  resources_endpoints = []
-  repos_all = (12..12).to_a
-  repos_all.each do |repo|
-    resources_endpoints << 'repositories/'+repo.to_s+'/resources'
-    end
-  @uris = []
-  resources_endpoints.each do |endpoint|
-    ids_by_endpoint = []
-    ids_by_endpoint << @client.get(endpoint, {
-      query: {
-       all_ids: true
-      }}).parsed
-    ids_by_endpoint = ids_by_endpoint.flatten!
-    ids_by_endpoint.each do |id|
-      @uris << "/#{endpoint}/#{id}"
-    end
-  end #close resources_endpoints.each
-  @uris
-end #close method
-
 aspace_login
 
 puts Time.now
@@ -43,7 +21,7 @@ filename = "MARC_out.xml"
 #front-load resource uri's to iterate over
 #resources = get_all_resource_uris_for_institution
 
-resources = get_all_resource_uris_for_repo
+resources = ["/repositories/4/resources/2238"]
 
 file =  File.open(filename, "w")
 file << '<collection xmlns="http://www.loc.gov/MARC21/slim" xmlns:marc="http://www.loc.gov/MARC21/slim" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.loc.gov/MARC21/slim http://www.loc.gov/standards/marcxml/schema/MARC21slim.xsd">'
