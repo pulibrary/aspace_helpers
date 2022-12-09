@@ -27,9 +27,6 @@ file =  File.open(filename, "w")
 file << '<collection xmlns="http://www.loc.gov/MARC21/slim" xmlns:marc="http://www.loc.gov/MARC21/slim" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.loc.gov/MARC21/slim http://www.loc.gov/standards/marcxml/schema/MARC21slim.xsd">'
 
 resources.each do |resource|
-  # puts resource
-  # puts "retrieving from path: #{resource}/top_containers"
-  #container_refs = @client.get("#{resource}/top_containers", { timeout: 1000 }).parsed
   marc_uri = resource.gsub("resources", "resources/marc21") + ".xml"
   marc_record = @client.get(marc_uri)
   doc = Nokogiri::XML(marc_record.body)
@@ -169,9 +166,10 @@ resources.each do |resource|
   #this returns a response object; or it may be nil
   #NB the quirky punctuation for the query syntax
   containers_unfiltered = @client.get(
-    "repositories/5/top_containers/search",
+    "repositories/#{repo}/top_containers/search",
     query: { q: "collection_uri_u_sstr:\"#{resource}\"" }
   )
+
   containers =
     containers_unfiltered.parsed['response']['docs'].select do |container|
       json = JSON.parse(container['json'])
