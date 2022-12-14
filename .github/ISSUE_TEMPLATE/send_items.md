@@ -14,6 +14,7 @@ Give us the quick scoop--when do you need this by, what collection, is the data 
 These are the things we'll need to run the import
 - call number:
 - box (container) numbers:
+- date the top containers were last edited in ASpace (if you know):
 
 ### Additional Questions
 - [ ] does the collection include containers that already have item records in Alma?
