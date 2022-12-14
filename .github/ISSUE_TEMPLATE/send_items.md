@@ -1,3 +1,12 @@
+---
+name: Send ReCAP items to Alma
+about: Create Alma item records from ASpace top_container records
+title: ''
+labels: ''
+assignees: ''
+
+---
+
 ### User story
 Give us the quick scoop--when do you need this by, what collection, is the data ready in ArchivesSpace, and anything else we should know
 
