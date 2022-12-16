@@ -14,3 +14,9 @@ group :development do
   gem "capistrano", "~> 3.16.0"
   gem "capistrano-bundler"
 end
+
+group :development, :test do
+  gem "rspec"
+  gem "webmock"
+  gem "byebug"
+end
