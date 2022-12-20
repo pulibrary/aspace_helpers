@@ -16,7 +16,7 @@ RSpec.describe 'endpoint methods' do
     get_agent_stub
   end
 
-  it 'can retrieve an agend by id' do
+  it 'can retrieve an agent by id' do
     aspace_login
     person = get_agent_by_id("people", 11175)
     expect(get_agent_stub).to have_been_requested
