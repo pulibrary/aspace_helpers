@@ -4,12 +4,6 @@ orbs:
   ruby: circleci/ruby@2.0.0
 
 jobs:
-  build:
-    docker:
-      - image: cimg/ruby:2.7.5
-    steps:
-      - checkout
-      - ruby/install-deps
   rubocop:
     docker:
       - image: cimg/ruby:2.7.5
@@ -30,8 +24,5 @@ jobs:
 workflows:
   build_and_test:
     jobs:
-      - build
       - rubocop
-      - test:
-          requires:
-            - build
+      - test
