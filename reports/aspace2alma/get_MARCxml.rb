@@ -12,6 +12,20 @@ def alma_sftp (filename)
   end
 end
 
+#recursively remove truly empty elements (blank text and attributes)
+#use node.attributes.blank? for all attributes
+def remove_empty_elements(node)
+  node.children.map { |child| remove_empty_elements(child) }
+  node.remove if node.content.blank? && (
+  (node.attribute('@ind1').blank? && node.attribute('@ind2').blank?) ||
+  node.attribute('@code').blank?)
+end
+
+#remove linebreaks from notes
+def remove_linebreaks(node)
+  node.xpath("//marc:subfield/text()").map { |text| text.content = text.content.gsub(/[\n\r]+/," ") }
+end
+
 def fetch_and_process_records
   aspace_login
 
@@ -26,20 +40,6 @@ def fetch_and_process_records
     uri = resource.gsub!("resources", "resources/marc21") + ".xml"
     marc_record = @client.get(uri)
     doc = Nokogiri::XML(marc_record.body)
-
-    #recursively remove truly empty elements (blank text and attributes)
-    #use node.attributes.blank? for all attributes
-    def remove_empty_elements(node)
-      node.children.map { |child| remove_empty_elements(child) }
-      node.remove if node.content.blank? && (
-      (node.attribute('@ind1').blank? && node.attribute('@ind2').blank?) ||
-      node.attribute('@code').blank?)
-    end
-
-    #remove linebreaks from notes
-    def remove_linebreaks(node)
-      node.xpath("//marc:subfield/text()").map { |text| text.content = text.content.gsub(/[\n\r]+/," ") }
-    end
 
     # set up variables (these may return a sequence)
     ##################
@@ -185,12 +185,12 @@ def fetch_and_process_records
   file << '</collection>'
   file.close
   #send to alma
-  # alma_sftp(filename)
+  alma_sftp(filename)
   puts Time.now
 end
 
 # If you run this file directly, the main method will run
 # If you run the file from rspec, it will only run when calling the method
-if $0 == __FILE__
+if $PROGRAM_NAME == __FILE__
   fetch_and_process_records
 end
