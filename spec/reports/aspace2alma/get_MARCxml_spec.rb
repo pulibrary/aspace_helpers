@@ -2,7 +2,6 @@
 
 require_relative '../../../reports/aspace2alma/get_MARCxml'
 require 'spec_helper.rb'
-require 'byebug'
 
 RSpec.describe 'regular aspace2alma process' do
   before do

@@ -1,7 +1,6 @@
 #!/usr/bin/env ruby
 require 'archivesspace/client'
 #require_relative 'authentication'
-require 'byebug'
 
 def aspace_login()
   #configure access

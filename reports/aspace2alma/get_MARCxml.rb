@@ -3,7 +3,6 @@ require 'active_support/all'
 require 'nokogiri'
 require 'net/sftp'
 require_relative '../../helper_methods.rb'
-require 'byebug'
 
 #configure sendoff to alma
 def alma_sftp (filename)
