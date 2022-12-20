@@ -1,13 +1,11 @@
 source "https://rubygems.org"
 
-gem 'archivesspace-client'
 gem 'activesupport'
-gem 'rake'
-gem 'rubocop', require: false
-gem 'nokogiri'
+gem 'archivesspace-client'
 gem 'net-sftp'
 gem 'net-ssh'
-
+gem 'nokogiri'
+gem 'rake'
 gem 'whenever', require: false
 
 group :development do
@@ -20,7 +18,10 @@ group :test do
 end
 
 group :development, :test do
-  gem "rspec"
-  gem "webmock"
   gem "byebug"
+  gem "rspec", require: false
+  gem "rubocop", require: false
+  gem "rubocop-rake", require: false
+  gem "rubocop-rspec", require: false
+  gem "webmock"
 end

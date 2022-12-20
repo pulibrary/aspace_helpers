@@ -10,6 +10,15 @@ jobs:
     steps:
       - checkout
       - ruby/install-deps
+  rubocop:
+    docker:
+      - image: cimg/ruby:2.7.5
+    steps:
+      - checkout
+      - ruby/install-deps
+      - ruby/rubocop-check:
+          format: progress
+          label: Inspecting with Rubocop
   test:
     docker:
       - image: cimg/ruby:2.7.5
@@ -22,6 +31,7 @@ workflows:
   build_and_test:
     jobs:
       - build
+      - rubocop
       - test:
           requires:
             - build
