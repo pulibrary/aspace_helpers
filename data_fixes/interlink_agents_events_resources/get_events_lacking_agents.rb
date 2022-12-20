@@ -12,8 +12,8 @@ selected_events =
 #write selected fields to CSV
 filename = "events_lacking_agents.csv"
 CSV.open(filename, "wb",
-    :write_headers=> true,
-    :headers => ["uri", "created_by", "create_time", "event_type", "outcome_note"]) do |row|
+         :write_headers=> true,
+         :headers => ["uri", "created_by", "create_time", "event_type", "outcome_note"]) do |row|
       selected_events.each do |event|
         uri = event['uri']
         creator = event['created_by']
