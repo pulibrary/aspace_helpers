@@ -6,4 +6,6 @@ Gemfile
 Gemfile.lock
 *.csv
 *.xml
+!spec/fixtures/marc_1511.xml
+!spec/fixtures/marc_1512.xml
 .byebug_history
