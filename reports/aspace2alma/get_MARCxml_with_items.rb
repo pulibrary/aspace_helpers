@@ -21,7 +21,7 @@ filename = "MARC_out.xml"
 #front-load resource uri's to iterate over
 #resources = get_all_resource_uris_for_institution
 
-resources = ["/repositories/4/resources/2238"]
+resources = ["/repositories/5/resources/4277"]
 
 file =  File.open(filename, "w")
 file << '<collection xmlns="http://www.loc.gov/MARC21/slim" xmlns:marc="http://www.loc.gov/MARC21/slim" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.loc.gov/MARC21/slim http://www.loc.gov/standards/marcxml/schema/MARC21slim.xsd">'
@@ -170,7 +170,10 @@ resources.each do |resource|
     query: { q: "collection_uri_u_sstr:\"#{resource}\"" }
   )
 
+
   containers =
+    containers_unfiltered.parsed['response']['docs'].sort_by! { |container| JSON.parse(container['json'])['indicator'].scan(/\d+/).first.to_i }
+#puts containers_unfiltered.parsed['response']['docs'].map {|container| JSON.parse(container['json'])['indicator']}
     containers_unfiltered.parsed['response']['docs'].select do |container|
       json = JSON.parse(container['json'])
       resource_uri = container['collection_uri_u_sstr'] unless container['collection_uri_u_sstr'].nil?
@@ -213,7 +216,7 @@ resources.each do |resource|
 
   #append record to file
   #the unless clause addresses #186, #268, #284
-  file << doc.at_xpath('//marc:record') unless tag099_a.content =~ /C0140|AC214|AC364/ || tag856.nil?
+  file << doc.at_xpath('//marc:record') unless tag099_a.content =~ /C0140|AC214|AC364/ #|| tag856.nil?
 end
 file << '</collection>'
 file.close
