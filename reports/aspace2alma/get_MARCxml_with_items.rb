@@ -21,7 +21,7 @@ filename = "MARC_out.xml"
 #front-load resource uri's to iterate over
 #resources = get_all_resource_uris_for_institution
 
-resources = ["/repositories/4/resources/2238"]
+resources = ["/repositories/5/resources/4277"]
 
 file =  File.open(filename, "w")
 file << '<collection xmlns="http://www.loc.gov/MARC21/slim" xmlns:marc="http://www.loc.gov/MARC21/slim" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.loc.gov/MARC21/slim http://www.loc.gov/standards/marcxml/schema/MARC21slim.xsd">'
@@ -171,6 +171,7 @@ resources.each do |resource|
   )
 
   containers =
+    containers_unfiltered.parsed['response']['docs'].sort_by! { |container| JSON.parse(container['json'])['indicator'].scan(/\d+/).first.to_i }
     containers_unfiltered.parsed['response']['docs'].select do |container|
       json = JSON.parse(container['json'])
       resource_uri = container['collection_uri_u_sstr'] unless container['collection_uri_u_sstr'].nil?
