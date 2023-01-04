@@ -171,6 +171,7 @@ resources.each do |resource|
   )
 
   containers =
+  #sort by top_container indicator
     containers_unfiltered.parsed['response']['docs'].sort_by! { |container| JSON.parse(container['json'])['indicator'].scan(/\d+/).first.to_i }
     containers_unfiltered.parsed['response']['docs'].select do |container|
       json = JSON.parse(container['json'])
