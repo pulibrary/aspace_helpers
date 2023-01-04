@@ -122,8 +122,7 @@ def fetch_and_process_records
       new_subfield_a = subfield_a.replace("<subfield code='a'>#{subfield_a_text}</subfield")
       segments[1..-1].each do |segment|
         code = segment =~ /^[0-9]{2}/ ? 'y' : 'x'
-        #new_subfield_a is a node set of one
-        new_subfield_a[0].next=("<subfield code='#{code}'>#{segment}</subfield>")
+        tag6xx.children.last.next=("<subfield code='#{code}'>#{segment}</subfield>")
       end
       #add punctuation to the last subfield except $2
       if tag6xx.children[-1].attribute('code') == '2'
