@@ -216,7 +216,7 @@ resources.each do |resource|
 
   #append record to file
   #the unless clause addresses #186, #268, #284
-  file << doc.at_xpath('//marc:record') unless tag099_a.content =~ /C0140|AC214|AC364/ #|| tag856.nil?
+  file << doc.at_xpath('//marc:record') unless tag099_a.content =~ /C0140|AC214|AC364/ || tag856.nil?
 end
 file << '</collection>'
 file.close
