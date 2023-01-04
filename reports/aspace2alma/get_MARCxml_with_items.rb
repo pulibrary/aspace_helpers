@@ -170,10 +170,8 @@ resources.each do |resource|
     query: { q: "collection_uri_u_sstr:\"#{resource}\"" }
   )
 
-
   containers =
     containers_unfiltered.parsed['response']['docs'].sort_by! { |container| JSON.parse(container['json'])['indicator'].scan(/\d+/).first.to_i }
-#puts containers_unfiltered.parsed['response']['docs'].map {|container| JSON.parse(container['json'])['indicator']}
     containers_unfiltered.parsed['response']['docs'].select do |container|
       json = JSON.parse(container['json'])
       resource_uri = container['collection_uri_u_sstr'] unless container['collection_uri_u_sstr'].nil?
@@ -216,7 +214,7 @@ resources.each do |resource|
 
   #append record to file
   #the unless clause addresses #186, #268, #284
-  file << doc.at_xpath('//marc:record') unless tag099_a.content =~ /C0140|AC214|AC364/ #|| tag856.nil?
+  file << doc.at_xpath('//marc:record') unless tag099_a.content =~ /C0140|AC214|AC364/ || tag856.nil?
 end
 file << '</collection>'
 file.close
