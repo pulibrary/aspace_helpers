@@ -5,7 +5,7 @@ AllCops:
   NewCops: enable
   
 Metrics/AbcSize:
-Exclude:
-  - 'reports/aspace2alma/get_MARCxml.rb'
+  Exclude:
+    - 'reports/aspace2alma/get_MARCxml.rb'
 
 
