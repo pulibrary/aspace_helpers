@@ -26,8 +26,8 @@ repos_all.each do |repo|
   #File.write(file, selected_records.to_s, mode: 'a')
 #write uri and ref_id (i.e. former cid) to csv
   CSV.open(filename, "wb",
-      :write_headers=> true,
-      :headers => ["uri", "ref_id"]) do |row|
+           :write_headers=> true,
+           :headers => ["uri", "ref_id"]) do |row|
           selected_records.each do |record|
             uri = record['uri']
             refid = record['ref_id']
