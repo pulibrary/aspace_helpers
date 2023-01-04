@@ -184,9 +184,8 @@ resources.each do |resource|
       top_container_location_code = json['container_locations'][0]['_resolved']['classification']
       at_recap = /^(sca)?rcp\p{L}+/.match?(top_container_location_code)
       has_no_barcode = json['barcode'].blank?
-      #check whether container is new and at recap
+      #check whether container is new, at recap, has a barcode
       #these can be toggled on or off depending on the use case
-      #puts "#{resource_uri} : #{resource}"
       if
       #resource_uri == resource.to_s &&
       #created_since_yesterday == true &&
