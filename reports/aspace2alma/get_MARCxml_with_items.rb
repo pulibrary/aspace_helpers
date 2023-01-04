@@ -170,10 +170,8 @@ resources.each do |resource|
     query: { q: "collection_uri_u_sstr:\"#{resource}\"" }
   )
 
-
   containers =
     containers_unfiltered.parsed['response']['docs'].sort_by! { |container| JSON.parse(container['json'])['indicator'].scan(/\d+/).first.to_i }
-#puts containers_unfiltered.parsed['response']['docs'].map {|container| JSON.parse(container['json'])['indicator']}
     containers_unfiltered.parsed['response']['docs'].select do |container|
       json = JSON.parse(container['json'])
       resource_uri = container['collection_uri_u_sstr'] unless container['collection_uri_u_sstr'].nil?
@@ -185,13 +183,15 @@ resources.each do |resource|
       never_modified = json['lock_version'] == 0
       top_container_location_code = json['container_locations'][0]['_resolved']['classification']
       at_recap = /^(sca)?rcp\p{L}+/.match?(top_container_location_code)
+      has_no_barcode = json['barcode'].blank?
       #check whether container is new and at recap
       #these can be toggled on or off depending on the use case
       #puts "#{resource_uri} : #{resource}"
       if
       #resource_uri == resource.to_s &&
       #created_since_yesterday == true &&
-      at_recap == true
+      at_recap == true &&
+      has_no_barcode == false
       #&& never_modified == true
       doc.xpath('//marc:datafield').last.next=
         ("<datafield ind1=' ' ind2=' ' tag='949'>
