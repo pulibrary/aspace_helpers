@@ -2,6 +2,7 @@ require 'archivesspace/client'
 require 'active_support/all'
 require 'nokogiri'
 require 'net/sftp'
+require 'byebug'
 require_relative '../../helper_methods.rb'
 
 #configure sendoff to alma
@@ -27,15 +28,20 @@ end
 
 def fetch_and_process_records
   aspace_login
+  puts "Process started at: #{Time.now}"
 
-  puts Time.now
+  retries = 0
+  begin
+
   filename = "MARC_out.xml"
   resources = get_all_resource_uris_for_institution
+  #resources = ["/repositories/3/resources/1511", "/repositories/3/resources/15111", "/repositories/3/resources/1512"]
 
   file =  File.open(filename, "w")
   file << '<collection xmlns="http://www.loc.gov/MARC21/slim" xmlns:marc="http://www.loc.gov/MARC21/slim" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.loc.gov/MARC21/slim http://www.loc.gov/standards/marcxml/schema/MARC21slim.xsd">'
 
   resources.each do |resource|
+    #byebug if resource.match? /repositories.4/
     uri = resource.gsub!("resources", "resources/marc21") + ".xml"
     marc_record = @client.get(uri)
     doc = Nokogiri::XML(marc_record.body)
@@ -180,12 +186,23 @@ def fetch_and_process_records
     file << doc.at_xpath('//marc:record') unless tag099_a.content =~ /C0140|AC214|AC364/ || tag856.nil?
     file.flush
   end
+
   file << '</collection>'
   file.close
+
   #send to alma
   alma_sftp(filename)
-  puts Time.now
-end
+
+  rescue Exception => error
+    while (retries += 1) <= 3
+      puts "Encountered #{error.class}: '#{error.message}' at #{Time.now}, retrying in #{retries} second(s)..."
+      sleep(retries)
+      retry
+    end
+  end
+
+  puts "Process ended at: #{Time.now}"
+  end
 
 # If you run this file directly, the main method will run
 # If you run the file from rspec, it will only run when calling the method
