@@ -6,5 +6,3 @@ AllCops:
   Exclude:
     - 'reports/aspace2alma/get_MARCxml.rb'
     - 'data_fixes/subject_remediation/*'
-    - 'vendor/bundle/ruby/3.1.0/gems/airbrussh-1.4.1/.rubocop.yml'
-
