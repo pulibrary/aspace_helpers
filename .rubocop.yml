@@ -3,8 +3,6 @@ inherit_from: .rubocop_todo.yml
 AllCops:
   TargetRubyVersion: 3.1
   NewCops: enable
-  
-AllCops:
   Exclude:
     - 'reports/aspace2alma/get_MARCxml.rb'
     - 'data_fixes/subject_remediation/*'
