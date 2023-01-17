@@ -21,5 +21,5 @@
 
 # Run on production at 04:00 am EST or 3:00 am EDT
 every 1.day, at: '09:00 am', roles: [:prod] do
-  command "cd /opt/aspace_helpers/current/reports/aspace2alma && bundle exec ruby get_MARCxml.rb"
+  command "(cd /opt/aspace_helpers/current/reports/aspace2alma && bundle exec ruby get_MARCxml.rb) > get_Marcxml.log 2>&1"
 end
