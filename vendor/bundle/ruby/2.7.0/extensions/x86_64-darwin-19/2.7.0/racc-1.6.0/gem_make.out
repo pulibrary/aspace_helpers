@@ -1,0 +1,17 @@
+current directory: /Users/heberleinr/Documents/aspace_helpers/vendor/bundle/ruby/2.7.0/gems/racc-1.6.0/ext/racc/cparse
+/Users/heberleinr/.rvm/rubies/ruby-2.7.5/bin/ruby -I /Users/heberleinr/.rvm/rubies/ruby-2.7.5/lib/ruby/2.7.0 -r ./siteconf20220308-20683-125zmoa.rb extconf.rb
+checking for rb_block_call()... yes
+checking for rb_ary_subseq()... yes
+creating Makefile
+
+current directory: /Users/heberleinr/Documents/aspace_helpers/vendor/bundle/ruby/2.7.0/gems/racc-1.6.0/ext/racc/cparse
+make "DESTDIR=" clean
+
+current directory: /Users/heberleinr/Documents/aspace_helpers/vendor/bundle/ruby/2.7.0/gems/racc-1.6.0/ext/racc/cparse
+make "DESTDIR="
+compiling cparse.c
+linking shared-object racc/cparse.bundle
+
+current directory: /Users/heberleinr/Documents/aspace_helpers/vendor/bundle/ruby/2.7.0/gems/racc-1.6.0/ext/racc/cparse
+make "DESTDIR=" install
+/usr/local/opt/coreutils/bin/ginstall -c -m 0755 cparse.bundle ./.gem.20220308-20683-zpq7kk/racc
