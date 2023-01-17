@@ -46,8 +46,8 @@ RSpec.describe 'regular aspace2alma process' do
       allow(ENV).to receive(:[]).with("ASPACE_URL").and_return("https://example.com/staff/api")
       allow(ENV).to receive(:[]).with("ASPACE_USER").and_return("test_user")
       allow(ENV).to receive(:[]).with("ASPACE_PASSWORD").and_return("test_pw")
-      stub_request(:post, "https://example.com/staff/api/users/test_user/login?password=test_pw").
-        to_return(
+      stub_request(:post, "https://example.com/staff/api/users/test_user/login?password=test_pw")
+        .to_return(
           status: 403,
           body: "<html>\r\n<head><title>403 Forbidden</title></head>\r\n<body>\r\n<center><h1>403 Forbidden</h1></center>\r\n<hr><center>nginx</center>\r\n</body>\r\n</html>\r\n"
         )
