@@ -5,12 +5,12 @@ require 'net/sftp'
 require_relative '../../helper_methods.rb'
 
 #log to files
-outlog = $stdout.reopen("out_log.txt", "w")
-errlog = $stderr.reopen("err_log.txt", "w")
+$stdout.reopen("out_log.txt", "w")
+$stderr.reopen("err_log.txt", "w")
 
 #keep values synced so they're not going to the buffer
-STDOUT.sync = true
-STDERR.sync = true
+$stdout.sync = true
+$stderr.sync = true
 
 #configure sendoff to alma
 def alma_sftp (filename)
