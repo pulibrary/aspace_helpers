@@ -4,6 +4,9 @@ require 'nokogiri'
 require 'net/sftp'
 require_relative '../../helper_methods.rb'
 
+out = $stdout.reopen("out_log.txt", "w")
+err = $stderr.reopen("err_log.txt", "w")
+
 #configure sendoff to alma
 def alma_sftp (filename)
   Net::SFTP.start(ENV['SFTP_HOST'], ENV['SFTP_USERNAME'], { password: ENV['SFTP_PASSWORD'] }) do |sftp|
@@ -28,7 +31,7 @@ end
 def fetch_and_process_records
   aspace_login
 
-  puts Time.now
+  puts "Process started fetching records at #{Time.now}"
   filename = "MARC_out.xml"
   resources = get_all_resource_uris_for_institution
 
@@ -184,7 +187,7 @@ def fetch_and_process_records
   file.close
   #send to alma
   alma_sftp(filename)
-  puts Time.now
+  puts "Process closed out file at #{Time.now}"
 end
 
 # If you run this file directly, the main method will run
