@@ -11,6 +11,7 @@ subject_ids = @client.get(
   "/subjects", {query: {
     all_ids: true
   }}
+
 ).parsed
 subjects =
   subject_ids.map {|subject_id| @client.get("/subjects/#{subject_id}").parsed}

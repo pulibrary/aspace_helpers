@@ -7,6 +7,9 @@ AllCops:
 Metrics/AbcSize:
   Exclude:
     - 'reports/aspace2alma/get_MARCxml.rb'
-    - 'data_fixes/subject_remediation/*'
+    
+Metrics/MethodLength:
+  Exclude:
+    - 'reports/aspace2alma/get_MARCxml.rb'
 
 
