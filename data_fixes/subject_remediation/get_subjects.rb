@@ -8,10 +8,7 @@ puts Time.now
 output_file = "subjects_test.csv"
 
 subject_ids = @client.get(
-  "/subjects", {query: {
-    all_ids: true
-  }
-}
+  "/subjects", { query: { all_ids: true } }
 ).parsed
 subjects =
   subject_ids.map {|subject_id| @client.get("/subjects/#{subject_id}").parsed}
@@ -19,8 +16,7 @@ subjects =
 CSV.open(output_file, "a",
            :write_headers => true,
            :headers => ["title", "created", "source", "type", "ext_ids", "used", "terms", "vocab", "uri"]) do |row|
-
-subject_fields = subjects.map {|subject|
+subject_fields = subjects.map do |subject|
   title = subject['title']
   created = subject['create_time']
   source = subject['source']
@@ -35,7 +31,6 @@ subject_fields = subjects.map {|subject|
   vocab = subject['vocabulary']
   uri = subject['uri']
   row << [title, created, source, type, ext_ids, used, terms, vocab, uri]
-}
-
+end
 end
 puts Time.now
