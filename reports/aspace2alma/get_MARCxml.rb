@@ -4,8 +4,13 @@ require 'nokogiri'
 require 'net/sftp'
 require_relative '../../helper_methods.rb'
 
-out = $stdout.reopen("out_log.txt", "w")
-err = $stderr.reopen("err_log.txt", "w")
+#log to files
+outlog = $stdout.reopen("out_log.txt", "w")
+errlog = $stderr.reopen("err_log.txt", "w")
+
+#keep values synced so they're not going to the buffer
+STDOUT.sync = true
+STDERR.sync = true
 
 #configure sendoff to alma
 def alma_sftp (filename)
@@ -30,7 +35,7 @@ end
 
 def fetch_and_process_records
   aspace_login
-
+#I want to know in the log when the process started
   puts "Process started fetching records at #{Time.now}"
   filename = "MARC_out.xml"
   resources = get_all_resource_uris_for_institution
@@ -178,6 +183,9 @@ def fetch_and_process_records
     tag561.remove unless tag561.nil?
     tag583.remove unless tag583.nil?
 
+    #I want to know in the log which records were finished when
+    puts "Fetched record #{tag099_a.content} at #{Time.now}"
+
     #append record to file
     #the unless clause addresses #186 and #268 and #284
     file << doc.at_xpath('//marc:record') unless tag099_a.content =~ /C0140|AC214|AC364/ || tag856.nil?
@@ -187,8 +195,11 @@ def fetch_and_process_records
   file.close
   #send to alma
   alma_sftp(filename)
-  puts "Process closed out file at #{Time.now}"
+  #I want to know in the log when the process finished.
+  puts "Process finished at #{Time.now}"
 end
+
+
 
 # If you run this file directly, the main method will run
 # If you run the file from rspec, it will only run when calling the method
