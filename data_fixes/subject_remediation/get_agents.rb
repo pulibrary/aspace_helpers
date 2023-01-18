@@ -11,14 +11,12 @@ agent_endpoints = ["software", "families", "corporate_entities", "people"]
 CSV.open(filename, "a",
            :write_headers => true,
            :headers => ["title", "created", "used", "source", "type", "ext_id", "string", "uri"]) do |row|
-
  agent_endpoints.map do |endpoint|
    ids = @client.get(
-       "/agents/#{endpoint}", {query: {
-         all_ids: true
-           }
-         }
-       ).parsed
+     "/agents/#{endpoint}", {query: {
+       all_ids: true
+     }}
+   ).parsed
    agents = ids.map do |id|
      agent = @client.get("/agents/#{endpoint}/#{id}").parsed
      title = agent['title']

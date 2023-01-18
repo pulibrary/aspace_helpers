@@ -35,7 +35,7 @@ end
 
 def fetch_and_process_records
   aspace_login
-#I want to know in the log when the process started
+  #I want to know in the log when the process started
   puts "Process started fetching records at #{Time.now}"
   filename = "MARC_out.xml"
   resources = get_all_resource_uris_for_institution
@@ -198,8 +198,6 @@ def fetch_and_process_records
   #I want to know in the log when the process finished.
   puts "Process finished at #{Time.now}"
 end
-
-
 
 # If you run this file directly, the main method will run
 # If you run the file from rspec, it will only run when calling the method
