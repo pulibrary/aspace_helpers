@@ -45,13 +45,12 @@ eads.each do |ead|
   file =  File.open(filename, 'w:UTF-8')
   file << '<collection xmlns="http://www.loc.gov/MARC21/slim" xmlns:marc="http://www.loc.gov/MARC21/slim" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.loc.gov/MARC21/slim http://www.loc.gov/standards/marcxml/schema/MARC21slim.xsd">'
 
-  # set these manually before running
+  # get repo and id; set default restriction
   resource_id = [ead["aspace_id"]]
   repo = ead["repo"]
   default_restriction = 'Collection is open for research use.'
 
   # get components
-
   ao_tree = @client.get("/repositories/#{repo}/resources/#{resource_id[0]}/ordered_records").parsed
   # set up variables for each data point needed in the MARCxml
   # data coming from the collection-level
@@ -367,7 +366,6 @@ eads.each do |ead|
               else
                 'x'
               end
-            # "#{subterm['term_type']}: #{subfield_code}: #{subterm['term'].strip}"
             "<subfield code = '#{subfield_code}'>#{subterm['term'].strip}</subfield>"
           end
           #if there are no subfields but the main term has double dashes, compute supfields
