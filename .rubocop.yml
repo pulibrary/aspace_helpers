@@ -7,5 +7,9 @@ AllCops:
 Metrics/AbcSize:
   Exclude:
     - 'reports/aspace2alma/get_MARCxml.rb'
+    
+Metrics/MethodLength:
+  Exclude:
+    - 'reports/aspace2alma/get_MARCxml.rb'
 
 
