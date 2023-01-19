@@ -211,6 +211,7 @@ def fetch_and_process_records
     end
   end
 
+
   #I want to know in the log when the process finished.
   puts "Process finished at #{Time.now}"
 end
