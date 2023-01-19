@@ -201,13 +201,12 @@ def fetch_and_process_records
     #send to alma
     alma_sftp(filename)
 
-  # rescue Exception => error
-  #   while (retries += 1) <= 3
-  #     puts "Encountered #{error.class}: '#{error.message}' at #{Time.now}, retrying in #{retries} second(s)..."
-  #     sleep(retries)
-  #     retry
-  #   end
-  # end
+  rescue Exception => error
+    while (retries += 1) <= 3
+      puts "Encountered #{error.class}: '#{error.message}' at #{Time.now}, retrying in #{retries} second(s)..."
+      sleep(retries)
+      retry
+    end
 
   #log when the process finished.
   log_out.puts "Process finished at #{Time.now}"
