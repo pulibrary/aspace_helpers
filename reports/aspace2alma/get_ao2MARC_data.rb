@@ -16,7 +16,7 @@ def entify_ampersands(text)
   text.to_s.gsub(/([\w\s])(\&)(?![\w\s]{2,6};)/, '\\1&amp;')
 end
 
-def fetch_and_process_records
+def process_ao_records
   aspace_login
 
   start_time = "Process started: #{Time.now}"
@@ -453,5 +453,5 @@ end
 # If you run this file directly, the main method will run
 # If you run the file from rspec, it will only run when calling the method
 if $PROGRAM_NAME == __FILE__
-  fetch_and_process_records
+  process_ao_records
 end
