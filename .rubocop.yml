@@ -3,9 +3,23 @@ inherit_from: .rubocop_todo.yml
 AllCops:
   TargetRubyVersion: 3.1
   NewCops: enable
-  
+
 Metrics/AbcSize:
   Exclude:
     - 'reports/aspace2alma/get_MARCxml.rb'
+    - 'reports/aspace2alma/get_ao2MARC_data.rb'
 
+Metrics/MethodLength:
+  Exclude:
+    - 'reports/aspace2alma/get_MARCxml.rb'
+    - 'reports/aspace2alma/get_ao2MARC_data.rb'
 
+Metrics/CyclomaticComplexity:
+  Exclude:
+    - 'reports/aspace2alma/get_MARCxml.rb'
+    - 'reports/aspace2alma/get_ao2MARC_data.rb'
+
+Metrics/PerceivedComplexity:
+  Exclude:
+    - 'reports/aspace2alma/get_MARCxml.rb'
+    - 'reports/aspace2alma/get_ao2MARC_data.rb'
