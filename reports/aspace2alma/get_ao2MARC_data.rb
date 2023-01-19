@@ -10,6 +10,12 @@ def remove_tags(text)
   text.to_s.gsub(%r{</?[\D\S]+?>}, '')
 end
 
+#literal ampersands are sprinkled throughout; they break the XML
+#check 6 characters out to make sure it's not already an html entity, and if not, entify it
+def entify_ampersands(text)
+  text.to_s.gsub(/([\w\s])(\&)(?![\w\s]{2,6};)/, '\\1&amp;')
+end
+
 aspace_login
 
 start_time = "Process started: #{Time.now}"
@@ -197,7 +203,7 @@ eads.each do |ead|
         else nil
         end
       tag245 = "<datafield ind1=' ' ind2=' ' tag='245'>
-        <subfield code = 'a'>#{title.gsub(/([\w\s])(\&)(?![\w\s]{2,6};)/, '\\1&amp;')}</subfield>
+        <subfield code = 'a'>#{entify_ampersands(title)}</subfield>
         #{subfield_f ||= ''}
         </datafield>"
       # addresses github 181 Extents	300
@@ -227,32 +233,32 @@ eads.each do |ead|
       # addresses github 181 'Scope and contents	520'
       tags520 = scope_notes.map do |scope_note|
         "<datafield ind1=' ' ind2=' ' tag='520'>
-          <subfield code = 'a'>#{scope_note.gsub(/([\w\s])(\&)(?![\w\s]{2,6};)/, '\\1&amp;')}</subfield>
+          <subfield code = 'a'>#{entify_ampersands(scope_note)}</subfield>
           </datafield>"
       end
       # addresses github 181 'Immediate Source of Acquisition	541'
       tags541 = acq_notes.map do |acq_note|
         "<datafield ind1=' ' ind2=' ' tag='541'>
-            <subfield code = 'a'>#{acq_note.gsub(/([\w\s])(\&)(?![\w\s]{2,6};)/, '\\1&amp;')}</subfield>
+            <subfield code = 'a'>#{entify_ampersands(acq_note)}</subfield>
             </datafield>"
       end
       # adds related materials note
       tags544 = related_notes.map do |related_note|
         "<datafield ind1=' ' ind2=' ' tag='544'>
-            <subfield code = 'a'>#{related_note.gsub(/([\w\s])(\&)(?![\w\s]{2,6};)/, '\\1&amp;')}</subfield>
+            <subfield code = 'a'>#{entify_ampersands(related_note)}</subfield>
             </datafield>"
       end
       # addresses github 181 '# Agents/Biographical/Historical note	545'
       tags545 = bioghist_notes.map do |bioghist_note|
         "<datafield ind1=' ' ind2=' ' tag='545'>
-            <subfield code = 'a'>#{bioghist_note.gsub(/([\w\s])(\&)(?![\w\s]{2,6};)/, '\\1&amp;')}</subfield>
+            <subfield code = 'a'>#{entify_ampersands(bioghist_note)}</subfield>
             </datafield>"
       end
 
       # addresses github 181 'Processing Information	583'
       tags583 = processinfo_notes.map do |processinfo_note|
         "<datafield ind1=' ' ind2=' ' tag='583'>
-            <subfield code = 'a'>#{processinfo_note.gsub(/([\w\s])(\&)(?![\w\s]{2,6};)/, '\\1&amp;')}</subfield>
+            <subfield code = 'a'>#{entify_ampersands(processinfo_note)}</subfield>
             </datafield>"
       end
 
@@ -313,7 +319,7 @@ eads.each do |ead|
           tag1xx <<
             if agent['role'] == 'creator'
               "<datafield ind1='#{name_type}' ind2='#{source_code}' tag='1#{tag.to_s[1..2]}'>
-                <subfield code = 'a'>#{name.gsub(/([\w\s])(\&)(?![\w\s]{2,6};)/, '\\1&amp;')}#{add_punctuation unless name[-1] =~ /[.,)-]/}</subfield>
+                <subfield code = 'a'>#{entify_ampersands(name)}#{add_punctuation unless name[-1] =~ /[.,)-]/}</subfield>
                 #{dates unless agent['name_dates'].nil?}
                 #{subfield_e ||= ''}
                 #{subfield_2 ||= ''}
@@ -321,7 +327,7 @@ eads.each do |ead|
               </datafield>"
             end
           "<datafield ind1='#{name_type}' ind2='#{tag.to_s[0]=='7' ? ' ' : source_code}' tag='#{tag}'>
-            <subfield code = 'a'>#{name.gsub(/([\w\s])(\&)(?![\w\s]{2,6};)/, '\\1&amp;')}#{add_punctuation unless name[-1] =~ /[.,)-]/}</subfield>
+            <subfield code = 'a'>#{entify_ampersands(name)}#{add_punctuation unless name[-1] =~ /[.,)-]/}</subfield>
             #{dates unless agent['name_dates'].nil?}
             #{subfield_e ||= ''}
             #{subfield_2 ||= ''}
