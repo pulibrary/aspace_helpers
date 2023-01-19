@@ -203,8 +203,6 @@ def fetch_and_process_records
 
   rescue Exception => error
     while (retries += 1) <= 3
-      next if retries == 3
-
       puts "Encountered #{error.class}: '#{error.message}' at #{Time.now}, retrying in #{retries} second(s)..."
       sleep(retries)
       retry
