@@ -4,12 +4,9 @@ require 'nokogiri'
 require 'net/sftp'
 require_relative '../../helper_methods.rb'
 
-#log to files
-$stdout.reopen("out_log.txt", "w")
-$stderr.reopen("err_log.txt", "w")
-
-#keep values synced so they're not going to the buffer
-$stdout.sync = true
+#log errors to file
+$stderr.reopen("log_err.txt", "w")
+# #keep values synced so they're not going to the buffer
 $stderr.sync = true
 
 #configure sendoff to alma
@@ -34,9 +31,11 @@ def remove_linebreaks(node)
 end
 
 def fetch_and_process_records
+  #open a quasi log to receive progress output
+  log_out = File.open("log_out.txt", "w")
   aspace_login
-  #I want to know in the log when the process started
-  puts "Process started fetching records at #{Time.now}"
+  #log when the process started
+  log_out.puts "Process started fetching records at #{Time.now}"
   filename = "MARC_out.xml"
   resources = get_all_resource_uris_for_institution
 
@@ -44,8 +43,8 @@ def fetch_and_process_records
   file << '<collection xmlns="http://www.loc.gov/MARC21/slim" xmlns:marc="http://www.loc.gov/MARC21/slim" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.loc.gov/MARC21/slim http://www.loc.gov/standards/marcxml/schema/MARC21slim.xsd">'
 
   resources.each do |resource|
-    retries = 0
-    begin
+      # retries = 0
+      # begin
       #byebug if resource.match? /repositories.4/
       uri = resource.gsub!("resources", "resources/marc21") + ".xml"
       marc_record = @client.get(uri)
@@ -186,13 +185,14 @@ def fetch_and_process_records
       tag561.remove unless tag561.nil?
       tag583.remove unless tag583.nil?
 
-      #I want to know in the log which records were finished when
-      puts "Fetched record #{tag099_a.content} at #{Time.now}"
+      #log which records were finished when
+      log_out.puts "Fetched record #{tag099_a.content} at #{Time.now}\n"
 
       #append record to file
       #the unless clause addresses #186 and #268 and #284
       file << doc.at_xpath('//marc:record') unless tag099_a.content =~ /C0140|AC214|AC364/ || tag856.nil?
       file.flush
+      log_out.flush
     end
 
     file << '</collection>'
@@ -201,16 +201,16 @@ def fetch_and_process_records
     #send to alma
     alma_sftp(filename)
 
-  rescue Exception => error
-    while (retries += 1) <= 3
-      puts "Encountered #{error.class}: '#{error.message}' at #{Time.now}, retrying in #{retries} second(s)..."
-      sleep(retries)
-      retry
-    end
-  end
+  # rescue Exception => error
+  #   while (retries += 1) <= 3
+  #     puts "Encountered #{error.class}: '#{error.message}' at #{Time.now}, retrying in #{retries} second(s)..."
+  #     sleep(retries)
+  #     retry
+  #   end
+  # end
 
-  #I want to know in the log when the process finished.
-  puts "Process finished at #{Time.now}"
+  #log when the process finished.
+  log_out.puts "Process finished at #{Time.now}"
 end
 
 # If you run this file directly, the main method will run
