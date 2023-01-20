@@ -84,5 +84,3 @@ RSpec.describe 'regular aspace2alma process' do
     end
   end
 end
-
-#Errno::ECONNRESET
