@@ -38,4 +38,14 @@ RSpec.describe 'regular aspace2alma process' do
       expect(doc.at(subfield_e_xpath).to_s).to eq('dacs')
     end
   end
+
+  it 'raises an error when the connection is interrupted' do
+    expect(ArchivesSpace::Response).not_to be_nil
+    expect { assert_nil(ArchivesSpace::Response) }.to raise_error(Exception)
+  end
+
+
+
 end
+
+#Errno::ECONNRESET

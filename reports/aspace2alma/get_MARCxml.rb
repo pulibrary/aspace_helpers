@@ -200,7 +200,7 @@ def fetch_and_process_records
 
     #send to alma
     alma_sftp(filename)
-  rescue Exception => error
+  rescue Errno::ECONNRESET,Errno::ECONNABORTED,Errno::ETIMEDOUT => error
     while (retries += 1) <= 3
       puts "Encountered #{error.class}: '#{error.message}' at #{Time.now}, retrying in #{retries} second(s)..."
       sleep(retries)
