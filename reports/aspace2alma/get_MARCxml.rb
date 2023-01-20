@@ -30,6 +30,10 @@ def remove_linebreaks(node)
   node.xpath("//marc:subfield/text()").map { |text| text.content = text.content.gsub(/[\n\r]+/," ") }
 end
 
+def path_for_resource(resource)
+  resource.gsub("resources", "resources/marc21") + ".xml"
+end
+
 def fetch_and_process_records
   #open a quasi log to receive progress output
   log_out = File.open("log_out.txt", "w")
@@ -43,10 +47,10 @@ def fetch_and_process_records
   file << '<collection xmlns="http://www.loc.gov/MARC21/slim" xmlns:marc="http://www.loc.gov/MARC21/slim" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.loc.gov/MARC21/slim http://www.loc.gov/standards/marcxml/schema/MARC21slim.xsd">'
 
   resources.each do |resource|
-      # retries = 0
+      retries ||= 0
       # begin
       #byebug if resource.match? /repositories.4/
-      uri = resource.gsub!("resources", "resources/marc21") + ".xml"
+      uri = path_for_resource(resource)
       marc_record = @client.get(uri)
       doc = Nokogiri::XML(marc_record.body)
 
@@ -193,6 +197,12 @@ def fetch_and_process_records
       file << doc.at_xpath('//marc:record') unless tag099_a.content =~ /C0140|AC214|AC364/ || tag856.nil?
       file.flush
       log_out.flush
+    rescue Errno::ECONNRESET,Errno::ECONNABORTED,Errno::ETIMEDOUT,Errno::ECONNREFUSED => error
+      while (retries += 1) <= 3
+        puts "Encountered #{error.class}: '#{error.message}' at #{Time.now}, retrying in #{retries} second(s)..."
+        sleep(retries)
+        retry
+      end
     end
 
     file << '</collection>'
@@ -200,15 +210,12 @@ def fetch_and_process_records
 
     #send to alma
     alma_sftp(filename)
-  rescue Errno::ECONNRESET,Errno::ECONNABORTED,Errno::ETIMEDOUT,Errno::ECONNREFUSED => error
-    while (retries += 1) <= 3
-      puts "Encountered #{error.class}: '#{error.message}' at #{Time.now}, retrying in #{retries} second(s)..."
-      sleep(retries)
-      retry
-    end
 
   #log when the process finished.
   log_out.puts "Process finished at #{Time.now}"
+end
+
+def process_resource(resource, file, log_out)
 end
 
 # If you run this file directly, the main method will run
