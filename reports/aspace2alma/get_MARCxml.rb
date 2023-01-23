@@ -206,6 +206,9 @@ def process_resource(resource, file, log_out)
   #log which records were finished when
   log_out.puts "Fetched record #{tag099_a.content} at #{Time.now}\n"
 
+  #try adding a delay to get around the rate limit
+  sleep(0.25)
+
   #append record to file
   #the unless clause addresses #186 and #268 and #284
   file << doc.at_xpath('//marc:record') unless tag099_a.content =~ /C0140|AC214|AC364/ || tag856.nil?
