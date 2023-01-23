@@ -16,8 +16,10 @@ Metrics/MethodLength:
 
 Metrics/CyclomaticComplexity:
   Exclude:
+    - 'reports/aspace2alma/get_MARCxml.rb'
     - 'reports/aspace2alma/get_ao2MARC_data.rb'
 
 Metrics/PerceivedComplexity:
   Exclude:
+    - 'reports/aspace2alma/get_MARCxml.rb'
     - 'reports/aspace2alma/get_ao2MARC_data.rb'

@@ -4,12 +4,9 @@ require 'nokogiri'
 require 'net/sftp'
 require_relative '../../helper_methods.rb'
 
-#log to files
-$stdout.reopen("out_log.txt", "w")
-$stderr.reopen("err_log.txt", "w")
-
-#keep values synced so they're not going to the buffer
-$stdout.sync = true
+#log errors to file
+$stderr.reopen("log_err.txt", "w")
+# #keep values synced so they're not going to the buffer
 $stderr.sync = true
 
 #configure sendoff to alma
@@ -33,10 +30,16 @@ def remove_linebreaks(node)
   node.xpath("//marc:subfield/text()").map { |text| text.content = text.content.gsub(/[\n\r]+/," ") }
 end
 
+def path_for_resource(resource)
+  resource.gsub("resources", "resources/marc21") + ".xml"
+end
+
 def fetch_and_process_records
+  #open a quasi log to receive progress output
+  log_out = File.open("log_out.txt", "w")
   aspace_login
-  #I want to know in the log when the process started
-  puts "Process started fetching records at #{Time.now}"
+  #log when the process started
+  log_out.puts "Process started fetching records at #{Time.now}"
   filename = "MARC_out.xml"
   resources = get_all_resource_uris_for_institution
 
@@ -44,104 +47,121 @@ def fetch_and_process_records
   file << '<collection xmlns="http://www.loc.gov/MARC21/slim" xmlns:marc="http://www.loc.gov/MARC21/slim" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.loc.gov/MARC21/slim http://www.loc.gov/standards/marcxml/schema/MARC21slim.xsd">'
 
   resources.each do |resource|
-    uri = resource.gsub!("resources", "resources/marc21") + ".xml"
-    marc_record = @client.get(uri)
-    doc = Nokogiri::XML(marc_record.body)
+    process_resource(resource, file, log_out)
+  end
 
-    # set up variables (these may return a sequence)
-    ##################
-    tag008 = doc.at_xpath('//marc:controlfield[@tag="008"]')
-    tags040 = doc.xpath('//marc:datafield[@tag="040"]')
-    tag041 = doc.at_xpath('//marc:datafield[@tag="041"]')
-    tag099_a = doc.at_xpath('//marc:datafield[@tag="099"]/marc:subfield[@code="a"]')
-    tag351 = doc.at_xpath('//marc:datafield[@tag="351"]')
-    tags500 = doc.xpath('//marc:datafield[@tag="500"]')
-    tags500_a = doc.xpath('//marc:datafield[@tag="500"]/marc:subfield[@code="a"]')
-    tags520 = doc.xpath('//marc:datafield[@tag="520"]')
-    tag524 = doc.at_xpath('//marc:datafield[@tag="524"]')
-    tag535 = doc.at_xpath('//marc:datafield[@tag="535"]')
-    tag540 = doc.at_xpath('//marc:datafield[@tag="540"]')
-    tag541 = doc.at_xpath('//marc:datafield[@tag="541"]')
-    tags544 = doc.xpath('//marc:datafield[@tag="544"]')
-    tag561 = doc.at_xpath('//marc:datafield[@tag="561"]')
-    tag583 = doc.at_xpath('//marc:datafield[@tag="583"]')
-    tags852 = doc.xpath('//marc:datafield[@tag="852"]')
-    tag856 = doc.at_xpath('//marc:datafield[@tag="856"]')
-    tags6xx = doc.xpath('//marc:datafield[@tag = "700" or @tag = "650" or
-      @tag = "651" or @tag = "610" or @tag = "630" or @tag = "648" or
-      @tag = "655" or @tag = "656" or @tag = "657"]')
-    subfields = doc.xpath('//marc:subfield')
+  file << '</collection>'
+  file.close
 
-    #do stuff
-    ##################
+  #send to alma
+  alma_sftp(filename)
 
-    #addresses github #128
-    remove_empty_elements(doc)
+  #log when the process finished.
+  log_out.puts "Process finished at #{Time.now}"
+end
 
-    #addresses github #159
-    remove_linebreaks(doc)
+def process_resource(resource, file, log_out)
+  retries ||= 0
+  # begin
+  #byebug if resource.match? /repositories.4/
+  uri = path_for_resource(resource)
+  marc_record = @client.get(uri)
+  doc = Nokogiri::XML(marc_record.body)
 
-    #addresses github #129
-    tag008.previous=("<controlfield tag='001'>#{tag099_a.content}</controlfield>")
+  # set up variables (these may return a sequence)
+  ##################
+  tag008 = doc.at_xpath('//marc:controlfield[@tag="008"]')
+  tags040 = doc.xpath('//marc:datafield[@tag="040"]')
+  tag041 = doc.at_xpath('//marc:datafield[@tag="041"]')
+  tag099_a = doc.at_xpath('//marc:datafield[@tag="099"]/marc:subfield[@code="a"]')
+  tag351 = doc.at_xpath('//marc:datafield[@tag="351"]')
+  tags500 = doc.xpath('//marc:datafield[@tag="500"]')
+  tags500_a = doc.xpath('//marc:datafield[@tag="500"]/marc:subfield[@code="a"]')
+  tags520 = doc.xpath('//marc:datafield[@tag="520"]')
+  tag524 = doc.at_xpath('//marc:datafield[@tag="524"]')
+  tag535 = doc.at_xpath('//marc:datafield[@tag="535"]')
+  tag540 = doc.at_xpath('//marc:datafield[@tag="540"]')
+  tag541 = doc.at_xpath('//marc:datafield[@tag="541"]')
+  tags544 = doc.xpath('//marc:datafield[@tag="544"]')
+  tag561 = doc.at_xpath('//marc:datafield[@tag="561"]')
+  tag583 = doc.at_xpath('//marc:datafield[@tag="583"]')
+  tags852 = doc.xpath('//marc:datafield[@tag="852"]')
+  tag856 = doc.at_xpath('//marc:datafield[@tag="856"]')
+  tags6xx = doc.xpath('//marc:datafield[@tag = "700" or @tag = "650" or
+    @tag = "651" or @tag = "610" or @tag = "630" or @tag = "648" or
+    @tag = "655" or @tag = "656" or @tag = "657"]')
+  subfields = doc.xpath('//marc:subfield')
 
-    #addresses github #130
-    tag008.previous=("<controlfield tag='003'>PULFA</controlfield>")
+  #do stuff
+  ##################
 
-    #addresses github #144
-    #swap quotes so interpolation is possible
-    tag008.next=("<datafield ind1=' ' ind2=' ' tag='035'>
-      <subfield code='a'>(PULFA)#{tag099_a.content}</subfield>
+  #addresses github #128
+  remove_empty_elements(doc)
+
+  #addresses github #159
+  remove_linebreaks(doc)
+
+  #addresses github #129
+  tag008.previous=("<controlfield tag='001'>#{tag099_a.content}</controlfield>")
+
+  #addresses github #130
+  tag008.previous=("<controlfield tag='003'>PULFA</controlfield>")
+
+  #addresses github #144
+  #swap quotes so interpolation is possible
+  tag008.next=("<datafield ind1=' ' ind2=' ' tag='035'>
+    <subfield code='a'>(PULFA)#{tag099_a.content}</subfield>
+    </datafield>")
+
+  #addresses github #131
+  tags040.each do |tag040|
+    tag040.replace('<datafield ind1=" " ind2=" " tag="040">
+        <subfield code="a">NjP</subfield>
+        <subfield code="b">eng</subfield>
+        <subfield code="e">dacs</subfield>
+        <subfield code="c">NjP</subfield>
+      </datafield>')
+  end
+
+  #addresses github #134
+  tag041.next=("<datafield ind1=' ' ind2=' ' tag='046'>
+        <subfield code='a'>i</subfield>
+        <subfield code='c'>#{tag008.content[7..10]}</subfield>
+        <subfield code='e'>#{tag008.content[11..14]}</subfield>
       </datafield>")
 
-    #addresses github #131
-    tags040.each do |tag040|
-      tag040.replace('<datafield ind1=" " ind2=" " tag="040">
-          <subfield code="a">NjP</subfield>
-          <subfield code="b">eng</subfield>
-          <subfield code="e">dacs</subfield>
-          <subfield code="c">NjP</subfield>
-        </datafield>')
+  #addresses github #168
+  tags520 = tags520.map.with_index { |tag520, index| tag520.remove if index > 0}
+
+  #addresses github #133
+  #superseded by github #205
+  #NB node.children.before inserts new node as first of node's children; default for add_child is last
+  # tags544.each do |tag544|
+  #   tag544.children.before('<subfield code="a">')
+  # end
+
+  #addresses github #143
+  #adapted from Mark's implementation of Don's logic
+  tags6xx.each do |tag6xx|
+    subfield_a = tag6xx.at_xpath('marc:subfield[@code="a"]')
+    segments = subfield_a.content.split('--')
+    segments.each { |segment| segment.strip! }
+    subfield_a_text = segments[0]
+    new_subfield_a = subfield_a.replace("<subfield code='a'>#{subfield_a_text}</subfield")
+    segments[1..-1].each do |segment|
+      code = segment =~ /^[0-9]{2}/ ? 'y' : 'x'
+      tag6xx.children.last.next=("<subfield code='#{code}'>#{segment}</subfield>")
     end
-
-    #addresses github #134
-    tag041.next=("<datafield ind1=' ' ind2=' ' tag='046'>
-          <subfield code='a'>i</subfield>
-          <subfield code='c'>#{tag008.content[7..10]}</subfield>
-          <subfield code='e'>#{tag008.content[11..14]}</subfield>
-        </datafield>")
-
-    #addresses github #168
-    tags520 = tags520.map.with_index { |tag520, index| tag520.remove if index > 0}
-
-    #addresses github #133
-    #superseded by github #205
-    #NB node.children.before inserts new node as first of node's children; default for add_child is last
-    # tags544.each do |tag544|
-    #   tag544.children.before('<subfield code="a">')
-    # end
-
-    #addresses github #143
-    #adapted from Mark's implementation of Don's logic
-    tags6xx.each do |tag6xx|
-      subfield_a = tag6xx.at_xpath('marc:subfield[@code="a"]')
-      segments = subfield_a.content.split('--')
-      segments.each { |segment| segment.strip! }
-      subfield_a_text = segments[0]
-      new_subfield_a = subfield_a.replace("<subfield code='a'>#{subfield_a_text}</subfield")
-      segments[1..-1].each do |segment|
-        code = segment =~ /^[0-9]{2}/ ? 'y' : 'x'
-        tag6xx.children.last.next=("<subfield code='#{code}'>#{segment}</subfield>")
-      end
-      #add punctuation to the last subfield except $2
-      if tag6xx.children[-1].attribute('code') == '2'
-        tag6xx.children[-2].content << '.' unless ['?', '-', '.'].include?(tag6xx.children[-2].content[-1])
-      else
-        tag6xx.children[-1].content << '.' unless ['?', '-', '.'].include?(tag6xx.children[-1].content[-1])
-      end
+    #add punctuation to the last subfield except $2
+    if tag6xx.children[-1].attribute('code') == '2'
+      tag6xx.children[-2].content << '.' unless ['?', '-', '.'].include?(tag6xx.children[-2].content[-1])
+    else
+      tag6xx.children[-1].content << '.' unless ['?', '-', '.'].include?(tag6xx.children[-1].content[-1])
     end
+  end
 
-    #addresses github #132
-    tags852.remove
+  #addresses github #132
+  tags852.remove
 
   #addresses github #268
   unless tag856.nil?
@@ -153,50 +173,55 @@ def fetch_and_process_records
     </datafield>")
   end
 
-    #addresses github 147
-    unless tags500_a.nil?
-      tags500_a.select do |tag500_a|
-        #the exporter adds preceding text and punctuation for each physloc.
-        #hardcode location codes because textual physlocs are patterned the same
-        #account for 'sca' prefix (#247)
+  #addresses github 147
+  unless tags500_a.nil?
+    tags500_a.select do |tag500_a|
+      #the exporter adds preceding text and punctuation for each physloc.
+      #hardcode location codes because textual physlocs are patterned the same
+      #account for 'sca' prefix (#247)
 
-        if tag500_a.content.match(/Location of resource: (sca)?(anxb|ea|ex|flm|flmp|gax|hsvc|hsvm|mss|mudd|prnc|rarebooks|rcpph|rcppf|rcppl|rcpxc|rcpxg|rcpxm|rcpxr|st|thx|wa|review|oo|sc|sls)/)
-          #strip text preceding and following code
-          location_notes = tag500_a.content.gsub(/.*:\s(.+)[.]/, "\\1")
-          location_notes.split.each do |tag|
-            #add as the last datafield
-            doc.xpath('//marc:datafield').last.next=
-            ("<datafield ind1=' ' ind2=' ' tag='982'><subfield code='c'>#{tag}</subfield></datafield>")
-            end unless location_notes.nil?
-        end
+      if tag500_a.content.match(/Location of resource: (sca)?(anxb|ea|ex|flm|flmp|gax|hsvc|hsvm|mss|mudd|prnc|rarebooks|rcpph|rcppf|rcppl|rcpxc|rcpxg|rcpxm|rcpxr|st|thx|wa|review|oo|sc|sls)/)
+        #strip text preceding and following code
+        location_notes = tag500_a.content.gsub(/.*:\s(.+)[.]/, "\\1")
+        location_notes.split.each do |tag|
+          #add as the last datafield
+          doc.xpath('//marc:datafield').last.next=
+          ("<datafield ind1=' ' ind2=' ' tag='982'><subfield code='c'>#{tag}</subfield></datafield>")
+          end unless location_notes.nil?
       end
     end
-
-    #addresses github #205
-    tag351.remove unless tag351.nil?
-    tags500.remove unless tags500.nil?
-    tag524.remove unless tag524.nil?
-    tag535.remove unless tag535.nil?
-    tag540.remove unless tag540.nil?
-    tag541.remove unless tag541.nil?
-    tags544.remove unless tags544.nil?
-    tag561.remove unless tag561.nil?
-    tag583.remove unless tag583.nil?
-
-    #I want to know in the log which records were finished when
-    puts "Fetched record #{tag099_a.content} at #{Time.now}"
-
-    #append record to file
-    #the unless clause addresses #186 and #268 and #284
-    file << doc.at_xpath('//marc:record') unless tag099_a.content =~ /C0140|AC214|AC364/ || tag856.nil?
-    file.flush
   end
-  file << '</collection>'
-  file.close
-  #send to alma
-  alma_sftp(filename)
-  #I want to know in the log when the process finished.
-  puts "Process finished at #{Time.now}"
+
+  #addresses github #205
+  tag351.remove unless tag351.nil?
+  tags500.remove unless tags500.nil?
+  tag524.remove unless tag524.nil?
+  tag535.remove unless tag535.nil?
+  tag540.remove unless tag540.nil?
+  tag541.remove unless tag541.nil?
+  tags544.remove unless tags544.nil?
+  tag561.remove unless tag561.nil?
+  tag583.remove unless tag583.nil?
+
+  #log which records were finished when
+  log_out.puts "Fetched record #{tag099_a.content} at #{Time.now}\n"
+
+  #try adding a delay to get around the rate limit
+  sleep(0.25)
+
+  #append record to file
+  #the unless clause addresses #186 and #268 and #284
+  file << doc.at_xpath('//marc:record') unless tag099_a.content =~ /C0140|AC214|AC364/ || tag856.nil?
+  file.flush
+  log_out.flush
+rescue Errno::ECONNRESET,Errno::ECONNABORTED,Errno::ETIMEDOUT,Errno::ECONNREFUSED => error
+  while (retries += 1) <= 3
+    log_out.puts "Encountered #{error.class}: '#{error.message}' when retrieving resource #{resource} at #{Time.now}, retrying in #{retries} second(s)..."
+    sleep(retries)
+    retry
+  end
+  # It might be more appropriate to put this in the error log, but I'm not sure how to do that with the current setup
+  log_out.puts "Encountered #{error.class}: '#{error.message}' at #{Time.now}, unsuccessful in retrieving resource #{resource} after #{retries} retries"
 end
 
 # If you run this file directly, the main method will run
