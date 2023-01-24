@@ -1,7 +1,7 @@
 require_relative '../../helper_methods.rb'
 require_relative '../../csv_aspace_runner'
 
-client = aspace_staging_login
+client = aspace_login
 
 runner = CSVASpaceRunner.new("AC107_Change_Container_Indicators.csv", client)
 
@@ -16,7 +16,7 @@ runner.run do |row, record|
     record["container_profile"] = {'ref'=>"#{new_profile}"}
     record['container_locations'] = [{"jsonmodel_type"=>"container_location",
     "status"=>"current",
-    "start_date"=>"2022-11-09}",
+    "start_date"=>"2023-01-24}",
     "ref"=>"#{new_location}"
     }]
 
