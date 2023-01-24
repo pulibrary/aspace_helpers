@@ -12,10 +12,9 @@ csv = CSV.parse(File.read("AC107_Merge_Duplicate_Containers.csv"), :headers => t
     victim = row['victim'].to_s
 
     update=@client.post('/merge_requests/top_container?repo_id=4', {
-      'uri': 'merge_requests/top_container',
-      'target': {'ref':target},
-      'victims': [{'ref':victim}]
-    }.to_json
-    )
+      uri: 'merge_requests/top_container',
+      target: {ref: target},
+      victims: [{ref: victim}]
+    }.to_json)
     puts update.body
 end
