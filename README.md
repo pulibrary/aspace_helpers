@@ -70,3 +70,12 @@ $ ASPACE_USER=wrong_user ASPACE_URL=http://example.com bundle exec ruby test_con
 API client login failed as user [wrong_user], check username and password are correct
 ```
 
+### Tests
+#### RSpec
+- To run RSpec, from the root of your application, run `bundle exec rspec`
+- To run a single test file, include the path to the file, e.g. `bundle exec rspec spec/reports/get_MARCxml_spec.rb`
+
+#### Rubocop
+- To run Rubocop, from the root of your application, run `bundle exec rubocop`
+- To auto-correct less-risky errors, run `bundle exec rubocop -a`
+- To auto-correct more risky errors (need to be double-checked by a human), run `bundle exec rubocop -A`

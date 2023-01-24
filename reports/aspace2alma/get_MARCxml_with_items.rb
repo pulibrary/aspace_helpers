@@ -13,46 +13,21 @@ def alma_sftp (filename)
   end
 end
 
-def get_all_resource_uris_for_repo()
-  #run through all repositories (1 and 2 are reserved for admin use)
-  resources_endpoints = []
-  repos_all = (12..12).to_a
-  repos_all.each do |repo|
-    resources_endpoints << 'repositories/'+repo.to_s+'/resources'
-    end
-  @uris = []
-  resources_endpoints.each do |endpoint|
-    ids_by_endpoint = []
-    ids_by_endpoint << @client.get(endpoint, {
-      query: {
-       all_ids: true
-      }}).parsed
-    ids_by_endpoint = ids_by_endpoint.flatten!
-    ids_by_endpoint.each do |id|
-      @uris << "/#{endpoint}/#{id}"
-    end
-  end #close resources_endpoints.each
-  @uris
-end #close method
-
-aspace_staging_login
+aspace_login
 
 puts Time.now
 filename = "MARC_out.xml"
 
 #front-load resource uri's to iterate over
 #resources = get_all_resource_uris_for_institution
-resources = get_all_resource_uris_for_repo
 
+resources = ["/repositories/5/resources/4277"]
 
 file =  File.open(filename, "w")
 file << '<collection xmlns="http://www.loc.gov/MARC21/slim" xmlns:marc="http://www.loc.gov/MARC21/slim" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.loc.gov/MARC21/slim http://www.loc.gov/standards/marcxml/schema/MARC21slim.xsd">'
 
 resources.each do |resource|
-  # puts resource
-  # puts "retrieving from path: #{resource}/top_containers"
-  #container_refs = @client.get("#{resource}/top_containers", { timeout: 1000 }).parsed
-  marc_uri = resource.gsub!("resources", "resources/marc21") + ".xml"
+  marc_uri = resource.gsub("resources", "resources/marc21") + ".xml"
   marc_record = @client.get(marc_uri)
   doc = Nokogiri::XML(marc_record.body)
 
@@ -189,27 +164,39 @@ resources.each do |resource|
   #get container records for the resource
   #tried and true, this is the fastest way
   #this returns a response object; or it may be nil
-  containers_unfiltered = @client.get("repositories/#{repo}/top_containers/search", q: resource, timeout: 10000 )
+  #NB the quirky punctuation for the query syntax
+  containers_unfiltered = @client.get(
+    "repositories/#{repo}/top_containers/search",
+    query: { q: "collection_uri_u_sstr:\"#{resource}\"" }
+  )
+
   containers =
+    #sort by top_container indicator
+    containers_unfiltered.parsed['response']['docs'].sort_by! { |container| JSON.parse(container['json'])['indicator'].scan(/\d+/).first.to_i }
     containers_unfiltered.parsed['response']['docs'].select do |container|
+      json = JSON.parse(container['json'])
+      resource_uri = container['collection_uri_u_sstr'] unless container['collection_uri_u_sstr'].nil?
       aspace_ctime = Date.parse(container['create_time'])
       ctime = "#{aspace_ctime.year}-#{aspace_ctime.month}-#{aspace_ctime.day}"
       yesterday_raw = Time.now.utc.to_date - 1
       yesterday = "#{yesterday_raw.year}-#{yesterday_raw.month}-#{yesterday_raw.day}"
       created_since_yesterday = Date.parse(ctime) >= Date.parse(yesterday)
-      never_modified = JSON.parse(container['json'])['lock_version'] == 0
-      top_container_location_code = container['location_display_string_u_sstr'].nil? ? '' : container['location_display_string_u_sstr'][0].gsub(/(^.+\[)(.+)(\].*)/, '\2')
+      never_modified = json['lock_version'] == 0
+      top_container_location_code = json['container_locations'][0]['_resolved']['classification']
       at_recap = /^(sca)?rcp\p{L}+/.match?(top_container_location_code)
-      #check whether container is new and at recap
+      has_no_barcode = json['barcode'].blank?
+      #check whether container is new, at recap, has a barcode
       #these can be toggled on or off depending on the use case
       if
-      created_since_yesterday == true &&
+      #resource_uri == resource.to_s &&
+      #created_since_yesterday == true &&
       at_recap == true &&
-      never_modified == true
+      has_no_barcode == false
+      #&& never_modified == true
       doc.xpath('//marc:datafield').last.next=
         ("<datafield ind1=' ' ind2=' ' tag='949'>
-            <subfield code='a'>#{container['barcode_u_icusort']}</subfield>
-            <subfield code='b'>#{container['type_u_ssort']} #{container['indicator_u_icusort']}</subfield>
+            <subfield code='a'>#{json['barcode']}</subfield>
+            <subfield code='b'>#{json['type']} #{json['indicator']}</subfield>
             <subfield code='c'>#{top_container_location_code}</subfield>
             <subfield code='d'>(PULFA)#{tag099_a.content}</subfield>
           </datafield>")
