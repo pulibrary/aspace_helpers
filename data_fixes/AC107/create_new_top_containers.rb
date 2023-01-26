@@ -22,17 +22,17 @@ csv.each do |row|
   location = row['location']
   top_containers <<
     {
-    "barcode"=>"#{barcode}",
-    "indicator"=>"#{indicator}",
-    "type"=>"#{type}",
-    "ils_holding_id"=>"#{ils_holding_id}",
+      "barcode"=>barcode.to_s,
+    "indicator"=>indicator.to_s,
+    "type"=>type.to_s,
+    "ils_holding_id"=>ils_holding_id.to_s,
     "repository"=>{"ref"=>"/repositories/#{repo}"},
     "container_locations"=>[{
       "status"=>"current",
       "start_date"=>"{#{Time.now}}",
-      "ref"=>"#{location}"}
-    ],
-     "container_profile"=>"#{container_profile}"
+      "ref"=>location.to_s
+    }],
+     "container_profile"=>container_profile.to_s
     }
   rescue Exception => msg
   end_time = "Constructing records interrupted: #{Time.now} with message '#{msg.class}: #{msg.message}''"
