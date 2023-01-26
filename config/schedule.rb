@@ -19,7 +19,7 @@
 
 # Learn more: http://github.com/javan/whenever
 
-# Run on production at 04:00 am EST or 3:00 am EDT
-every 1.day, at: '12:00 am', roles: [:prod] do
+# Run on production at 04:30 am EST or 3:30 am EDT
+every 1.day, at: '09:30 am', roles: [:prod] do
   command "cd /opt/aspace_helpers/current/reports/aspace2alma && bundle exec ruby get_MARCxml.rb"
 end

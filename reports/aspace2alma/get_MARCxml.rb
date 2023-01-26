@@ -4,6 +4,11 @@ require 'nokogiri'
 require 'net/sftp'
 require_relative '../../helper_methods.rb'
 
+#log errors to file
+$stderr.reopen("log_err.txt", "w")
+# #keep values synced so they're not going to the buffer
+$stderr.sync = true
+
 #configure sendoff to alma
 def alma_sftp (filename)
   Net::SFTP.start(ENV['SFTP_HOST'], ENV['SFTP_USERNAME'], { password: ENV['SFTP_PASSWORD'] }) do |sftp|
@@ -11,34 +16,57 @@ def alma_sftp (filename)
   end
 end
 
-aspace_login
+#recursively remove truly empty elements (blank text and attributes)
+#use node.attributes.blank? for all attributes
+def remove_empty_elements(node)
+  node.children.map { |child| remove_empty_elements(child) }
+  node.remove if node.content.blank? && (
+  (node.attribute('@ind1').blank? && node.attribute('@ind2').blank?) ||
+  node.attribute('@code').blank?)
+end
 
-puts Time.now
-filename = "MARC_out.xml"
+#remove linebreaks from notes
+def remove_linebreaks(node)
+  node.xpath("//marc:subfield/text()").map { |text| text.content = text.content.gsub(/[\n\r]+/," ") }
+end
 
-resources = get_all_resource_uris_for_institution
+def path_for_resource(resource)
+  resource.gsub("resources", "resources/marc21") + ".xml"
+end
 
-file =  File.open(filename, "w")
-file << '<collection xmlns="http://www.loc.gov/MARC21/slim" xmlns:marc="http://www.loc.gov/MARC21/slim" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.loc.gov/MARC21/slim http://www.loc.gov/standards/marcxml/schema/MARC21slim.xsd">'
+def fetch_and_process_records
+  #open a quasi log to receive progress output
+  log_out = File.open("log_out.txt", "w")
+  aspace_login
+  #log when the process started
+  log_out.puts "Process started fetching records at #{Time.now}"
+  filename = "MARC_out.xml"
+  resources = get_all_resource_uris_for_institution
 
-resources.each do |resource|
-  uri = resource.gsub!("resources", "resources/marc21") + ".xml"
+  file =  File.open(filename, "w")
+  file << '<collection xmlns="http://www.loc.gov/MARC21/slim" xmlns:marc="http://www.loc.gov/MARC21/slim" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.loc.gov/MARC21/slim http://www.loc.gov/standards/marcxml/schema/MARC21slim.xsd">'
+
+  resources.each do |resource|
+    process_resource(resource, file, log_out)
+  end
+
+  file << '</collection>'
+  file.close
+
+  #send to alma
+  alma_sftp(filename)
+
+  #log when the process finished.
+  log_out.puts "Process finished at #{Time.now}"
+end
+
+def process_resource(resource, file, log_out)
+  retries ||= 0
+  # begin
+  #byebug if resource.match? /repositories.4/
+  uri = path_for_resource(resource)
   marc_record = @client.get(uri)
   doc = Nokogiri::XML(marc_record.body)
-
-  #recursively remove truly empty elements (blank text and attributes)
-  #use node.attributes.blank? for all attributes
-  def remove_empty_elements(node)
-    node.children.map { |child| remove_empty_elements(child) }
-    node.remove if node.content.blank? && (
-    (node.attribute('@ind1').blank? && node.attribute('@ind2').blank?) ||
-    node.attribute('@code').blank?)
-  end
-
-  #remove linebreaks from notes
-  def remove_linebreaks(node)
-    node.xpath("//marc:subfield/text()").map { |text| text.content = text.content.gsub(/[\n\r]+/," ") }
-  end
 
   # set up variables (these may return a sequence)
   ##################
@@ -122,8 +150,7 @@ resources.each do |resource|
     new_subfield_a = subfield_a.replace("<subfield code='a'>#{subfield_a_text}</subfield")
     segments[1..-1].each do |segment|
       code = segment =~ /^[0-9]{2}/ ? 'y' : 'x'
-      #new_subfield_a is a node set of one
-      new_subfield_a[0].next=("<subfield code='#{code}'>#{segment}</subfield>")
+      tag6xx.children.last.next=("<subfield code='#{code}'>#{segment}</subfield>")
     end
     #add punctuation to the last subfield except $2
     if tag6xx.children[-1].attribute('code') == '2'
@@ -136,15 +163,15 @@ resources.each do |resource|
   #addresses github #132
   tags852.remove
 
-#addresses github #268
-unless tag856.nil?
-  #addresses github #264 and #265
-  tag856.replace("<datafield ind1='4' ind2='2' tag='856'>
-    <subfield code='z'>Search and Request</subfield>
-    #{tag856.at_xpath('marc:subfield[@code="u"]')}
-    <subfield code='y'>Princeton University Library Finding Aids</subfield>
-  </datafield>")
-end
+  #addresses github #268
+  unless tag856.nil?
+    #addresses github #264 and #265
+    tag856.replace("<datafield ind1='4' ind2='2' tag='856'>
+      <subfield code='z'>Search and Request</subfield>
+      #{tag856.at_xpath('marc:subfield[@code="u"]')}
+      <subfield code='y'>Princeton University Library Finding Aids</subfield>
+    </datafield>")
+  end
 
   #addresses github 147
   unless tags500_a.nil?
@@ -152,7 +179,7 @@ end
       #the exporter adds preceding text and punctuation for each physloc.
       #hardcode location codes because textual physlocs are patterned the same
       #account for 'sca' prefix (#247)
-      #account for trailing 'r' (#247)
+
       if tag500_a.content.match(/Location of resource: (sca)?(anxb|ea|ex|flm|flmp|gax|hsvc|hsvm|mss|mudd|prnc|rarebooks|rcpph|rcppf|rcppl|rcpxc|rcpxg|rcpxm|rcpxr|st|thx|wa|review|oo|sc|sls)/)
         #strip text preceding and following code
         location_notes = tag500_a.content.gsub(/.*:\s(.+)[.]/, "\\1")
@@ -176,13 +203,29 @@ end
   tag561.remove unless tag561.nil?
   tag583.remove unless tag583.nil?
 
+  #log which records were finished when
+  log_out.puts "Fetched record #{tag099_a.content} at #{Time.now}\n"
+
+  #try adding a delay to get around the rate limit
+  sleep(0.25)
+
   #append record to file
   #the unless clause addresses #186 and #268 and #284
   file << doc.at_xpath('//marc:record') unless tag099_a.content =~ /C0140|AC214|AC364/ || tag856.nil?
   file.flush
+  log_out.flush
+rescue Errno::ECONNRESET,Errno::ECONNABORTED,Errno::ETIMEDOUT,Errno::ECONNREFUSED => error
+  while (retries += 1) <= 3
+    log_out.puts "Encountered #{error.class}: '#{error.message}' when retrieving resource #{resource} at #{Time.now}, retrying in #{retries} second(s)..."
+    sleep(retries)
+    retry
+  end
+  # It might be more appropriate to put this in the error log, but I'm not sure how to do that with the current setup
+  log_out.puts "Encountered #{error.class}: '#{error.message}' at #{Time.now}, unsuccessful in retrieving resource #{resource} after #{retries} retries"
 end
-file << '</collection>'
-file.close
-#send to alma
-alma_sftp(filename)
-puts Time.now
+
+# If you run this file directly, the main method will run
+# If you run the file from rspec, it will only run when calling the method
+if $PROGRAM_NAME == __FILE__
+  fetch_and_process_records
+end
