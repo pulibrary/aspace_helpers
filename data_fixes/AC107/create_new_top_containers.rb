@@ -1,13 +1,12 @@
 require 'archivesspace/client'
 require 'json'
-require_relative '../../../helper_methods.rb'
+require_relative '../../helper_methods.rb'
 
 aspace_login()
 
 start_time = "Process started: #{Time.now}"
 puts start_time
 
-# #declare input file with uri and restriction value
 csv = CSV.parse(File.read("input_file.csv"), :headers => true)
 log = "log_create_top_containers.txt"
 
