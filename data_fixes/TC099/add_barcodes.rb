@@ -23,4 +23,4 @@ csv.each do |row|
   File.write(log, log_entry, mode: 'a')
 end
 
-puts "Process ended: #{Time.now}" 
+puts "Process ended: #{Time.now}"
