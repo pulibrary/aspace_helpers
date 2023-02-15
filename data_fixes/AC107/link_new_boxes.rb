@@ -27,9 +27,8 @@ csv.each do |row|
         "jsonmodel_type"=>"instance",
         "sub_container"=>{
           "jsonmodel_type"=>"sub_container",
-          "top_container"=>{"ref"=>"#{row['container_uri']}"}
-        }
-    }
+          "top_container"=>{"ref"=>(row['container_uri']).to_s}
+        }}
   post = @client.post(uri, ao.to_json)
   response = post.body
   puts response
@@ -39,6 +38,5 @@ rescue Exception => msg
 end_time = "Process ended: #{Time.now} with message '#{msg.class}: #{msg.message}''"
 puts end_time
 end
-
 
 puts "Process ended: #{Time.now}"

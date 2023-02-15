@@ -13,4 +13,4 @@ csv.each do |row|
   uri = row['uri']
   top_container = @client.get(uri).parsed
   puts "#{top_container['uri']}, #{top_container['barcode']}"
-end 
+end
