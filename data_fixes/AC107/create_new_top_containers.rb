@@ -3,7 +3,7 @@ require 'active_support/all'
 require 'json'
 require_relative '../../helper_methods.rb'
 
-aspace_staging_login()
+aspace_login()
 
 start_time = "Process started: #{Time.now}"
 puts start_time
