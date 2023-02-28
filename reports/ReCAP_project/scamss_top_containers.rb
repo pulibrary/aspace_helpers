@@ -19,12 +19,6 @@ CSV.open("scamss_repo5_top_containers.csv", "a",
   :headers => ["ead_id", "container_profile", "display_string", "uri"]) do |row|
 
   top_containers.map do |result|
-      # "
-      # #{result['collection_identifier_stored_u_sstr'][0] unless result['collection_identifier_stored_u_sstr'].nil?} ^
-      # #{result['container_profile_display_string_u_sstr'][0]} ^
-      # #{result['display_string']} ^
-      # #{result['uri']}
-      # "
       row << [
         "#{result['collection_identifier_stored_u_sstr'][0] unless result['collection_identifier_stored_u_sstr'].nil?}",
         "#{result['container_profile_display_string_u_sstr'][0] unless result['container_profile_display_string_u_sstr'].nil?}",

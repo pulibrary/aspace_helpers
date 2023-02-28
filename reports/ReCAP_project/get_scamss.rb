@@ -4,7 +4,7 @@ require 'nokogiri'
 require_relative 'helper_methods.rb'
 
 
-@client = aspace_login
+@client = aspace_login 
 
 resources = get_all_records_for_repo_endpoint(5, 'resources')
 CSV.open("mss_linear_feet.csv", "a",
