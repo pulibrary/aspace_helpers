@@ -8,7 +8,7 @@ require_relative '../../helper_methods.rb'
 start_time = "Process started: #{Time.now}"
 puts start_time
 
-agent_types = ['people']
+agent_types = ['people', 'corporate_entities', 'families', 'software']
 
 @agent_records = []
 
@@ -51,11 +51,11 @@ end
   #we can mostly count on records having a title, and we can boilerplate the source
   next if agent_record['title'].nil?
 
-    identifier =
+    name_identifier =
       if agent_record['names'][0]['authority_id'].nil?
         agent_record['title'].gsub(/\P{L}/, '').upcase
       else
-        agent_record['names'][0]['authority_id'] + agent_record['names'][0]['authority_id'].gsub(/\D/, '')
+        agent_record['title'].gsub(/\P{L}/, '').upcase + agent_record['names'][0]['authority_id'].gsub(/\d/, '')
       end
     identifier_source =
       if agent_record['names'][0]['source'].nil?
@@ -63,18 +63,21 @@ end
       else
         agent_record['names'][0]['source']
       end
+
+    agent_record_identifier =
+      {
+        'record_identifier'=>name_identifier,
+        'source'=>identifier_source,
+        'primary_identifier'=>true
+      }
+
     control =
       {
         "maintenance_agency"=>"NjP",
         "agency_name"=>"Princeton University Library",
         "maintenance_status"=>"upgraded"
       }
-    agent_record_identifier =
-      {
-        'record_identifier'=>identifier,
-        'source'=>identifier_source,
-        'primary_identifier'=>true
-      }
+
       #populate the fields
       #add this if there is no maintenance event recorded
       if agent_record['agent_maintenance_histories'].empty?
@@ -95,7 +98,7 @@ end
       agent_record['agent_record_identifiers'] << agent_record_identifier
     end
     if agent_record['agent_identifiers'].empty?
-      agent_record['agent_identifiers'] << {'entity_identifier'=>identifier}
+      agent_record['agent_identifiers'] << {'entity_identifier'=>name_identifier}
     end
     unless agent_record['names'][0]['authority_id'].nil?
       agent_record['display_name']['source'] = identifier_source
