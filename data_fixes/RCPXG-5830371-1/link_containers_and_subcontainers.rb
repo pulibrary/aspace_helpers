@@ -15,18 +15,18 @@ csv.each do |row|
   uri = row['ao_uri']
   ao = @client.get(uri).parsed
     ao['instances'] <<
-    {
-    "instance_type"=>"mixed_materials",
-    "jsonmodel_type"=>"instance",
-    "is_representative"=>false,
-    "sub_container"=>{
-      "lock_version"=>0,
-      "indicator_2"=>row['subcontainer_number'],
-      "type_2"=>row['subcontainer_type'],
-      "jsonmodel_type"=>"sub_container",
-      "top_container"=>{"ref"=>row['container_uri']}
+      {
+        "instance_type"=>"mixed_materials",
+      "jsonmodel_type"=>"instance",
+      "is_representative"=>false,
+      "sub_container"=>{
+        "lock_version"=>0,
+        "indicator_2"=>row['subcontainer_number'],
+        "type_2"=>row['subcontainer_type'],
+        "jsonmodel_type"=>"sub_container",
+        "top_container"=>{"ref"=>row['container_uri']}
       }
-    }
+      }
   post = @client.post(uri, ao.to_json)
   response = post.body
   puts response
