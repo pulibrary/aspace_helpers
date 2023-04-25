@@ -54,7 +54,7 @@ def fetch_and_process_records
   file.close
 
   #send to alma
-  alma_sftp(filename)
+  #alma_sftp(filename)
 
   #log when the process finished.
   log_out.puts "Process finished at #{Time.now}"
@@ -78,13 +78,13 @@ def process_resource(resource, file, log_out)
   tags500 = doc.xpath('//marc:datafield[@tag="500"]')
   tags500_a = doc.xpath('//marc:datafield[@tag="500"]/marc:subfield[@code="a"]')
   tags520 = doc.xpath('//marc:datafield[@tag="520"]')
-  tag524 = doc.at_xpath('//marc:datafield[@tag="524"]')
-  tag535 = doc.at_xpath('//marc:datafield[@tag="535"]')
-  tag540 = doc.at_xpath('//marc:datafield[@tag="540"]')
-  tag541 = doc.at_xpath('//marc:datafield[@tag="541"]')
+  tags524 = doc.xpath('//marc:datafield[@tag="524"]')
+  tags535 = doc.xpath('//marc:datafield[@tag="535"]')
+  tags540 = doc.xpath('//marc:datafield[@tag="540"]')
+  tags541 = doc.xpath('//marc:datafield[@tag="541"]')
   tags544 = doc.xpath('//marc:datafield[@tag="544"]')
-  tag561 = doc.at_xpath('//marc:datafield[@tag="561"]')
-  tag583 = doc.at_xpath('//marc:datafield[@tag="583"]')
+  tags561 = doc.xpath('//marc:datafield[@tag="561"]')
+  tags583 = doc.xpath('//marc:datafield[@tag="583"]')
   tags852 = doc.xpath('//marc:datafield[@tag="852"]')
   tag856 = doc.at_xpath('//marc:datafield[@tag="856"]')
   tags6xx = doc.xpath('//marc:datafield[@tag = "700" or @tag = "650" or
@@ -131,7 +131,8 @@ def process_resource(resource, file, log_out)
       </datafield>")
 
   #addresses github #168
-  tags520 = tags520.map.with_index { |tag520, index| tag520.remove if index > 0}
+  #superseded by github #379
+#  tags520 = tags520.map.with_index { |tag520, index| tag520.remove if index > 0}
 
   #addresses github #133
   #superseded by github #205
@@ -161,7 +162,9 @@ def process_resource(resource, file, log_out)
   end
 
   #addresses github #132
-  tags852.remove
+  tags852.each do |tag|
+    tag.remove
+    end
 
   #addresses github #268
   unless tag856.nil?
@@ -194,14 +197,30 @@ def process_resource(resource, file, log_out)
 
   #addresses github #205
   tag351.remove unless tag351.nil?
-  tags500.remove unless tags500.nil?
-  tag524.remove unless tag524.nil?
-  tag535.remove unless tag535.nil?
-  tag540.remove unless tag540.nil?
-  tag541.remove unless tag541.nil?
-  tags544.remove unless tags544.nil?
-  tag561.remove unless tag561.nil?
-  tag583.remove unless tag583.nil?
+  tags500.each do |tag|
+    tag.remove
+    end unless tags500.nil?
+  tags524.each do |tag|
+    tag.remove
+    end unless tags524.nil?
+  tags535.each do |tag|
+    tag.remove
+    end unless tags535.nil?
+  tags540.each do |tag|
+    tag.remove
+    end unless tags540.nil?
+  tags541.each do |tag|
+    tag.remove
+    end unless tags541.nil?
+  tags544.each do |tag|
+    tag.remove
+    end unless tags544.nil?
+  tags561.each do |tag|
+    tag.remove
+    end unless tags561.nil?
+  tags583.each do |tag|
+    tag.remove
+    end unless tags583.nil?
 
   #log which records were finished when
   log_out.puts "Fetched record #{tag099_a.content} at #{Time.now}\n"
