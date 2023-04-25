@@ -132,7 +132,7 @@ def process_resource(resource, file, log_out)
 
   #addresses github #168
   #superseded by github #379
-#  tags520 = tags520.map.with_index { |tag520, index| tag520.remove if index > 0}
+  #  tags520 = tags520.map.with_index { |tag520, index| tag520.remove if index > 0}
 
   #addresses github #133
   #superseded by github #205
