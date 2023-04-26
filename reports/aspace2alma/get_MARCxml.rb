@@ -37,7 +37,7 @@ end
 def fetch_and_process_records
   #open a quasi log to receive progress output
   log_out = File.open("log_out.txt", "w")
-  aspace_login
+  aspace_staging_login
   #log when the process started
   log_out.puts "Process started fetching records at #{Time.now}"
   filename = "MARC_out.xml"
@@ -134,6 +134,17 @@ def process_resource(resource, file, log_out)
   #superseded by github #379
   #  tags520 = tags520.map.with_index { |tag520, index| tag520.remove if index > 0}
 
+  #addresses github #380
+  # (9999b field size limit in Alma v. 40,000+ character notes in ASpace)
+  tags520 = tags520.each do |tag520|
+    #ASpace exports everything to $a, so only one subfield to check
+    subfield_a = tag520.at_xpath('marc:subfield[@code="a"]')
+    puts subfield_a.content.length
+    if subfield_a.content.length > 8000
+      subfield_a = subfield_a.content.truncate(8000)
+    end
+  end
+
   #addresses github #133
   #superseded by github #205
   #NB node.children.before inserts new node as first of node's children; default for add_child is last
@@ -164,7 +175,7 @@ def process_resource(resource, file, log_out)
   #addresses github #132
   tags852.each do |tag|
     tag.remove
-    end
+  end
 
   #addresses github #268
   unless tag856.nil?
@@ -197,30 +208,14 @@ def process_resource(resource, file, log_out)
 
   #addresses github #205
   tag351.remove unless tag351.nil?
-  tags500.each do |tag|
-    tag.remove
-    end unless tags500.nil?
-  tags524.each do |tag|
-    tag.remove
-    end unless tags524.nil?
-  tags535.each do |tag|
-    tag.remove
-    end unless tags535.nil?
-  tags540.each do |tag|
-    tag.remove
-    end unless tags540.nil?
-  tags541.each do |tag|
-    tag.remove
-    end unless tags541.nil?
-  tags544.each do |tag|
-    tag.remove
-    end unless tags544.nil?
-  tags561.each do |tag|
-    tag.remove
-    end unless tags561.nil?
-  tags583.each do |tag|
-    tag.remove
-    end unless tags583.nil?
+  tags500.each(&:remove) unless tags500.nil?
+  tags524.each(&:remove) unless tags524.nil?
+  tags535.each(&:remove) unless tags535.nil?
+  tags540.each(&:remove) unless tags540.nil?
+  tags541.each(&:remove) unless tags541.nil?
+  tags544.each(&:remove) unless tags544.nil?
+  tags561.each(&:remove) unless tags561.nil?
+  tags583.each(&:remove) unless tags583.nil?
 
   #log which records were finished when
   log_out.puts "Fetched record #{tag099_a.content} at #{Time.now}\n"
