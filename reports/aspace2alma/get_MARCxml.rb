@@ -37,7 +37,7 @@ end
 def fetch_and_process_records
   #open a quasi log to receive progress output
   log_out = File.open("log_out.txt", "w")
-  aspace_staging_login
+  aspace_login
   #log when the process started
   log_out.puts "Process started fetching records at #{Time.now}"
   filename = "MARC_out.xml"
@@ -54,7 +54,7 @@ def fetch_and_process_records
   file.close
 
   #send to alma
-  #alma_sftp(filename)
+  alma_sftp(filename)
 
   #log when the process finished.
   log_out.puts "Process finished at #{Time.now}"
@@ -134,15 +134,11 @@ def process_resource(resource, file, log_out)
   #superseded by github #379
   #  tags520 = tags520.map.with_index { |tag520, index| tag520.remove if index > 0}
 
-  #addresses github #380
+  #addresses github #380 - limit scopenotes to 8000 characters
   # (9999b field size limit in Alma v. 40,000+ character notes in ASpace)
   tags520 = tags520.each do |tag520|
     #ASpace exports everything to $a, so only one subfield to check
-    subfield_a = tag520.at_xpath('marc:subfield[@code="a"]')
-    puts subfield_a.content.length
-    if subfield_a.content.length > 8000
-      subfield_a = subfield_a.content.truncate(8000)
-    end
+    tag520.at_xpath('marc:subfield[@code="a"]').content = tag520.at_xpath('marc:subfield[@code="a"]').content.truncate(7999)
   end
 
   #addresses github #133
