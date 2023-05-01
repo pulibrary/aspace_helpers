@@ -54,7 +54,7 @@ def fetch_and_process_records
   file.close
 
   #send to alma
-  #alma_sftp(filename)
+  alma_sftp(filename)
 
   #log when the process finished.
   log_out.puts "Process finished at #{Time.now}"
