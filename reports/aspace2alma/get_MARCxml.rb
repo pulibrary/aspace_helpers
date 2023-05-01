@@ -173,7 +173,6 @@ def process_resource(resource, file, log_out)
     tag.remove
   end
 
-
   #addresses github #268
   unless tag856.nil?
     #addresses github #264 and #265
