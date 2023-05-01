@@ -3,12 +3,13 @@ require 'json'
 require 'csv'
 require_relative '../../helper_methods.rb'
 
-@client = aspace_staging_login
+@client = aspace_login
 
 start_time = "Process started: #{Time.now}"
 puts start_time
 
-agent_types = ['people', 'corporate_entities', 'families', 'software']
+#we don't need to do this for software
+agent_types = ['families']
 
 @agent_records = []
 
@@ -18,6 +19,8 @@ agent_types.each do |agent_type|
   # puts agent_ids.class
   # puts agent_ids.count
   # puts agent_ids[5]
+  # puts "Last agent processed has index: "
+  # puts agent_ids.find_index(18029)
   agent_ids.each do |agent_id|
     @agent_records << get_agent_by_id(agent_type, agent_id)
   end
@@ -41,7 +44,7 @@ end
 
   maintenance_event =
     {
-      'event_date'=>'2023-04-08 00:00:00 UTC',
+      'event_date'=>'2023-04-28 00:00:00 UTC',
       'agent'=>'system',
       'descriptive_note'=>'Upgraded records to re-populate the required CPF and ASpace fields that were lost during data import via OpenRefine.',
       'maintenance_event_type'=>'updated',
@@ -55,7 +58,7 @@ end
       if agent_record['names'][0]['authority_id'].nil?
         agent_record['title'].gsub(/\P{L}/, '').upcase
       else
-        agent_record['title'].gsub(/\P{L}/, '').upcase + agent_record['names'][0]['authority_id'].gsub(/\d/, '')
+        agent_record['title'].gsub(/\P{L}/, '').upcase + agent_record['names'][0]['authority_id'].gsub(/\D/, '')
       end
     identifier_source =
       if agent_record['names'][0]['source'].nil?
