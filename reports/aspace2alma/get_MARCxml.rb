@@ -54,7 +54,7 @@ def fetch_and_process_records
   file.close
 
   #send to alma
-  alma_sftp(filename)
+  #alma_sftp(filename)
 
   #log when the process finished.
   log_out.puts "Process finished at #{Time.now}"
@@ -172,6 +172,7 @@ def process_resource(resource, file, log_out)
   tags852.each do |tag|
     tag.remove
   end
+
 
   #addresses github #268
   unless tag856.nil?
