@@ -3,13 +3,13 @@ require 'json'
 require 'csv'
 require_relative '../../helper_methods.rb'
 
-@client = aspace_login()
+aspace_staging_login
 
 start_time = "Process started: #{Time.now}"
 puts start_time
 
-log = "log_aclu_restrictions_20220428.csv"
-csv = CSV.parse(File.read("aclu_restrictions_20220428.csv"), :headers => true)
+log = "log_aclu_restrictions_20230509.csv"
+csv = CSV.parse(File.read("ACLU Paralegal Review Data Collection - Import 2023-05.csv"), :headers => true)
 
   csv.each do |row|
     record = @client.get(row['uri']).parsed
@@ -21,16 +21,27 @@ csv = CSV.parse(File.read("aclu_restrictions_20220428.csv"), :headers => true)
       #change restriction note here. Takes a string.
       accessrestrict[0]['subnotes'][0]['content'] = row['restriction_note']
       #change the end date here
-      #accessrestrict[0]['rights_restriction']['end'] = row['end_date'] unless row['end_date'].empty?
+      accessrestrict[0]['rights_restriction']['end'] = row['end_date'] unless row['end_date'].empty?
     else
       record['notes'].append(
-          {"type"=>"accessrestrict",
-          "subnotes"=>[{"jsonmodel_type"=>"note_text",
-            "content"=>row['restriction_note'],
-            "publish"=>true}],
-          "jsonmodel_type"=>"note_multipart",
-          "rights_restriction"=>{"local_access_restriction_type"=>[row['restriction_type']]},
-          "publish"=>true})
+          {
+            "jsonmodel_type"=>"note_multipart",
+            "type"=>"accessrestrict",
+            "rights_restriction"=>{
+              "local_access_restriction_type"=>[row['restriction_type']],
+              "end"=>row['end_date'] unless row['end_date'].empty?
+            },
+            "subnotes"=>[
+              {
+                "jsonmodel_type"=>"note_text",
+                "content"=>row['restriction_note'],
+                "publish"=>true
+              }
+              ],
+            "publish"=>true
+          }
+        )
+
     end
     post = @client.post(row['uri'], record.to_json)
     #write to log
