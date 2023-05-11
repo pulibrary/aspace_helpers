@@ -24,7 +24,7 @@ CSV.open(output_file, "a",
       string = scopenote['subnotes'][0]['content'].gsub(/[\r\n\t]/, ' ')
       row << [eadid, uri, published, string, string.length, string.bytesize]
       #puts "#{eadid}, #{uri}, #{string}, #{string.length}, #{string.bytesize}"
-    end
+    end 
   end
 end
 
