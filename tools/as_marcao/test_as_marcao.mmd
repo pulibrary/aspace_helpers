@@ -42,3 +42,6 @@ Lyrasis-->>aspace-prod: installs as_marcao v.0.5
 Princeton-->>sftp-staging1: updates firewall rules for aspace-prod
 aspace-prod-->>sftp-staging1:runs as_marcao v0.5
 sftp-staging1->>sftp-staging1: fails
+Lyrasis-->>aspace-prod: adds config
+aspace-prod-->>sftp-staging1:runs as_marcao v0.5
+sftp-staging1->>sftp-staging1: SUCCEEDS
