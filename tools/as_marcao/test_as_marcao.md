@@ -2,6 +2,17 @@
 ---
 title: Testing process for as_marcao plugin
 ---
+sequenceDiagram;
+actor HM
+actor Lyrasis
+actor Princeton
+participant aspace-staging 
+participant aspace-prod
+participant sftp-staging1
+participant sftp-prod1
+participant Alma-Sandbox
+participant Alma-prod
+
 HM-->>Princeton:releases as_marcao v0.1
 Lyrasis-->>aspace-staging: installs as_marcao v.0.1
 aspace-staging->>aspace-staging:fails
