@@ -27,9 +27,10 @@ repos = (3..5).to_a
 repos.each do |repo|
   #get resource ids
   resource_ids = @client.get("/repositories/#{repo}/resources", {
-    query: {
-     all_ids: true
-   }}).parsed
+                               query: {
+                                 all_ids: true
+                               }
+                             }).parsed
   #get records from ids
   records =
     resource_ids.map do |id|

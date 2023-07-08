@@ -24,7 +24,7 @@ csv.each do |row|
   notes = record['notes']
 
     notes.delete_if { |note| note["type"] == 'phystech' && row['new_phystech'].nil?}
-    notes.select { |note| note['type'] == 'phystech'}[0].replace(new_phystech) unless notes.select { |note| note['type'] == 'phystech'}[0].nil?
+    notes.select { |note| note['type'] == 'phystech'}[0]&.replace(new_phystech)
     post = @client.post(uri, record.to_json)
     puts post.body
     # write to log
