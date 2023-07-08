@@ -3,7 +3,7 @@ require 'json'
 require 'csv'
 require_relative '../../helper_methods'
 
-aspace_staging_login
+aspace_login
 
 log = 'replace_phystech_log.txt'
 csv = CSV.parse(File.read('replace_phystech.csv'), headers: true)
