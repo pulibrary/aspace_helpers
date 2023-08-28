@@ -7,23 +7,37 @@ require 'json'
 require_relative '../../helper_methods.rb'
 
 #configure sendoff to alma
-def alma_sftp (filename)
-  Net::SFTP.start(ENV['SFTP_HOST'], ENV['SFTP_USERNAME'], { password: ENV['SFTP_PASSWORD'] }) do |sftp|
-    sftp.upload!(filename, File.join('/alma/aspace/', File.basename(filename)))
-  end
-end
+# def send_to_alma_sftp (file_to_send)
+#   Net::SFTP.start(ENV['SFTP_HOST'], ENV['SFTP_USERNAME'], { password: ENV['SFTP_PASSWORD'] }) do |sftp|
+#     sftp.upload!(file_to_send, File.join('/alma/aspace/', File.basename(file_to_send)))
+#   end
+# end
+#
+# #configure getting Alma barcode report from sftp
+# def get_file_from_sftp (file_to_get)
+#   Net::SFTP.start(ENV['SFTP_HOST'], ENV['SFTP_USERNAME'], { password: ENV['SFTP_PASSWORD'] }) do |sftp|
+#     sftp.download!(File.join('/alma/aspace/', File.basename(file_to_get)), "/Users/heberleinr/Documents/aspace_helpers/sc_active_barcodes.csv")
+#   end
+# end
 
 aspace_login
 
 puts Time.now
-filename = "MARC_out.xml"
+file_to_send = "MARC_out.xml"
+alma_barcodes_array = CSV.read('sc_active_barcodes.csv').flatten.to_a #get_file_from_sftp('sc_active_barcodes.csv')
+alma_barcodes_set = alma_barcodes_array.to_set
+
+# CSV.read("#{RAILS_ROOT}/config/countries.csv").flatten
+# ARRAY = (1..20_000).to_a
+# SET = ARRAY.to_set
+
 
 #front-load resource uri's to iterate over
 #resources = get_all_resource_uris_for_institution
 
-resources = ["/repositories/5/resources/4277"]
+resources = ["/repositories/5/resources/3753"]
 
-file =  File.open(filename, "w")
+file =  File.open(file_to_send, "w")
 file << '<collection xmlns="http://www.loc.gov/MARC21/slim" xmlns:marc="http://www.loc.gov/MARC21/slim" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.loc.gov/MARC21/slim http://www.loc.gov/standards/marcxml/schema/MARC21slim.xsd">'
 
 resources.each do |resource|
@@ -176,22 +190,25 @@ resources.each do |resource|
     containers_unfiltered.parsed['response']['docs'].select do |container|
       json = JSON.parse(container['json'])
       resource_uri = container['collection_uri_u_sstr'] unless container['collection_uri_u_sstr'].nil?
-      aspace_ctime = Date.parse(container['create_time'])
-      ctime = "#{aspace_ctime.year}-#{aspace_ctime.month}-#{aspace_ctime.day}"
-      yesterday_raw = Time.now.utc.to_date - 1
-      yesterday = "#{yesterday_raw.year}-#{yesterday_raw.month}-#{yesterday_raw.day}"
-      created_since_yesterday = Date.parse(ctime) >= Date.parse(yesterday)
-      never_modified = json['lock_version'] == 0
+      # aspace_ctime = Date.parse(container['create_time'])
+      # ctime = "#{aspace_ctime.year}-#{aspace_ctime.month}-#{aspace_ctime.day}"
+      # yesterday_raw = Time.now.utc.to_date - 1
+      # yesterday = "#{yesterday_raw.year}-#{yesterday_raw.month}-#{yesterday_raw.day}"
+      # created_since_yesterday = Date.parse(ctime) >= Date.parse(yesterday)
+      # never_modified = json['lock_version'] == 0
       top_container_location_code = json['container_locations'][0]['_resolved']['classification']
       at_recap = /^(sca)?rcp\p{L}+/.match?(top_container_location_code)
       has_no_barcode = json['barcode'].blank?
+      is_already_in_alma = alma_barcodes_set.include?(json['barcode'])
+      puts "#{json['barcode']}: is #{is_already_in_alma}" if is_already_in_alma == true
       #check whether container is new, at recap, has a barcode
       #these can be toggled on or off depending on the use case
       if
       #resource_uri == resource.to_s &&
       #created_since_yesterday == true &&
       at_recap == true &&
-      has_no_barcode == false
+      has_no_barcode == false &&
+      is_already_in_alma == false
       #&& never_modified == true
       doc.xpath('//marc:datafield').last.next=
         ("<datafield ind1=' ' ind2=' ' tag='949'>
@@ -221,5 +238,5 @@ end
 file << '</collection>'
 file.close
 #send to alma
-#alma_sftp(filename)
+#send_to_alma_sftp(file_to_send)
 puts Time.now
