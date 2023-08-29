@@ -16,6 +16,16 @@ def alma_sftp (filename)
   end
 end
 
+#get Alma barcode report from sftp
+#delete after download;
+#this will keep the process from running should the fresh report from Alma not arrive
+def get_file_from_sftp (remote_filename)
+  Net::SFTP.start(ENV['SFTP_HOST'], ENV['SFTP_USERNAME'], { password: ENV['SFTP_PASSWORD'] }) do |sftp|
+    sftp.download!(File.join('/alma/aspace/', File.basename(remote_filename)), "/Users/heberleinr/Documents/aspace_helpers/sc_active_barcodes.csv")
+    sftp.remove(File.join('/alma/aspace/', File.basename(remote_filename)))
+  end
+end
+
 #recursively remove truly empty elements (blank text and attributes)
 #use node.attributes.blank? for all attributes
 def remove_empty_elements(node)
@@ -41,13 +51,18 @@ def fetch_and_process_records
   #log when the process started
   log_out.puts "Process started fetching records at #{Time.now}"
   filename = "MARC_out.xml"
+  #get file from remote server
+  remote_filename = "sc_active_barcodes.csv"
+  get_file_from_sftp(remote_filename)
+  remote_file = remote_filename
+  #get collection records from ASpace
   resources = get_all_resource_uris_for_institution
 
   file =  File.open(filename, "w")
   file << '<collection xmlns="http://www.loc.gov/MARC21/slim" xmlns:marc="http://www.loc.gov/MARC21/slim" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.loc.gov/MARC21/slim http://www.loc.gov/standards/marcxml/schema/MARC21slim.xsd">'
 
   resources.each do |resource|
-    process_resource(resource, file, log_out)
+    process_resource(resource, file, log_out, remote_file)
   end
 
   file << '</collection>'
@@ -60,7 +75,7 @@ def fetch_and_process_records
   log_out.puts "Process finished at #{Time.now}"
 end
 
-def process_resource(resource, file, log_out)
+def process_resource(resource, file, log_out, remote_file)
   retries ||= 0
   # begin
   #byebug if resource.match? /repositories.4/
@@ -202,6 +217,9 @@ def process_resource(resource, file, log_out)
     end
   end
 
+  #addresses github #397
+  construct_item_records(remote_file, resource, doc, tag099_a)
+
   #addresses github #205
   tag351.remove unless tag351.nil?
   tags500.each(&:remove) unless tags500.nil?
@@ -232,6 +250,42 @@ rescue Errno::ECONNRESET,Errno::ECONNABORTED,Errno::ETIMEDOUT,Errno::ECONNREFUSE
   end
   # It might be more appropriate to put this in the error log, but I'm not sure how to do that with the current setup
   log_out.puts "Encountered #{error.class}: '#{error.message}' at #{Time.now}, unsuccessful in retrieving resource #{resource} after #{retries} retries"
+end
+
+def construct_item_records(remote_file, resource, doc, tag099_a)
+  alma_barcodes_array = CSV.read(remote_file).flatten.to_a
+  alma_barcodes_set = alma_barcodes_array.to_set
+  #get the repo so we don't check ALL container records every time
+  repo = resource.gsub(/(^\/repositories\/)(\d{1,2})(\/resources.*$)/, '\2')
+  #get container records for the resource
+  containers_unfiltered = @client.get(
+    "repositories/#{repo}/top_containers/search",
+    query: { q: "collection_uri_u_sstr:\"#{resource}\"" }
+  )
+  containers =
+    #sort by top_container indicator
+    containers_unfiltered.parsed['response']['docs'].sort_by! { |container| JSON.parse(container['json'])['indicator'].scan(/\d+/).first.to_i }
+    containers_unfiltered.parsed['response']['docs'].select do |container|
+      json = JSON.parse(container['json'])
+      resource_uri = container['collection_uri_u_sstr'] unless container['collection_uri_u_sstr'].nil?
+      top_container_location_code = json['container_locations'][0]['_resolved']['classification'] unless json['container_locations'][0].nil?
+      at_recap = /^(sca)?rcp\p{L}+/.match?(top_container_location_code)
+      has_no_barcode = json['barcode'].blank?
+      is_already_in_alma = alma_barcodes_set.include?(json['barcode'])
+      #puts "#{json['barcode']}: is #{is_already_in_alma}" if is_already_in_alma == true
+      if
+      at_recap == true &&
+      has_no_barcode == false &&
+      is_already_in_alma == false
+      doc.xpath('//marc:datafield').last.next=
+        ("<datafield ind1=' ' ind2=' ' tag='949'>
+            <subfield code='a'>#{json['barcode']}</subfield>
+            <subfield code='b'>#{json['type']} #{json['indicator']}</subfield>
+            <subfield code='c'>#{top_container_location_code}</subfield>
+            <subfield code='d'>(PULFA)#{tag099_a.content}</subfield>
+          </datafield>")
+        end
+      end unless containers_unfiltered.nil?
 end
 
 # If you run this file directly, the main method will run
