@@ -256,7 +256,7 @@ def construct_item_records(remote_file, resource, doc, tag099_a)
   alma_barcodes_array = CSV.read(remote_file).flatten.to_a
   alma_barcodes_set = alma_barcodes_array.to_set
   #get the repo so we don't check ALL container records every time
-  repo = resource.gsub(/(^\/repositories\/)(\d{1,2})(\/resources.*$)/, '\2')
+  repo = resource.gsub(%r{(^/repositories/)(\d{1,2})(/resources.*$)}, '\2')
   #get container records for the resource
   containers_unfiltered = @client.get(
     "repositories/#{repo}/top_containers/search",
@@ -273,10 +273,9 @@ def construct_item_records(remote_file, resource, doc, tag099_a)
       has_no_barcode = json['barcode'].blank?
       is_already_in_alma = alma_barcodes_set.include?(json['barcode'])
       #puts "#{json['barcode']}: is #{is_already_in_alma}" if is_already_in_alma == true
-      if
-      at_recap == true &&
-      has_no_barcode == false &&
-      is_already_in_alma == false
+      if at_recap == true &&
+         has_no_barcode == false &&
+         is_already_in_alma == false
       doc.xpath('//marc:datafield').last.next=
         ("<datafield ind1=' ' ind2=' ' tag='949'>
             <subfield code='a'>#{json['barcode']}</subfield>
