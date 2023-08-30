@@ -31,7 +31,6 @@ alma_barcodes_set = alma_barcodes_array.to_set
 # ARRAY = (1..20_000).to_a
 # SET = ARRAY.to_set
 
-
 #front-load resource uri's to iterate over
 #resources = get_all_resource_uris_for_institution
 
