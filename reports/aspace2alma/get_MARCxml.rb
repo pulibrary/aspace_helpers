@@ -10,8 +10,10 @@ $stderr.reopen("log_err.txt", "w")
 $stderr.sync = true
 
 #configure sendoff to alma
+#rename old MARC file so we never send an outdated file by accident
 def alma_sftp (filename)
   Net::SFTP.start(ENV['SFTP_HOST'], ENV['SFTP_USERNAME'], { password: ENV['SFTP_PASSWORD'] }) do |sftp|
+    sftp.rename(File.join('/alma/aspace/', File.basename(filename), "MARC_out_old.xml"))
     sftp.upload!(filename, File.join('/alma/aspace/', File.basename(filename)))
   end
 end
@@ -21,7 +23,7 @@ end
 #this will keep the process from running should the fresh report from Alma not arrive
 def get_file_from_sftp (remote_filename)
   Net::SFTP.start(ENV['SFTP_HOST'], ENV['SFTP_USERNAME'], { password: ENV['SFTP_PASSWORD'] }) do |sftp|
-    sftp.download!(File.join('/alma/aspace/', File.basename(remote_filename)), "/Users/heberleinr/Documents/aspace_helpers/sc_active_barcodes.csv")
+    sftp.download!(File.join('/alma/aspace/', File.basename(remote_filename)), "/Users/heberleinr/Documents/aspace_helpers/reports/aspace2alma/sc_active_barcodes.csv")
     sftp.remove(File.join('/alma/aspace/', File.basename(remote_filename)))
   end
 end
@@ -255,7 +257,7 @@ end
 def construct_item_records(remote_file, resource, doc, tag099_a)
   alma_barcodes_array = CSV.read(remote_file).flatten.to_a
   alma_barcodes_set = alma_barcodes_array.to_set
-  #get the repo so we don't check ALL container records every time
+  #get the repo so we only check in the relevant repo
   repo = resource.gsub(%r{(^/repositories/)(\d{1,2})(/resources.*$)}, '\2')
   #get container records for the resource
   containers_unfiltered = @client.get(
