@@ -8,8 +8,23 @@ RSpec.describe 'regular aspace2alma process' do
     ["/repositories/3/resources/1511", "/repositories/3/resources/1512"]
   end
 
+  let(:sftp_session) { instance_double("Net::SFTP::Session", dir: sftp_dir) }
+  let(:sftp_dir) { instance_double("Net::SFTP::Operations::Dir") }
+
   before do
     stub_aspace_login
+    allow(Net::SFTP).to receive(:start).and_yield(sftp_session)
+    #expect(File).not_to exist("/alma/aspace/sc_active_barcodes.csv")
+    #logic I'm going for here: 
+    #if the csv does not exist on SFTP, the process ends
+    #else it downloads the file and deletes it from SFTP
+    if File.exist?("/alma/aspace/sc_active_barcodes.csv")
+      allow(sftp_session).to receive(:download!)
+        .with("/alma/aspace/sc_active_barcodes.csv", "/Users/heberleinr/Documents/aspace_helpers/reports/aspace2alma/sc_active_barcodes.csv")
+        .and_return(File.open('spec/fixtures/sc_active_barcodes.csv').read)
+      allow(sftp_session).to receive(:remove)
+    else exit
+    end
     stub(:get_all_resource_uris_for_institution)
       .and_return(resource_uris)
     stub(:alma_sftp).with('MARC_out.xml')
@@ -23,7 +38,7 @@ RSpec.describe 'regular aspace2alma process' do
         .and_return(status: 200, body: File.read(File.open('spec/fixtures/marc_1512.xml')))
       fetch_and_process_records
     end
-
+    
     let(:doc) { Nokogiri::XML(File.open('MARC_out.xml')) }
 
     context 'when aspace returns multiple records' do
