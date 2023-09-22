@@ -36,7 +36,7 @@ Dependencies: `aspace_helpers` depends on the archivesspace-client gem: https://
 
 ###  running a script on the server
      
-   1. server (`lib-jobs-staging1` or `lib-jobs-prod1`): as `deploy` user:
+   1. server (`lib-jobs-staging2` or `lib-jobs-prod2`): as `deploy` user:
       1. `cd /opt/aspace_helpers/current`
       1. `bundle install`
       
