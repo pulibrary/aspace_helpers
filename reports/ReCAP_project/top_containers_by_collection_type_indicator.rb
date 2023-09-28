@@ -38,9 +38,6 @@ top_containers =
 end
 
 top_containers.flatten!
-# puts top_containers
-# puts top_containers.class
-# puts top_containers.count
 
 CSV.open("top_containers_by_collection_type_indicator.csv", "a",
   :write_headers=> true,
