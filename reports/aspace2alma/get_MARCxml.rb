@@ -278,7 +278,6 @@ def construct_item_records(remote_file, resource, doc, tag099_a)
       if at_recap == true &&
          has_no_barcode == false &&
          is_already_in_alma == false
-      puts "#{json['barcode']}"
       doc.xpath('//marc:datafield').last.next=
         ("<datafield ind1=' ' ind2=' ' tag='949'>
             <subfield code='a'>#{json['barcode']}</subfield>
