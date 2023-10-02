@@ -14,17 +14,17 @@ $stderr.sync = true
 def alma_sftp (filename)
   Net::SFTP.start(ENV['SFTP_HOST'], ENV['SFTP_USERNAME'], { password: ENV['SFTP_PASSWORD'] }) do |sftp|
     sftp.rename(File.join('/alma/aspace/', File.basename(filename), "MARC_out_old.xml"))
-    #sftp.upload!(filename, File.join('/alma/aspace/', File.basename(filename)))
+    sftp.upload!(filename, File.join('/alma/aspace/', File.basename(filename)))
   end
 end
 
 #get Alma barcode report from sftp
-#delete after download;
+#rename after download;
 #this will keep the process from running should the fresh report from Alma not arrive
 def get_file_from_sftp (remote_filename)
   Net::SFTP.start(ENV['SFTP_HOST'], ENV['SFTP_USERNAME'], { password: ENV['SFTP_PASSWORD'] }) do |sftp|
     sftp.download!(File.join('/alma/aspace/', File.basename(remote_filename)), "/Users/heberleinr/Documents/aspace_helpers/reports/aspace2alma/sc_active_barcodes.csv")
-    #sftp.remove(File.join('/alma/aspace/', File.basename(remote_filename)))
+    sftp.rename(File.join('/alma/aspace/', File.basename(remote_filename), "sc_active_barcodes_old.csv"))
   end
 end
 
@@ -278,6 +278,7 @@ def construct_item_records(remote_file, resource, doc, tag099_a)
       if at_recap == true &&
          has_no_barcode == false &&
          is_already_in_alma == false
+      puts "#{json['barcode']}"
       doc.xpath('//marc:datafield').last.next=
         ("<datafield ind1=' ' ind2=' ' tag='949'>
             <subfield code='a'>#{json['barcode']}</subfield>
