@@ -2,6 +2,7 @@ require 'archivesspace/client'
 require 'active_support/all'
 require 'nokogiri'
 require 'net/sftp'
+require 'byebug'
 require_relative '../../helper_methods.rb'
 
 #log errors to file
@@ -13,18 +14,21 @@ $stderr.sync = true
 #rename old MARC file so we never send an outdated file by accident
 def alma_sftp (filename)
   Net::SFTP.start(ENV['SFTP_HOST'], ENV['SFTP_USERNAME'], { password: ENV['SFTP_PASSWORD'] }) do |sftp|
-    sftp.rename!(File.join('/alma/aspace/', File.basename(filename)), "MARC_out_old.xml")
+    sftp.rename!(File.join('/alma/aspace/', File.basename(filename)), "/alma/aspace/MARC_out_old.xml")
     sftp.upload!(filename, File.join('/alma/aspace/', File.basename(filename)))
   end
 end
 
 #get Alma barcode report from sftp
-#rename after download;
-#this will keep the process from running should the fresh report from Alma not arrive
-def get_file_from_sftp (remote_filename)
+def get_file_from_sftp(remote_filename)
   Net::SFTP.start(ENV['SFTP_HOST'], ENV['SFTP_USERNAME'], { password: ENV['SFTP_PASSWORD'] }) do |sftp|
-    sftp.download!(File.join('/alma/aspace/', File.basename(remote_filename)), "/Users/heberleinr/Documents/aspace_helpers/reports/aspace2alma/sc_active_barcodes.csv")
-    sftp.rename!(File.join('/alma/aspace/', File.basename(remote_filename)), "sc_active_barcodes_old.csv")
+    sftp.download!(File.join('/alma/aspace/', File.basename(remote_filename)), remote_filename)
+  end
+end
+
+def rename_file(original_path, new_path)
+  Net::SFTP.start(ENV['SFTP_HOST'], ENV['SFTP_USERNAME'], { password: ENV['SFTP_PASSWORD'] }) do |sftp|
+    sftp.rename!(original_path, new_path)
   end
 end
 
@@ -46,7 +50,7 @@ def path_for_resource(resource)
   resource.gsub("resources", "resources/marc21") + ".xml"
 end
 
-def fetch_and_process_records
+def fetch_and_process_records(remote_filename)
   #open a quasi log to receive progress output
   log_out = File.open("log_out.txt", "w")
   aspace_login
@@ -54,9 +58,13 @@ def fetch_and_process_records
   log_out.puts "Process started fetching records at #{Time.now}"
   filename = "MARC_out.xml"
   #get file from remote server
-  remote_filename = "sc_active_barcodes.csv"
   get_file_from_sftp(remote_filename)
   remote_file = remote_filename
+  #byebug
+  #rename after download;
+  #this will keep the process from running should the fresh report from Alma not arrive
+  #rename_file("/alma/aspace/#{remote_filename}", "/alma/aspace/sc_active_barcodes_old.csv")
+  
   #get collection records from ASpace
   resources = get_all_resource_uris_for_institution
 
@@ -71,7 +79,7 @@ def fetch_and_process_records
   file.close
 
   #send to alma
-  alma_sftp(filename)
+  #alma_sftp(filename)
 
   #log when the process finished.
   log_out.puts "Process finished at #{Time.now}"
@@ -267,6 +275,7 @@ def construct_item_records(remote_file, resource, doc, tag099_a)
   containers =
     #sort by top_container indicator
     containers_unfiltered.parsed['response']['docs'].sort_by! { |container| JSON.parse(container['json'])['indicator'].scan(/\d+/).first.to_i }
+    puts containers_unfiltered.parsed['response']['docs'].sort_by! { |container| JSON.parse(container['json'])['indicator'].scan(/\d+/).first.to_i }
     containers_unfiltered.parsed['response']['docs'].select do |container|
       json = JSON.parse(container['json'])
       resource_uri = container['collection_uri_u_sstr'] unless container['collection_uri_u_sstr'].nil?
