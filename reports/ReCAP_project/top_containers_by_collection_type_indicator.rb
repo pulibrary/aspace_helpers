@@ -22,15 +22,16 @@ queries = [
   'collection_uri_u_sstr:"/repositories/6/resources/1739"',
   'collection_uri_u_sstr:"/repositories/6/resources/1740"',
   'collection_uri_u_sstr:"/repositories/6/resources/1741"',
-  'collection_uri_u_sstr:"/repositories/8/resources/4115"']
+  'collection_uri_u_sstr:"/repositories/8/resources/4115"'
+]
 
 #'location_uri_u_sstr:"/locations/23648"'
 
 top_containers =
   (0..15).to_a.map do |int|
-    repo = queries[int].gsub(/collection_uri_u_sstr:"\/repositories\//, '').gsub(/\/resources\/\d{3,4}"/, '')
+    repo = queries[int].gsub(%r{collection_uri_u_sstr:"/repositories/}, '').gsub(%r{/resources/\d{3,4}"}, '')
     @client.get(
-    "repositories/#{repo}/top_containers/search",
+      "repositories/#{repo}/top_containers/search",
     query: {
       q: queries[int]
     }
@@ -42,14 +43,13 @@ top_containers.flatten!
 CSV.open("top_containers_by_collection_type_indicator.csv", "a",
   :write_headers=> true,
   :headers => ["uri", "eadid", "container_type", "container_indicator", "barcode"]) do |row|
-
   top_containers.map do |result|
       row << [
         result['uri'],
         (result['collection_identifier_stored_u_sstr'][0] unless result['collection_identifier_stored_u_sstr'].nil?).to_s,
         (result['type_enum_s'][0] unless result['type_enum_s'].nil?).to_s,
         (result['indicator_u_icusort'] unless result['indicator_u_icusort'].nil?).to_s,
-        (result['barcode_u_sstr'][0] unless result['barcode_u_sstr'].nil?).to_s,
+        (result['barcode_u_sstr'][0] unless result['barcode_u_sstr'].nil?).to_s
       ]
   end
 end
