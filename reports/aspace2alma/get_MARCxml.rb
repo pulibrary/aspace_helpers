@@ -13,7 +13,7 @@ $stderr.sync = true
 #rename old MARC file so we never send an outdated file by accident
 def alma_sftp (filename)
   Net::SFTP.start(ENV['SFTP_HOST'], ENV['SFTP_USERNAME'], { password: ENV['SFTP_PASSWORD'] }) do |sftp|
-    sftp.rename(File.join('/alma/aspace/', File.basename(filename)), "MARC_out_old.xml")
+    sftp.rename!(File.join('/alma/aspace/', File.basename(filename)), "MARC_out_old.xml")
     sftp.upload!(filename, File.join('/alma/aspace/', File.basename(filename)))
   end
 end
@@ -24,7 +24,7 @@ end
 def get_file_from_sftp (remote_filename)
   Net::SFTP.start(ENV['SFTP_HOST'], ENV['SFTP_USERNAME'], { password: ENV['SFTP_PASSWORD'] }) do |sftp|
     sftp.download!(File.join('/alma/aspace/', File.basename(remote_filename)), "/Users/heberleinr/Documents/aspace_helpers/reports/aspace2alma/sc_active_barcodes.csv")
-    sftp.rename(File.join('/alma/aspace/', File.basename(remote_filename)), "sc_active_barcodes_old.csv")
+    sftp.rename!(File.join('/alma/aspace/', File.basename(remote_filename)), "sc_active_barcodes_old.csv")
   end
 end
 
