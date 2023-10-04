@@ -18,6 +18,7 @@ RSpec.describe 'regular aspace2alma process' do
       .with("/alma/aspace/sc_active_barcodes.csv", "spec/fixtures/sc_active_barcodes.csv")
     allow(sftp_session).to receive(:rename!)
       .with("/alma/aspace/spec/fixtures/sc_active_barcodes.csv", "/alma/aspace/sc_active_barcodes_old.csv")
+    allow_any_instance_of(ArchivesSpace::Response).to receive(:parsed).and_return(JSON.parse(File.read(File.open("spec/fixtures/container_response.json"))))
     stub(:get_all_resource_uris_for_institution)
       .and_return(resource_uris)
     stub(:alma_sftp).with('MARC_out.xml')
@@ -27,8 +28,8 @@ RSpec.describe 'regular aspace2alma process' do
     before do
       stub_request(:get, "https://example.com/staff/api/repositories/3/resources/marc21/1511.xml")
         .and_return(status: 200, body: File.read(File.open('spec/fixtures/marc_1511.xml')))
-      # stub_request(:get, "https://example.com/staff/api/repositories/3/top_containers/search?q=collection_uri_u_sstr:%22/repositories/3/resources/1511%22")
-      #   .and_return(status: 200, body: "spec/fixtures/solr_container_query.json")
+      stub_request(:get, "https://example.com/staff/api/repositories/3/top_containers/search?q=collection_uri_u_sstr:%22/repositories/3/resources/1511%22")
+        .and_return(status:200, body: "")
       stub_request(:get, "https://example.com/staff/api/repositories/3/resources/marc21/1512.xml")
         .and_return(status: 200, body: File.read(File.open('spec/fixtures/marc_1512.xml')))
       fetch_and_process_records("spec/fixtures/sc_active_barcodes.csv")
