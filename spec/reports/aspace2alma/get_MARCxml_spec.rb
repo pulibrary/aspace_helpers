@@ -72,7 +72,7 @@ RSpec.describe 'regular aspace2alma process' do
         .and_return(status: 200, body: File.read(File.open('spec/fixtures/marc_1512.xml')))
     end
     it 'retries the record' do
-      fetch_and_process_records(("spec/fixtures/sc_active_barcodes.csv"))
+      fetch_and_process_records("spec/fixtures/sc_active_barcodes.csv")
       # Since we are rescuing from this error, it is not actually raised
       # but this was the intermediate step to make sure our test setup was raising the error correctly
       # expect { fetch_and_process_records }.to raise_error(Errno::ECONNRESET)
