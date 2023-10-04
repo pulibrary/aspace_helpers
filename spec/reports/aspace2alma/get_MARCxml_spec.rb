@@ -7,10 +7,10 @@ RSpec.describe 'regular aspace2alma process' do
   let(:resource_uris) do
     ["/repositories/3/resources/1511", "/repositories/3/resources/1512"]
   end
-
   let(:sftp_session) { instance_double("Net::SFTP::Session", dir: sftp_dir) }
   let(:sftp_dir) { instance_double("Net::SFTP::Operations::Dir") }
-
+  let(:response) { instance_double("ArchivesSpace::Response") }
+  
   before do
     stub_aspace_login
     allow(Net::SFTP).to receive(:start).and_yield(sftp_session)
@@ -18,7 +18,9 @@ RSpec.describe 'regular aspace2alma process' do
       .with("/alma/aspace/sc_active_barcodes.csv", "spec/fixtures/sc_active_barcodes.csv")
     allow(sftp_session).to receive(:rename!)
       .with("/alma/aspace/spec/fixtures/sc_active_barcodes.csv", "/alma/aspace/sc_active_barcodes_old.csv")
-    allow_any_instance_of(ArchivesSpace::Response).to receive(:parsed).and_return(JSON.parse(File.read(File.open("spec/fixtures/container_response.json"))))
+    #allow(ArchivesSpace::Client).to receive(:new).with(ArchivesSpace::Configuration).and_return(ArchivesSpace::Client.new)
+    allow_any_instance_of(response).to receive(:ancestors)
+    allow_any_instance_of(response).to receive(:parsed).and_return(JSON.parse(File.read(File.open("spec/fixtures/container_response.json"))))
     stub(:get_all_resource_uris_for_institution)
       .and_return(resource_uris)
     stub(:alma_sftp).with('MARC_out.xml')
