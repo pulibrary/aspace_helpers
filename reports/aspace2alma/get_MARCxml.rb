@@ -2,7 +2,6 @@ require 'archivesspace/client'
 require 'active_support/all'
 require 'nokogiri'
 require 'net/sftp'
-require 'byebug'
 require_relative '../../helper_methods.rb'
 
 #log errors to file
