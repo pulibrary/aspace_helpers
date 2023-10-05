@@ -7,9 +7,26 @@ RSpec.describe 'regular aspace2alma process' do
   let(:resource_uris) do
     ["/repositories/3/resources/1511", "/repositories/3/resources/1512"]
   end
+  let(:sftp_session) { instance_double("Net::SFTP::Session", dir: sftp_dir) }
+  let(:sftp_dir) { instance_double("Net::SFTP::Operations::Dir") }
+  let(:response) { instance_double("ArchivesSpace::Response") }
+  let(:client) { ArchivesSpace::Client.new(ArchivesSpace::Configuration.new(base_uri: 'https://example.com/staff/api')) }
 
   before do
     stub_aspace_login
+    allow(Net::SFTP).to receive(:start).and_yield(sftp_session)
+    allow(sftp_session).to receive(:download!)
+      .with("/alma/aspace/sc_active_barcodes.csv", "spec/fixtures/sc_active_barcodes.csv")
+    allow(sftp_session).to receive(:rename!)
+      .with("/alma/aspace/spec/fixtures/sc_active_barcodes.csv", "/alma/aspace/sc_active_barcodes_old.csv")
+    allow(ArchivesSpace::Client).to receive(:new).and_return(client)
+    allow(client).to receive(:login).and_return(client)
+    allow(client).to receive(:get).and_call_original
+    allow(client).to receive(:get).with("repositories/3/top_containers/search",
+      query: { q: "collection_uri_u_sstr:\"/repositories/3/resources/1511\"" }).and_return(response)
+    allow(client).to receive(:get).with("repositories/3/top_containers/search",
+        query: { q: "collection_uri_u_sstr:\"/repositories/3/resources/1512\"" }).and_return(response)
+    allow(response).to receive(:parsed).and_return(JSON.parse(File.read(File.open("spec/fixtures/container_response.json"))))
     stub(:get_all_resource_uris_for_institution)
       .and_return(resource_uris)
     stub(:alma_sftp).with('MARC_out.xml')
@@ -19,9 +36,11 @@ RSpec.describe 'regular aspace2alma process' do
     before do
       stub_request(:get, "https://example.com/staff/api/repositories/3/resources/marc21/1511.xml")
         .and_return(status: 200, body: File.read(File.open('spec/fixtures/marc_1511.xml')))
+      stub_request(:get, "https://example.com/staff/api/repositories/3/top_containers/search?q=collection_uri_u_sstr:%22/repositories/3/resources/1511%22")
+        .and_return(status: 200, body: "")
       stub_request(:get, "https://example.com/staff/api/repositories/3/resources/marc21/1512.xml")
         .and_return(status: 200, body: File.read(File.open('spec/fixtures/marc_1512.xml')))
-      fetch_and_process_records
+      fetch_and_process_records("spec/fixtures/sc_active_barcodes.csv")
     end
 
     let(:doc) { Nokogiri::XML(File.open('MARC_out.xml')) }
@@ -61,7 +80,7 @@ RSpec.describe 'regular aspace2alma process' do
         .and_return(status: 200, body: File.read(File.open('spec/fixtures/marc_1512.xml')))
     end
     it 'retries the record' do
-      fetch_and_process_records
+      fetch_and_process_records("spec/fixtures/sc_active_barcodes.csv")
       # Since we are rescuing from this error, it is not actually raised
       # but this was the intermediate step to make sure our test setup was raising the error correctly
       # expect { fetch_and_process_records }.to raise_error(Errno::ECONNRESET)

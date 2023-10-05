@@ -9,10 +9,27 @@ $stderr.reopen("log_err.txt", "w")
 # #keep values synced so they're not going to the buffer
 $stderr.sync = true
 
+remote_filename = "sc_active_barcodes.csv"
+
 #configure sendoff to alma
+#rename old MARC file so we never send an outdated file by accident
 def alma_sftp (filename)
   Net::SFTP.start(ENV['SFTP_HOST'], ENV['SFTP_USERNAME'], { password: ENV['SFTP_PASSWORD'] }) do |sftp|
+    sftp.rename!(File.join('/alma/aspace/', File.basename(filename)), "/alma/aspace/MARC_out_old.xml")
     sftp.upload!(filename, File.join('/alma/aspace/', File.basename(filename)))
+  end
+end
+
+#get Alma barcode report from sftp
+def get_file_from_sftp(remote_filename)
+  Net::SFTP.start(ENV['SFTP_HOST'], ENV['SFTP_USERNAME'], { password: ENV['SFTP_PASSWORD'] }) do |sftp|
+    sftp.download!(File.join('/alma/aspace/', File.basename(remote_filename)), remote_filename)
+  end
+end
+
+def rename_file(original_path, new_path)
+  Net::SFTP.start(ENV['SFTP_HOST'], ENV['SFTP_USERNAME'], { password: ENV['SFTP_PASSWORD'] }) do |sftp|
+    sftp.rename!(original_path, new_path)
   end
 end
 
@@ -34,20 +51,28 @@ def path_for_resource(resource)
   resource.gsub("resources", "resources/marc21") + ".xml"
 end
 
-def fetch_and_process_records
+def fetch_and_process_records(remote_filename)
   #open a quasi log to receive progress output
   log_out = File.open("log_out.txt", "w")
   aspace_login
   #log when the process started
   log_out.puts "Process started fetching records at #{Time.now}"
   filename = "MARC_out.xml"
+  #get file from remote server
+  get_file_from_sftp(remote_filename)
+  remote_file = remote_filename
+  #rename after download;
+  #this will keep the process from running should the fresh report from Alma not arrive
+  rename_file("/alma/aspace/#{remote_filename}", "/alma/aspace/sc_active_barcodes_old.csv")
+
+  #get collection records from ASpace
   resources = get_all_resource_uris_for_institution
 
   file =  File.open(filename, "w")
   file << '<collection xmlns="http://www.loc.gov/MARC21/slim" xmlns:marc="http://www.loc.gov/MARC21/slim" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.loc.gov/MARC21/slim http://www.loc.gov/standards/marcxml/schema/MARC21slim.xsd">'
 
   resources.each do |resource|
-    process_resource(resource, file, log_out)
+    process_resource(resource, file, log_out, remote_file)
   end
 
   file << '</collection>'
@@ -60,10 +85,9 @@ def fetch_and_process_records
   log_out.puts "Process finished at #{Time.now}"
 end
 
-def process_resource(resource, file, log_out)
+def process_resource(resource, file, log_out, remote_file)
   retries ||= 0
-  # begin
-  #byebug if resource.match? /repositories.4/
+
   uri = path_for_resource(resource)
   marc_record = @client.get(uri)
   doc = Nokogiri::XML(marc_record.body)
@@ -202,6 +226,9 @@ def process_resource(resource, file, log_out)
     end
   end
 
+  #addresses github #397
+  construct_item_records(remote_file, resource, doc, tag099_a)
+
   #addresses github #205
   tag351.remove unless tag351.nil?
   tags500.each(&:remove) unless tags500.nil?
@@ -230,12 +257,45 @@ rescue Errno::ECONNRESET,Errno::ECONNABORTED,Errno::ETIMEDOUT,Errno::ECONNREFUSE
     sleep(retries)
     retry
   end
-  # It might be more appropriate to put this in the error log, but I'm not sure how to do that with the current setup
   log_out.puts "Encountered #{error.class}: '#{error.message}' at #{Time.now}, unsuccessful in retrieving resource #{resource} after #{retries} retries"
+end
+
+def construct_item_records(remote_file, resource, doc, tag099_a)
+  alma_barcodes_array = CSV.read(remote_file).flatten.to_a
+  alma_barcodes_set = alma_barcodes_array.to_set
+  #get the repo so we only check in the relevant repo
+  repo = resource.gsub(%r{(^/repositories/)(\d{1,2})(/resources.*$)}, '\2')
+  #get container records for the resource
+  containers_unfiltered = @client.get(
+    "repositories/#{repo}/top_containers/search",
+    query: { q: "collection_uri_u_sstr:\"#{resource}\"" }
+  )
+  containers =
+    #sort by top_container indicator
+    containers_unfiltered.parsed['response']['docs'].sort_by! { |container| JSON.parse(container['json'])['indicator'].scan(/\d+/).first.to_i }
+    containers_unfiltered.parsed['response']['docs'].select do |container|
+      json = JSON.parse(container['json'])
+      resource_uri = container['collection_uri_u_sstr'] unless container['collection_uri_u_sstr'].nil?
+      top_container_location_code = json['container_locations'][0]['_resolved']['classification'] unless json['container_locations'][0].nil?
+      at_recap = /^(sca)?rcp\p{L}+/.match?(top_container_location_code)
+      has_no_barcode = json['barcode'].blank?
+      is_already_in_alma = alma_barcodes_set.include?(json['barcode'])
+      if at_recap == true &&
+         has_no_barcode == false &&
+         is_already_in_alma == false
+      doc.xpath('//marc:datafield').last.next=
+        ("<datafield ind1=' ' ind2=' ' tag='949'>
+            <subfield code='a'>#{json['barcode']}</subfield>
+            <subfield code='b'>#{json['type']} #{json['indicator']}</subfield>
+            <subfield code='c'>#{top_container_location_code}</subfield>
+            <subfield code='d'>(PULFA)#{tag099_a.content}</subfield>
+          </datafield>")
+        end
+      end unless containers_unfiltered.nil?
 end
 
 # If you run this file directly, the main method will run
 # If you run the file from rspec, it will only run when calling the method
 if $PROGRAM_NAME == __FILE__
-  fetch_and_process_records
+  fetch_and_process_records(remote_filename)
 end
