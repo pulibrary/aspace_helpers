@@ -10,7 +10,8 @@ RSpec.describe 'regular aspace2alma process' do
   let(:sftp_session) { instance_double("Net::SFTP::Session", dir: sftp_dir) }
   let(:sftp_dir) { instance_double("Net::SFTP::Operations::Dir") }
   let(:response) { instance_double("ArchivesSpace::Response") }
-  
+  let(:client) { ArchivesSpace::Client.new(ArchivesSpace::Configuration.new(base_uri: 'https://example.com/staff/api')) }
+
   before do
     stub_aspace_login
     allow(Net::SFTP).to receive(:start).and_yield(sftp_session)
@@ -18,9 +19,14 @@ RSpec.describe 'regular aspace2alma process' do
       .with("/alma/aspace/sc_active_barcodes.csv", "spec/fixtures/sc_active_barcodes.csv")
     allow(sftp_session).to receive(:rename!)
       .with("/alma/aspace/spec/fixtures/sc_active_barcodes.csv", "/alma/aspace/sc_active_barcodes_old.csv")
-    #allow(ArchivesSpace::Client).to receive(:new).with(ArchivesSpace::Configuration).and_return(ArchivesSpace::Client.new)
-    allow_any_instance_of(response).to receive(:ancestors)
-    allow_any_instance_of(response).to receive(:parsed).and_return(JSON.parse(File.read(File.open("spec/fixtures/container_response.json"))))
+    allow(ArchivesSpace::Client).to receive(:new).and_return(client)
+    allow(client).to receive(:login).and_return(client)
+    allow(client).to receive(:get).and_call_original
+    allow(client).to receive(:get).with("repositories/3/top_containers/search",
+      query: { q: "collection_uri_u_sstr:\"/repositories/3/resources/1511\"" }).and_return(response)
+    allow(client).to receive(:get).with("repositories/3/top_containers/search",
+        query: { q: "collection_uri_u_sstr:\"/repositories/3/resources/1512\"" }).and_return(response)
+    allow(response).to receive(:parsed).and_return(JSON.parse(File.read(File.open("spec/fixtures/container_response.json"))))
     stub(:get_all_resource_uris_for_institution)
       .and_return(resource_uris)
     stub(:alma_sftp).with('MARC_out.xml')
@@ -31,7 +37,7 @@ RSpec.describe 'regular aspace2alma process' do
       stub_request(:get, "https://example.com/staff/api/repositories/3/resources/marc21/1511.xml")
         .and_return(status: 200, body: File.read(File.open('spec/fixtures/marc_1511.xml')))
       stub_request(:get, "https://example.com/staff/api/repositories/3/top_containers/search?q=collection_uri_u_sstr:%22/repositories/3/resources/1511%22")
-        .and_return(status:200, body: "")
+        .and_return(status: 200, body: "")
       stub_request(:get, "https://example.com/staff/api/repositories/3/resources/marc21/1512.xml")
         .and_return(status: 200, body: File.read(File.open('spec/fixtures/marc_1512.xml')))
       fetch_and_process_records("spec/fixtures/sc_active_barcodes.csv")

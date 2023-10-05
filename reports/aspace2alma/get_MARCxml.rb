@@ -50,7 +50,7 @@ def path_for_resource(resource)
   resource.gsub("resources", "resources/marc21") + ".xml"
 end
 
-def fetch_and_process_records(remote_filename)
+def fetch_and_process_records(remote_filename = "sc_active_barcodes.csv")
   #open a quasi log to receive progress output
   log_out = File.open("log_out.txt", "w")
   aspace_login
@@ -64,7 +64,7 @@ def fetch_and_process_records(remote_filename)
   #rename after download;
   #this will keep the process from running should the fresh report from Alma not arrive
   #rename_file("/alma/aspace/#{remote_filename}", "/alma/aspace/sc_active_barcodes_old.csv")
-  
+
   #get collection records from ASpace
   resources = get_all_resource_uris_for_institution
 
@@ -275,7 +275,6 @@ def construct_item_records(remote_file, resource, doc, tag099_a)
   containers =
     #sort by top_container indicator
     containers_unfiltered.parsed['response']['docs'].sort_by! { |container| JSON.parse(container['json'])['indicator'].scan(/\d+/).first.to_i }
-    puts containers_unfiltered.parsed['response']['docs'].sort_by! { |container| JSON.parse(container['json'])['indicator'].scan(/\d+/).first.to_i }
     containers_unfiltered.parsed['response']['docs'].select do |container|
       json = JSON.parse(container['json'])
       resource_uri = container['collection_uri_u_sstr'] unless container['collection_uri_u_sstr'].nil?
