@@ -10,6 +10,8 @@ $stderr.reopen("log_err.txt", "w")
 # #keep values synced so they're not going to the buffer
 $stderr.sync = true
 
+remote_filename = "sc_active_barcodes.csv"
+
 #configure sendoff to alma
 #rename old MARC file so we never send an outdated file by accident
 def alma_sftp (filename)
@@ -50,7 +52,7 @@ def path_for_resource(resource)
   resource.gsub("resources", "resources/marc21") + ".xml"
 end
 
-def fetch_and_process_records(remote_filename = "sc_active_barcodes.csv")
+def fetch_and_process_records(remote_filename)
   #open a quasi log to receive progress output
   log_out = File.open("log_out.txt", "w")
   aspace_login
@@ -60,10 +62,9 @@ def fetch_and_process_records(remote_filename = "sc_active_barcodes.csv")
   #get file from remote server
   get_file_from_sftp(remote_filename)
   remote_file = remote_filename
-  #byebug
   #rename after download;
   #this will keep the process from running should the fresh report from Alma not arrive
-  #rename_file("/alma/aspace/#{remote_filename}", "/alma/aspace/sc_active_barcodes_old.csv")
+  rename_file("/alma/aspace/#{remote_filename}", "/alma/aspace/sc_active_barcodes_old.csv")
 
   #get collection records from ASpace
   resources = get_all_resource_uris_for_institution
@@ -79,7 +80,7 @@ def fetch_and_process_records(remote_filename = "sc_active_barcodes.csv")
   file.close
 
   #send to alma
-  #alma_sftp(filename)
+  alma_sftp(filename)
 
   #log when the process finished.
   log_out.puts "Process finished at #{Time.now}"
@@ -87,8 +88,7 @@ end
 
 def process_resource(resource, file, log_out, remote_file)
   retries ||= 0
-  # begin
-  #byebug if resource.match? /repositories.4/
+
   uri = path_for_resource(resource)
   marc_record = @client.get(uri)
   doc = Nokogiri::XML(marc_record.body)
@@ -258,7 +258,6 @@ rescue Errno::ECONNRESET,Errno::ECONNABORTED,Errno::ETIMEDOUT,Errno::ECONNREFUSE
     sleep(retries)
     retry
   end
-  # It might be more appropriate to put this in the error log, but I'm not sure how to do that with the current setup
   log_out.puts "Encountered #{error.class}: '#{error.message}' at #{Time.now}, unsuccessful in retrieving resource #{resource} after #{retries} retries"
 end
 
@@ -282,11 +281,9 @@ def construct_item_records(remote_file, resource, doc, tag099_a)
       at_recap = /^(sca)?rcp\p{L}+/.match?(top_container_location_code)
       has_no_barcode = json['barcode'].blank?
       is_already_in_alma = alma_barcodes_set.include?(json['barcode'])
-      #puts "#{json['barcode']}: is #{is_already_in_alma}" if is_already_in_alma == true
       if at_recap == true &&
          has_no_barcode == false &&
          is_already_in_alma == false
-      #puts (json['barcode']).to_s
       doc.xpath('//marc:datafield').last.next=
         ("<datafield ind1=' ' ind2=' ' tag='949'>
             <subfield code='a'>#{json['barcode']}</subfield>
@@ -301,5 +298,5 @@ end
 # If you run this file directly, the main method will run
 # If you run the file from rspec, it will only run when calling the method
 if $PROGRAM_NAME == __FILE__
-  fetch_and_process_records
+  fetch_and_process_records(remote_filename)
 end
