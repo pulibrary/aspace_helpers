@@ -1,4 +1,4 @@
-This template is for reporting issues with the ASpace-Alma integration, including exporting from ASpace, importing to Alma, or sending ASpace items to ReCAP. 
+This template is for reporting issues with the ASpace-Alma integration, including exporting from ASpace, importing to Alma, or sending ASpace items to ReCAP.
 
 See [this chart](https://github.com/pulibrary/lib_jobs/tree/main/docs/aspace2alma) for an overview of the integration steps.
 
