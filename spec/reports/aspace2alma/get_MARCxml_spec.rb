@@ -11,7 +11,7 @@ RSpec.describe 'regular aspace2alma process' do
   let(:sftp_dir) { instance_double("Net::SFTP::Operations::Dir") }
   let(:response) { instance_double("ArchivesSpace::Response") }
   let(:client) { ArchivesSpace::Client.new(ArchivesSpace::Configuration.new(base_uri: 'https://example.com/staff/api')) }
-  let(:frozen_time) { Time.local(2023, 10, 8, 12, 3, 1) }
+  let(:frozen_time) { Time.utc(2023, 10, 8, 12, 3, 1) }
 
   after do
     Timecop.return
@@ -23,7 +23,7 @@ RSpec.describe 'regular aspace2alma process' do
     allow(sftp_session).to receive(:download!)
       .with("/alma/aspace/sc_active_barcodes.csv", "spec/fixtures/sc_active_barcodes.csv")
     allow(sftp_session).to receive(:rename!)
-      .with("/alma/aspace/spec/fixtures/sc_active_barcodes.csv", "/alma/aspace/sc_active_barcodes_202310081603.csv")
+      .with("/alma/aspace/spec/fixtures/sc_active_barcodes.csv", "/alma/aspace/sc_active_barcodes_202310081203.csv")
     allow(ArchivesSpace::Client).to receive(:new).and_return(client)
     allow(client).to receive(:login).and_return(client)
     allow(client).to receive(:get).and_call_original
