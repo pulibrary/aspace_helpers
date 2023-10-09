@@ -15,7 +15,7 @@ remote_filename = "sc_active_barcodes.csv"
 #rename old MARC file so we never send an outdated file by accident
 def alma_sftp (filename)
   Net::SFTP.start(ENV['SFTP_HOST'], ENV['SFTP_USERNAME'], { password: ENV['SFTP_PASSWORD'] }) do |sftp|
-    sftp.rename!(File.join('/alma/aspace/', File.basename(filename)), "/alma/aspace/MARC_out_old.xml")
+    sftp.rename!(File.join('/alma/aspace/', File.basename(filename)), "/alma/aspace/MARC_out_#{datestamp}.xml")
     sftp.upload!(filename, File.join('/alma/aspace/', File.basename(filename)))
   end
 end
@@ -51,6 +51,10 @@ def path_for_resource(resource)
   resource.gsub("resources", "resources/marc21") + ".xml"
 end
 
+def datestamp
+  Time.now.utc.strftime('%Y%m%d%H%M')
+end
+
 def fetch_and_process_records(remote_filename)
   #open a quasi log to receive progress output
   log_out = File.open("log_out.txt", "w")
@@ -63,7 +67,7 @@ def fetch_and_process_records(remote_filename)
   remote_file = remote_filename
   #rename after download;
   #this will keep the process from running should the fresh report from Alma not arrive
-  rename_file("/alma/aspace/#{remote_filename}", "/alma/aspace/sc_active_barcodes_old.csv")
+  rename_file("/alma/aspace/#{remote_filename}", "/alma/aspace/sc_active_barcodes_#{datestamp}.csv")
 
   #get collection records from ASpace
   resources = get_all_resource_uris_for_institution

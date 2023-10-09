@@ -94,6 +94,7 @@ GEM
     sshkit (1.21.2)
       net-scp (>= 1.1.2)
       net-ssh (>= 2.8.0)
+    timecop (0.9.8)
     tzinfo (2.0.6)
       concurrent-ruby (~> 1.0)
     unicode-display_width (2.1.0)
@@ -123,6 +124,7 @@ DEPENDENCIES
   rubocop
   rubocop-rake
   rubocop-rspec
+  timecop
   webmock
   whenever
 
