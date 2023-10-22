@@ -23,7 +23,9 @@ RSpec.describe 'regular aspace2alma process' do
     allow(sftp_session).to receive(:download!)
       .with("/alma/aspace/sc_active_barcodes.csv", "spec/fixtures/sc_active_barcodes.csv")
     allow(sftp_session).to receive(:rename!)
-      .with("/alma/aspace/spec/fixtures/sc_active_barcodes.csv", "/alma/aspace/sc_active_barcodes_202310081203.csv")
+      .with("/alma/aspace/spec/fixtures/sc_active_barcodes.csv", "/alma/aspace/sc_active_barcodes_old.csv", "0x0001")
+    allow(sftp_session).to receive(:rename!)
+      .with("/alma/aspace/MARC_out.xml", "/alma/aspace/MARCxml_out_old.xml", "0x0001")
     allow(ArchivesSpace::Client).to receive(:new).and_return(client)
     allow(client).to receive(:login).and_return(client)
     allow(client).to receive(:get).and_call_original
