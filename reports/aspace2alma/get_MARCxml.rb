@@ -28,7 +28,13 @@ end
 
 def rename_file(original_path, new_path)
   Net::SFTP.start(ENV['SFTP_HOST'], ENV['SFTP_USERNAME'], { password: ENV['SFTP_PASSWORD'] }) do |sftp|
-    sftp.rename!(original_path, new_path, flags='0x0001')
+    sftp.rename!(original_path, new_path)
+  end
+end
+
+def remove_file(path)
+  Net::SFTP.start(ENV['SFTP_HOST'], ENV['SFTP_USERNAME'], { password: ENV['SFTP_PASSWORD'] }) do |sftp|
+    sftp.remove!(path)
   end
 end
 
@@ -64,12 +70,17 @@ def fetch_and_process_records(remote_filename)
   #get file from remote server
   get_file_from_sftp(remote_filename)
   remote_file = remote_filename
-  #rename after download;
+  #rename MARC file:
+  #in case the export fails, this ensures that
+  #Alma will not find a stale file to import
+  remove_file("/alma/aspace/MARC_out_old.xml")
+  rename_file("/alma/aspace/#{filename}", "/alma/aspace/MARC_out_old.csv")
+  #rename barcodes report after download:
   #this will keep the process from running if
   #either the fresh report from Alma does not arrive
   #or the ASpace export fails
+  remove_file("/alma/aspace/sc_active_barcodes_old.csv")
   rename_file("/alma/aspace/#{remote_filename}", "/alma/aspace/sc_active_barcodes_old.csv")
-  rename_file("/alma/aspace/#{filename}", "/alma/aspace/MARCxml_out_old.xml")
 
   #get collection records from ASpace
   resources = get_all_resource_uris_for_institution
