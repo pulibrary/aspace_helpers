@@ -74,7 +74,7 @@ def fetch_and_process_records(remote_filename)
   #in case the export fails, this ensures that
   #Alma will not find a stale file to import
   remove_file("/alma/aspace/MARC_out_old.xml")
-  rename_file("/alma/aspace/#{filename}", "/alma/aspace/MARC_out_old.csv")
+  rename_file("/alma/aspace/#{filename}", "/alma/aspace/MARC_out_old.xml")
   #rename barcodes report after download:
   #this will keep the process from running if
   #either the fresh report from Alma does not arrive
