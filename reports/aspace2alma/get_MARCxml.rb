@@ -307,7 +307,7 @@ def construct_item_records(remote_file, resource, doc, tag099_a)
             <subfield code='c'>#{top_container_location_code}</subfield>
             <subfield code='d'>(PULFA)#{tag099_a.content}</subfield>
           </datafield>")
-      log.puts "Created record for #{json['type']} #{json['indicator']}"
+      log_out.puts "Created record for #{json['type']} #{json['indicator']}"
         end
       end unless containers_unfiltered.nil?
 end
