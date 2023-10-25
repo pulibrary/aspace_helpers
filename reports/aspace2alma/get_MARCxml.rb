@@ -244,7 +244,7 @@ def process_resource(resource, file, log_out, remote_file)
   end
 
   #addresses github #397
-  construct_item_records(remote_file, resource, doc, tag099_a)
+  construct_item_records(remote_file, resource, doc, tag099_a, log_out)
 
   #addresses github #205
   tag351.remove unless tag351.nil?
@@ -277,7 +277,7 @@ rescue Errno::ECONNRESET,Errno::ECONNABORTED,Errno::ETIMEDOUT,Errno::ECONNREFUSE
   log_out.puts "Encountered #{error.class}: '#{error.message}' at #{Time.now}, unsuccessful in retrieving resource #{resource} after #{retries} retries"
 end
 
-def construct_item_records(remote_file, resource, doc, tag099_a)
+def construct_item_records(remote_file, resource, doc, tag099_a, log_out)
   alma_barcodes_array = CSV.read(remote_file).flatten.to_a
   alma_barcodes_set = alma_barcodes_array.to_set
   #get the repo so we only check in the relevant repo
