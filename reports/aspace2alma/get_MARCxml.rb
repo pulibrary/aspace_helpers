@@ -34,7 +34,9 @@ end
 
 def remove_file(path)
   Net::SFTP.start(ENV['SFTP_HOST'], ENV['SFTP_USERNAME'], { password: ENV['SFTP_PASSWORD'] }) do |sftp|
-    sftp.remove!(path)
+    sftp.stat(path) do |response|
+      sftp.remove!(path) if response.ok?
+    end
   end
 end
 
