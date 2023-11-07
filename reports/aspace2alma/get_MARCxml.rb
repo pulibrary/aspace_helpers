@@ -12,7 +12,6 @@ $stderr.sync = true
 remote_filename = "sc_active_barcodes.csv"
 
 #configure sendoff to alma
-#rename old MARC file so we never send an outdated file by accident
 def alma_sftp (filename)
   Net::SFTP.start(ENV['SFTP_HOST'], ENV['SFTP_USERNAME'], { password: ENV['SFTP_PASSWORD'] }) do |sftp|
     sftp.upload!(filename, File.join('/alma/aspace/', File.basename(filename)))
@@ -26,12 +25,16 @@ def get_file_from_sftp(remote_filename)
   end
 end
 
+#rename old files so we never send an outdated file by accident
 def rename_file(original_path, new_path)
   Net::SFTP.start(ENV['SFTP_HOST'], ENV['SFTP_USERNAME'], { password: ENV['SFTP_PASSWORD'] }) do |sftp|
-    sftp.rename!(original_path, new_path)
+    sftp.stat(original_path) do |response|
+      sftp.rename!(original_path, new_path) if response.ok?
+    end
   end
 end
 
+#remove files in preparation for renaming
 def remove_file(path)
   Net::SFTP.start(ENV['SFTP_HOST'], ENV['SFTP_USERNAME'], { password: ENV['SFTP_PASSWORD'] }) do |sftp|
     sftp.stat(path) do |response|
