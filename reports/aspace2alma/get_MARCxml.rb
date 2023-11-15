@@ -206,12 +206,30 @@ def process_resource(resource, file, log_out, remote_file)
       code = segment =~ /^[0-9]{2}/ ? 'y' : 'x'
       tag6xx.children.last.next=("<subfield code='#{code}'>#{segment}</subfield>")
     end
+    #addresses github issue #334
+    if tag6xx.at_xpath('marc:subfield[@code="0"]')
+      subfield0 = tag6xx.at_xpath('marc:subfield[@code="0"]')
+      if subfield0.content =~ /viaf/
+         subfield0.replace("<subfield code='1'>#{subfield0.content}</subfield>")
+      end
+ end
+ if tag6xx.at_xpath('marc:subfield[@code="2"]')
+     subfield2 = tag6xx.at_xpath('marc:subfield[@code="2"]')
+     ind2 = tag6xx.at_xpath('@ind2')
+     if subfield2.content =~ /^viaf$/
+         subfield2.remove
+         if ind2.content == '7'
+             ind2.content = '0'
+         end
+     end
+ end
+
     #add punctuation to the last subfield except $2
-    if tag6xx.children[-1].attribute('code') == '2'
-      tag6xx.children[-2].content << '.' unless ['?', '-', '.'].include?(tag6xx.children[-2].content[-1])
-    else
-      tag6xx.children[-1].content << '.' unless ['?', '-', '.'].include?(tag6xx.children[-1].content[-1])
-    end
+    # if tag6xx.children[-1].attribute('code') == '2'
+    #   tag6xx.children[-2].content << '.' unless ['?', '-', '.'].include?(tag6xx.children[-2].content[-1])
+    # else
+    #   tag6xx.children[-1].content << '.' unless ['?', '-', '.'].include?(tag6xx.children[-1].content[-1])
+    # end
   end
 
   #addresses github #132
