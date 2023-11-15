@@ -134,7 +134,7 @@ def process_resource(resource, file, log_out, remote_file)
   tags852 = doc.xpath('//marc:datafield[@tag="852"]')
   tag856 = doc.at_xpath('//marc:datafield[@tag="856"]')
   tags6xx = doc.xpath('//marc:datafield[@tag = "700" or @tag = "650" or
-    @tag = "651" or @tag = "610" or @tag = "630" or @tag = "648" or
+    @tag = "651" or @tag = "600" or @tag = "610" or @tag = "630" or @tag = "648" or
     @tag = "655" or @tag = "656" or @tag = "657"]')
   subfields = doc.xpath('//marc:subfield')
 
@@ -212,17 +212,17 @@ def process_resource(resource, file, log_out, remote_file)
       if subfield0.content =~ /viaf/
          subfield0.replace("<subfield code='1'>#{subfield0.content}</subfield>")
       end
- end
- if tag6xx.at_xpath('marc:subfield[@code="2"]')
-     subfield2 = tag6xx.at_xpath('marc:subfield[@code="2"]')
-     ind2 = tag6xx.at_xpath('@ind2')
-     if subfield2.content =~ /^viaf$/
-         subfield2.remove
-         if ind2.content == '7'
-             ind2.content = '0'
-         end
-     end
- end
+    end
+    if tag6xx.at_xpath('marc:subfield[@code="2"]')
+        subfield2 = tag6xx.at_xpath('marc:subfield[@code="2"]')
+        ind2 = tag6xx.at_xpath('@ind2')
+        if subfield2.content =~ /^viaf$/
+            subfield2.remove
+            if ind2.content == '7'
+                ind2.content = '0'
+            end
+        end
+    end
 
     #add punctuation to the last subfield except $2
     # if tag6xx.children[-1].attribute('code') == '2'
