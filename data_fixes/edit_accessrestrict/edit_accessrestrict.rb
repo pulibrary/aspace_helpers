@@ -42,10 +42,8 @@ resources = get_all_records_for_repo_endpoint(repo, "resources")
               }
             )
         else
-            accessrestrict_all.each do |accessrestrict|
-                accessrestrict['rights_restriction']['local_access_restriction_type'] = accessrestrict_type
-                accessrestrict['subnotes'][0]['content'] = accessrestrict_note
-            end
+            accessrestrict['rights_restriction']['local_access_restriction_type'] = accessrestrict_type
+            accessrestrict['subnotes'][0]['content'] = accessrestrict_note
         end
     end
     #write a revision statement to the record at the same time
