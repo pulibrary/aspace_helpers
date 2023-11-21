@@ -23,29 +23,29 @@ resources = get_all_records_for_repo_endpoint(repo, "resources")
     accessrestrict_all = resource['notes'].select { |note| note["type"] == "accessrestrict" }
     #iterate over all access notes
     accessrestrict_all.each do |accessrestrict|
-        unless accessrestrict.empty?
+        if accessrestrict.empty?
+            record['notes'].append(
+              {
+                "jsonmodel_type"=>"note_multipart",
+              "type"=>"accessrestrict",
+              "rights_restriction"=>{
+                "local_access_restriction_type"=>accessrestrict_type
+              },
+              "subnotes"=>[
+                {
+                  "jsonmodel_type"=>"note_text",
+                  "content"=>accessrestrict_note,
+                  "publish"=>true
+                }
+              ],
+              "publish"=>true
+              }
+            )
+        else
             accessrestrict_all.each do |accessrestrict|
                 accessrestrict['rights_restriction']['local_access_restriction_type'] = accessrestrict_type
                 accessrestrict['subnotes'][0]['content'] = accessrestrict_note
             end
-        else
-            record['notes'].append(
-                {
-                "jsonmodel_type"=>"note_multipart",
-                "type"=>"accessrestrict",
-                "rights_restriction"=>{
-                    "local_access_restriction_type"=>accessrestrict_type
-                },
-                "subnotes"=>[
-                    {
-                    "jsonmodel_type"=>"note_text",
-                    "content"=>accessrestrict_note,
-                    "publish"=>true
-                    }
-                ],
-                "publish"=>true
-                }
-            )
         end
     end
     #write a revision statement to the record at the same time
