@@ -1,15 +1,14 @@
 require 'archivesspace/client'
 require 'json'
-require 'csv'
 require_relative '../../helper_methods.rb'
 
-aspace_staging_login
+aspace_login
 
 start_time = "Process started: #{Time.now}"
 puts start_time
 
-accessrestrict_type = "test"
-accessrestrict_note = "test"
+accessrestrict_type = ["Open"]
+accessrestrict_note = "The School of Engineering and Applied Science technical reports are in the circulating collection of the Lewis Science and Engineering Library on the B floor of the Fine Hall Wing. Email englib@princeton.edu for questions or digitization of materials upon request."
 
 repos_all = (9..9).to_a
 
@@ -26,7 +25,7 @@ resources = get_all_records_for_repo_endpoint(repo, "resources")
         if accessrestrict.empty?
             record['notes'].append(
               {
-                "jsonmodel_type"=>"note_multipart",
+              "jsonmodel_type"=>"note_multipart",
               "type"=>"accessrestrict",
               "rights_restriction"=>{
                 "local_access_restriction_type"=>accessrestrict_type
@@ -48,8 +47,8 @@ resources = get_all_records_for_repo_endpoint(repo, "resources")
     end
     #write a revision statement to the record at the same time
     add_resource_revision_statement(resource, "Updated accessrestrict")
-    # post = @client.post(uri, resource.to_json)
-    # puts post.body
+    post = @client.post(uri, resource.to_json)
+    puts post.body
   end
 rescue Exception => msg
 error = "Process ended: #{Time.now} with error '#{msg.class}: #{msg.message}''"
