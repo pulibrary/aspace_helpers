@@ -8,7 +8,8 @@ start_time = "Process started: #{Time.now}"
 puts start_time
 
 accessrestrict_type = ["Open"]
-accessrestrict_note = "The School of Engineering and Applied Science technical reports are in the circulating collection of the Lewis Science and Engineering Library on the B floor of the Fine Hall Wing. Email englib@princeton.edu for questions or digitization of materials upon request."
+accessrestrict_note =
+  "The School of Engineering and Applied Science technical reports are in the circulating collection of the Lewis Science and Engineering Library on the B floor of the Fine Hall Wing. Email englib@princeton.edu for questions or digitization of materials upon request."
 
 repos_all = (9..9).to_a
 
@@ -25,7 +26,7 @@ resources = get_all_records_for_repo_endpoint(repo, "resources")
         if accessrestrict.empty?
             record['notes'].append(
               {
-              "jsonmodel_type"=>"note_multipart",
+                "jsonmodel_type"=>"note_multipart",
               "type"=>"accessrestrict",
               "rights_restriction"=>{
                 "local_access_restriction_type"=>accessrestrict_type
