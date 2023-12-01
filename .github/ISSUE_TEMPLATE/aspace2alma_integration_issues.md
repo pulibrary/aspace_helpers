@@ -1,7 +1,7 @@
 ---
 name: Integration issues
-about: This template is for reporting issues with the ASpace-Alma integration, including exporting from ASpace, importing to Alma, or sending ASpace items to ReCAP.
-
+about: This template is for reporting issues with the ASpace-Alma integration, including
+  exporting from ASpace, importing to Alma, or sending ASpace items to ReCAP.
 title: ''
 labels: ''
 assignees: ''
@@ -32,4 +32,3 @@ The script is called `get_MARCxml_with_items.rb` and is scheduled to run nightly
 ### If something goes wrong
 
 Disable the `ASpace to Alma With Items` import profile to suspend further imports to Alma while troubleshooting. (You may need the Alma team to do this.)
- 
