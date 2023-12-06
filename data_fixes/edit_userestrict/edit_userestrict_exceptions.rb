@@ -9,11 +9,11 @@ puts start_time
 
 #define input variables
 log = "log_userestrict.txt"
-input_file = "input.csv"
+input_file = "exceptions.csv"
 csv = CSV.parse(File.read(input_file), :headers => true)
-userestrict_note = "test"
 csv.each do |row|
     uri = row['uri']
+    userestrict_note = row['note']
     resource = @client.get(uri).parsed
     #filter out all accessrestrict notes
     userestrict_all = resource['notes'].select { |note| note["type"] == "userestrict" }
@@ -27,7 +27,7 @@ csv.each do |row|
               "subnotes"=>[
                 {
                   "jsonmodel_type"=>"note_text",
-                "content"=>userestrict_note,
+                "content"=>"<p>#{userestrict_note}</p>",
                 "publish"=>true
                 }
               ],
@@ -35,14 +35,14 @@ csv.each do |row|
               }
             )
         else
-            userestrict['subnotes'][0]['content'] = userestrict_note
+            userestrict['subnotes'][0]['content'] = "<p>#{userestrict_note}</p>"
         end
+    #write a revision statement to the record at the same time
+    add_resource_revision_statement(resource, "Updated use restriction with exception to default statement.")
+    post = @client.post(uri, resource.to_json)
+    puts post.body
+    File.write(log, post.body, mode: 'a')
     end
-#write a revision statement to the record at the same time
-add_resource_revision_statement(uri, "Updated use restriction.")
-post = @client.post(uri, resource.to_json)
-puts post.body
-File.write(log, post.body, mode: 'a')
 rescue Exception => msg
 error = "Process ended: #{Time.now} with error '#{msg.class}: #{msg.message}''"
 puts error
