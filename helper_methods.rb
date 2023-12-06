@@ -394,3 +394,8 @@ def get_all_resource_uris_for_repos(repos = [])
   end #close resources_endpoints.each
   @uris
 end #close method
+
+def get_index_of_resource_uri(uri, repo)
+  uris = get_all_resource_uris_for_repos([repo])
+  return uris.index(uri)
+end
