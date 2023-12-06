@@ -331,20 +331,6 @@ def get_user_permissions()
   ids.map { |id| @client.get("/users/#{id}").parsed }
 end
 
-#add a revision statement
-def add_revision_statement(uri, text)
-  record = @client.get(uri).parsed
-  record['revision_statements'] << {
-    "date"=>"#{Time.now}",
-    "description"=>text.to_s,
-    "created_by"=>"system",
-    "publish"=>true,
-    "jsonmodel_type"=>"revision_statement"
-  }
-  post = @client.post(uri, record.to_json)
-  puts post.body
-end
-
 #add a maintenance statement to agent records
 def add_maintenance_history(record, text)
   record['agent_maintenance_histories'] << {
@@ -357,7 +343,6 @@ def add_maintenance_history(record, text)
     "publish"=>true,
     "jsonmodel_type"=>"agent_maintenance_history"
   }
-
 end
 
 #add a revision statement to a resource record
@@ -397,5 +382,5 @@ end #close method
 
 def get_index_of_resource_uri(uri, repo)
   uris = get_all_resource_uris_for_repos([repo])
-  return uris.index(uri)
+  uris.index(uri)
 end
