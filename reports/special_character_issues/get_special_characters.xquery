@@ -445,8 +445,8 @@ let $results :=
 		
 			normalize-space(string-join(
 			(
-				$a/ancestor::ead//eadid/text(), 
-				$a/ancestor::ead//archdesc/did/unitid[@type="aspace_uri"]/text(),
+				if($a/ancestor::c) then $a/ancestor::c[1]/@id else $a/ancestor::ead//eadid/text(), 
+				if($a/ancestor::c) then $a/ancestor::c[1]/did/unitid[@type="aspace_uri"]/text() else $a/ancestor::ead//archdesc/did/unitid[@type="aspace_uri"]/text(),
 				if($get-match = '"') then replace($get-match, '"', '""""') else $get-match,
 				$codepoint,
 			    local:blockname($codepoint)
