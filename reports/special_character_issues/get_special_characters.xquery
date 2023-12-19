@@ -5,462 +5,458 @@ declare copy-namespaces no-preserve, inherit;
 import module namespace functx = "http://www.functx.com"
 at "http://www.xqueryfunctions.com/xq/functx-1.0-doc-2007-01.xq";
 
-declare function local:blockname($codepoint)
-as xs:string* {
-	switch ($codepoint)
-		case functx:between-inclusive($codepoint, 0, 127)
-			return
-				"BasicLatin"
-		case functx:between-inclusive($codepoint, 128, 255)
-			return
-				"Latin-1Supplement"
-		case functx:between-inclusive($codepoint, 256, 383)
-			return
-				"LatinExtended-A"
-		case functx:between-inclusive($codepoint, 384, 591)
-			return
-				"LatinExtended-B"
-		case functx:between-inclusive($codepoint, 592, 687)
-			return
-				"IPAExtensions"
-		case functx:between-inclusive($codepoint, 688, 767)
-			return
-				"SpacingModifierLetters"
-		case functx:between-inclusive($codepoint, 768, 879)
-			return
-				"CombiningDiacriticalMarks"
-		case functx:between-inclusive($codepoint, 880, 1023)
-			return
-				"Greek"
-		case functx:between-inclusive($codepoint, 1024, 1279)
-			return
-				"Cyrillic"
-		case functx:between-inclusive($codepoint, 1280, 1327)
-			return
-				"CyrillicSupplement"
-		case functx:between-inclusive($codepoint, 1328, 1423)
-			return
-				"Armenian"
-		case functx:between-inclusive($codepoint, 1424, 1535)
-			return
-				"Hebrew"
-		case functx:between-inclusive($codepoint, 1536, 1791)
-			return
-				"Arabic"
-		case functx:between-inclusive($codepoint, 1792, 1871)
-			return
-				"Syriac"
-		case functx:between-inclusive($codepoint, 1872, 1919)
-			return
-				"ArabicSupplement"
-		case functx:between-inclusive($codepoint, 1920, 1983)
-			return
-				"Thaana"
-		case functx:between-inclusive($codepoint, 1984, 2047)
-			return
-				"NKo"
-		case functx:between-inclusive($codepoint, 2048, 2111)
-			return
-				"Samaritan"
-		case functx:between-inclusive($codepoint, 2112, 2143)
-			return
-				"Mandaic"
-		case functx:between-inclusive($codepoint, 2144, 2159)
-			return
-				"SyriacSupplement"
-		case functx:between-inclusive($codepoint, 2160, 2207)
-			return
-				"unassigned"
-		case functx:between-inclusive($codepoint, 2208, 2303)
-			return
-				"ArabicExtended-A"
-		case functx:between-inclusive($codepoint, 2304, 2431)
-			return
-				"Devanagari"
-		case functx:between-inclusive($codepoint, 2432, 2559)
-			return
-				"Bengali"
-		case functx:between-inclusive($codepoint, 2560, 2687)
-			return
-				"Gurmukhi"
-		case functx:between-inclusive($codepoint, 2688, 2815)
-			return
-				"Gujarati"
-		case functx:between-inclusive($codepoint, 2816, 2943)
-			return
-				"Oriya"
-		case functx:between-inclusive($codepoint, 2944, 3071)
-			return
-				"Tamil"
-		case functx:between-inclusive($codepoint, 3072, 3199)
-			return
-				"Telugu"
-		case functx:between-inclusive($codepoint, 3200, 3327)
-			return
-				"Kannada"
-		case functx:between-inclusive($codepoint, 3328, 3455)
-			return
-				"Malayalam"
-		case functx:between-inclusive($codepoint, 3456, 3583)
-			return
-				"Sinhala"
-		case functx:between-inclusive($codepoint, 3584, 3711)
-			return
-				"Thai"
-		case functx:between-inclusive($codepoint, 3712, 3839)
-			return
-				"Lao"
-		case functx:between-inclusive($codepoint, 3840, 4095)
-			return
-				"Tibetan"
-		case functx:between-inclusive($codepoint, 4096, 4255)
-			return
-				"Myanmar"
-		case functx:between-inclusive($codepoint, 4256, 4351)
-			return
-				"Georgian"
-		case functx:between-inclusive($codepoint, 4352, 4607)
-			return
-				"HangulJamo"
-		case functx:between-inclusive($codepoint, 4608, 4991)
-			return
-				"Ethiopic"
-		case functx:between-inclusive($codepoint, 4992, 5023)
-			return
-				"EthiopicSupplement"
-		case functx:between-inclusive($codepoint, 5024, 5119)
-			return
-				"Cherokee"
-		case functx:between-inclusive($codepoint, 5120, 5759)
-			return
-				"UnifiedCanadianAboriginalSyllabics"
-		case functx:between-inclusive($codepoint, 5760, 5791)
-			return
-				"Ogham"
-		case functx:between-inclusive($codepoint, 5792, 5887)
-			return
-				"Runic"
-		case functx:between-inclusive($codepoint, 5888, 5919)
-			return
-				"Tagalog"
-		case functx:between-inclusive($codepoint, 5920, 5951)
-			return
-				"Hanunoo"
-		case functx:between-inclusive($codepoint, 5952, 5983)
-			return
-				"Buhid"
-		case functx:between-inclusive($codepoint, 5984, 6015)
-			return
-				"Tagbanwa"
-		case functx:between-inclusive($codepoint, 6016, 6143)
-			return
-				"Khmer"
-		case functx:between-inclusive($codepoint, 6144, 6319)
-			return
-				"Mongolian"
-		case functx:between-inclusive($codepoint, 6320, 6399)
-			return
-				"Unified Canadian Aboriginal Syllabics Extended"
-		
-		case functx:between-inclusive($codepoint, 6400, 6479)
-			return
-				"Limbu"
-		case functx:between-inclusive($codepoint, 6480, 6527)
-			return
-				"TaiLe"
-		case functx:between-inclusive($codepoint, 6528, 6623)
-			return
-				"NewTaiLue"
-		case functx:between-inclusive($codepoint, 6624, 6655)
-			return
-				"KhmerSymbols"
-		case functx:between-inclusive($codepoint, 6656, 6887)
-			return
-				"Buginese"
-		case functx:between-inclusive($codepoint, 6688, 6831)
-			return
-				"TaiTham"
-		case functx:between-inclusive($codepoint, 6832, 6911)
-			return
-				"CombiningDiacriticalMarksExtended"
-		case functx:between-inclusive($codepoint, 6912, 7039)
-			return
-				"Balinesee"
-		case functx:between-inclusive($codepoint, 7040, 7103)
-			return
-				"Sundanese"
-		case functx:between-inclusive($codepoint, 7104, 7167)
-			return
-				"Batak"
-		case functx:between-inclusive($codepoint, 7168, 7247)
-			return
-				"Lepcha"
-		case functx:between-inclusive($codepoint, 7248, 7295)
-			return
-				"OlChiki"
-		case functx:between-inclusive($codepoint, 7296, 7311)
-			return
-				"CyrillicExtended-C"
-		case functx:between-inclusive($codepoint, 77312, 7359)
-			return
-				"unassigned"
-		case functx:between-inclusive($codepoint, 7360, 7375)
-			return
-				"SundaneseSupplement"
-		case functx:between-inclusive($codepoint, 7376, 7423)
-			return
-				"VedicExtensions"
-		case functx:between-inclusive($codepoint, 7424, 7551)
-			return
-				"PhoneticExtensions"
-		case functx:between-inclusive($codepoint, 7552, 7615)
-			return
-				"PhoneticExtensionsSupplement"
-		case functx:between-inclusive($codepoint, 7616, 7679)
-			return
-				"CombiningDiacriticalMarksSupplement"
-		case functx:between-inclusive($codepoint, 7680, 7935)
-			return
-				"LatinExtendedAdditional"
-		case functx:between-inclusive($codepoint, 7936, 8191)
-			return
-				"GreekExtended"
-		case functx:between-inclusive($codepoint, 8192, 8303)
-			return
-				"GeneralPunctuation"
-		case functx:between-inclusive($codepoint, 8304, 8351)
-			return
-				"SuperscriptsandSubscripts"
-		case functx:between-inclusive($codepoint, 8352, 8399)
-			return
-				"CurrencySymbols"
-		case functx:between-inclusive($codepoint, 8400, 8447)
-			return
-				"CombiningMarksforSymbols"
-		case functx:between-inclusive($codepoint, 8448, 8527)
-			return
-				"LetterlikeSymbols"
-		case functx:between-inclusive($codepoint, 8528, 8591)
-			return
-				"NumberForms"
-		case functx:between-inclusive($codepoint, 8592, 8703)
-			return
-				"Arrows"
-		case functx:between-inclusive($codepoint, 8704, 8959)
-			return
-				"MathematicalOperators"
-		case functx:between-inclusive($codepoint, 8960, 9215)
-			return
-				"MiscellaneousTechnical"
-		case functx:between-inclusive($codepoint, 9216, 9279)
-			return
-				"ControlPictures"
-		case functx:between-inclusive($codepoint, 9280, 9311)
-			return
-				"OpticalCharacterRecognition"
-		case functx:between-inclusive($codepoint, 9312, 9471)
-			return
-				"EnclosedAlphanumerics"
-		case functx:between-inclusive($codepoint, 9472, 9599)
-			return
-				"BoxDrawing"
-		case functx:between-inclusive($codepoint, 9600, 9631)
-			return
-				"BlockElements"
-		case functx:between-inclusive($codepoint, 9632, 9727)
-			return
-				"GeometricShapes"
-		case functx:between-inclusive($codepoint, 9728, 9983)
-			return
-				"MiscellaneousSymbols"
-		case functx:between-inclusive($codepoint, 9984, 10175)
-			return
-				"Dingbats"
-		case functx:between-inclusive($codepoint, 10176, 10223)
-			return
-				"MiscellaneousMathematicalSymbols-A"
-		case functx:between-inclusive($codepoint, 10224, 10239)
-			return
-				"SupplementalArrows-A"
-		case functx:between-inclusive($codepoint, 10240, 10495)
-			return
-				"BraillePatterns"
-		case functx:between-inclusive($codepoint, 10496, 10623)
-			return
-				"SupplementalArrows-B"
-		case functx:between-inclusive($codepoint, 10624, 10751)
-			return
-				"MiscellaneousMathematicalSymbols-B"
-		case functx:between-inclusive($codepoint, 10752, 11007)
-			return
-				"SupplementalMathematicalOperators"
-		case functx:between-inclusive($codepoint, 11008, 11263)
-			return
-				"MiscellaneousSymbolsandArrows"
-		case functx:between-inclusive($codepoint, 11264, 11359)
-			return
-				"Glagolitic"
-		case functx:between-inclusive($codepoint, 11360, 11391)
-			return
-				"LatinExtended-C"
-		case functx:between-inclusive($codepoint, 11392, 11519)
-			return
-				"Coptic"
-		case functx:between-inclusive($codepoint, 11520, 11567)
-			return
-				"GeorgianSupplement"
-		case functx:between-inclusive($codepoint, 11568, 11647)
-			return
-				"Tifinagh"
-		case functx:between-inclusive($codepoint, 11648, 11743)
-			return
-				"EthiopicExtended"
-		case functx:between-inclusive($codepoint, 11744, 11775)
-			return
-				"CyrillicExtended"
-		case functx:between-inclusive($codepoint, 11776, 11903)
-			return
-				"SupplementalPunctuation"
-		case functx:between-inclusive($codepoint, 11904, 12031)
-			return
-				"CJKRadicalsSupplement"
-		case functx:between-inclusive($codepoint, 12032, 12255)
-			return
-				"KangxiRadicals"
-		case functx:between-inclusive($codepoint, 12256, 12271)
-			return
-				"unassigned"
-		case functx:between-inclusive($codepoint, 12272, 12287)
-			return
-				"IdeographicDescriptionCharacters"
-		case functx:between-inclusive($codepoint, 12288, 12351)
-			return
-				"CJKSymbolsandPunctuation"
-		case functx:between-inclusive($codepoint, 12352, 12447)
-			return
-				"Hiragana"
-		case functx:between-inclusive($codepoint, 12448, 12543)
-			return
-				"Katakana"
-		case functx:between-inclusive($codepoint, 12544, 12591)
-			return
-				"Bopomofo"
-		case functx:between-inclusive($codepoint, 12592, 12687)
-			return
-				"HangulCompatibilityJamo"
-		case functx:between-inclusive($codepoint, 12688, 12703)
-			return
-				"Kanbun"
-		case functx:between-inclusive($codepoint, 12704, 12735)
-			return
-				"BopomofoExtended"
-		case functx:between-inclusive($codepoint, 12736, 12783)
-			return
-				"CJKStrokes"
-		case functx:between-inclusive($codepoint, 12784, 12799)
-			return
-				"KatakanaPhoneticExtensions"
-		case functx:between-inclusive($codepoint, 12800, 13055)
-			return
-				"EnclosedCJKLettersandMonths"
-		case functx:between-inclusive($codepoint, 13056, 13311)
-			return
-				"CJKCompatibility"
-		case functx:between-inclusive($codepoint, 13312, 19903)
-			return
-				"CJKUnifiedIdeographsExtensionA"
-		case functx:between-inclusive($codepoint, 19904, 19967)
-			return
-				"YijingHexagramSymbols"
-		case functx:between-inclusive($codepoint, 19968, 40959)
-			return
-				"CJKUnifiedIdeographs"
-		case functx:between-inclusive($codepoint, 40960, 42127)
-			return
-				"YiSyllables"
-		case functx:between-inclusive($codepoint, 42128, 42191)
-			return
-				"YiRadicals"
-		case functx:between-inclusive($codepoint, 44032, 55203)
-			return
-				"HangulSyllables"
-		case functx:between-inclusive($codepoint, 55296, 56191)
-			return
-				"HighSurrogates"
-		case functx:between-inclusive($codepoint, 56192, 56319)
-			return
-				"HighPrivateUseSurrogates"
-		case functx:between-inclusive($codepoint, 56320, 57343)
-			return
-				"LowSurrogates"
-		case functx:between-inclusive($codepoint, 57344, 63743)
-			return
-				"PrivateUse"
-		case functx:between-inclusive($codepoint, 63744, 64255)
-			return
-				"CJKCompatibilityIdeographs"
-		case functx:between-inclusive($codepoint, 64256, 64335)
-			return
-				"AlphabeticPresentationForms"
-		case functx:between-inclusive($codepoint, 64336, 65023)
-			return
-				"ArabicPresentationForms-A"
-		case functx:between-inclusive($codepoint, 65056, 65071)
-			return
-				"CombiningHalfMarks"
-		case functx:between-inclusive($codepoint, 65072, 65103)
-			return
-				"CJKCompatibilityForms"
-		case functx:between-inclusive($codepoint, 65104, 65135)
-			return
-				"SmallFormVariants"
-		case functx:between-inclusive($codepoint, 65136, 65278)
-			return
-				"ArabicPresentationForms-B"
-		case functx:between-inclusive($codepoint, 65279, 65279)
-			return
-				"Specials"
-		case functx:between-inclusive($codepoint, 65280, 65519)
-			return
-				"HalfwidthandFullwidthForms"
-		case functx:between-inclusive($codepoint, 65520, 65533)
-			return
-				"Specials"
-		default return
-			()
+declare function local:blockname($co)
+as xs:string {
+    for $x in $co
+    return
+        if (functx:between-inclusive($x, 0, 127)) then
+            "BasicLatin"
+        else
+            if (functx:between-inclusive($x, 128, 255)) then
+                "Latin-1Supplement"
+            else
+                if (functx:between-inclusive($x, 256, 383)) then
+                    "LatinExtended-A"
+                else
+                    if (functx:between-inclusive($x, 384, 591)) then
+                        "LatinExtended-B"
+                    else
+                        if (functx:between-inclusive($x, 592, 687)) then
+                            "IPAExtensions"
+                        else
+                            if (functx:between-inclusive($x, 688, 767)) then
+                                "SpacingModifierLetters"
+                            else
+                                if (functx:between-inclusive($x, 768, 879)) then
+                                    "CombiningDiacriticalMarks"
+                                else
+                                    if (functx:between-inclusive($x, 880, 1023)) then
+                                        "Greek"
+                                    else
+                                        if (functx:between-inclusive($x, 1024, 1279)) then
+                                            "Cyrillic"
+                                        else
+                                            if (functx:between-inclusive($x, 1280, 1327)) then
+                                                "CyrillicSupplement"
+                                            else
+                                                if (functx:between-inclusive($x, 1328, 1423)) then
+                                                    "Armenian"
+                                                else
+                                                    if (functx:between-inclusive($x, 1424, 1535)) then
+                                                        "Hebrew"
+                                                    else
+                                                        if (functx:between-inclusive($x, 1536, 1791)) then
+                                                            "Arabic"
+                                                        else
+                                                            if (functx:between-inclusive($x, 1792, 1871)) then
+                                                                "Syriac"
+                                                            else
+                                                                if (functx:between-inclusive($x, 1872, 1919)) then
+                                                                    "ArabicSupplement"
+                                                                else
+                                                                    if (functx:between-inclusive($x, 1920, 1983)) then
+                                                                        "Thaana"
+                                                                    else
+                                                                        if (functx:between-inclusive($x, 1984, 2047)) then
+                                                                            "NKo"
+                                                                        else
+                                                                            if (functx:between-inclusive($x, 2048, 2111)) then
+                                                                                "Samaritan"
+                                                                            else
+                                                                                if (functx:between-inclusive($x, 2112, 2143)) then
+                                                                                    "Mandaic"
+                                                                                else
+                                                                                    if (functx:between-inclusive($x, 2144, 2159)) then
+                                                                                        "SyriacSupplement"
+                                                                                    else
+                                                                                        if (functx:between-inclusive($x, 2160, 2207)) then
+                                                                                            "unassigned"
+                                                                                        else
+                                                                                            if (functx:between-inclusive($x, 2208, 2303)) then
+                                                                                                "ArabicExtended-A"
+                                                                                            else
+                                                                                                if (functx:between-inclusive($x, 2304, 2431)) then
+                                                                                                    "Devanagari"
+                                                                                                else
+                                                                                                    if (functx:between-inclusive($x, 2432, 2559)) then
+                                                                                                        "Bengali"
+                                                                                                    else
+                                                                                                        if (functx:between-inclusive($x, 2560, 2687)) then
+                                                                                                            "Gurmukhi"
+                                                                                                        else
+                                                                                                            if (functx:between-inclusive($x, 2688, 2815)) then
+                                                                                                                "Gujarati"
+                                                                                                            else
+                                                                                                                if (functx:between-inclusive($x, 2816, 2943)) then
+                                                                                                                    "Oriya"
+                                                                                                                else
+                                                                                                                    if (functx:between-inclusive($x, 2944, 3071)) then
+                                                                                                                        "Tamil"
+                                                                                                                    else
+                                                                                                                        if (functx:between-inclusive($x, 3072, 3199)) then
+                                                                                                                            "Telugu"
+                                                                                                                        else
+                                                                                                                            if (functx:between-inclusive($x, 3200, 3327)) then
+                                                                                                                                "Kannada"
+                                                                                                                            else
+                                                                                                                                if (functx:between-inclusive($x, 3328, 3455)) then
+                                                                                                                                    "Malayalam"
+                                                                                                                                else
+                                                                                                                                    if (functx:between-inclusive($x, 3456, 3583)) then
+                                                                                                                                        "Sinhala"
+                                                                                                                                    else
+                                                                                                                                        if (functx:between-inclusive($x, 3584, 3711)) then
+                                                                                                                                            "Thai"
+                                                                                                                                        else
+                                                                                                                                            if (functx:between-inclusive($x, 3712, 3839)) then
+                                                                                                                                                "Lao"
+                                                                                                                                            else
+                                                                                                                                                if (functx:between-inclusive($x, 3840, 4095)) then
+                                                                                                                                                    "Tibetan"
+                                                                                                                                                else
+                                                                                                                                                    if (functx:between-inclusive($x, 4096, 4255)) then
+                                                                                                                                                        "Myanmar"
+                                                                                                                                                    else
+                                                                                                                                                        if (functx:between-inclusive($x, 4256, 4351)) then
+                                                                                                                                                            "Georgian"
+                                                                                                                                                        else
+                                                                                                                                                            if (functx:between-inclusive($x, 4352, 4607)) then
+                                                                                                                                                                "HangulJamo"
+                                                                                                                                                            else
+                                                                                                                                                                if (functx:between-inclusive($x, 4608, 4991)) then
+                                                                                                                                                                    "Ethiopic"
+                                                                                                                                                                else
+                                                                                                                                                                    if (functx:between-inclusive($x, 4992, 5023)) then
+                                                                                                                                                                        "EthiopicSupplement"
+                                                                                                                                                                    else
+                                                                                                                                                                        if (functx:between-inclusive($x, 5024, 5119)) then
+                                                                                                                                                                            "Cherokee"
+                                                                                                                                                                        else
+                                                                                                                                                                            if (functx:between-inclusive($x, 5120, 5759)) then
+                                                                                                                                                                                "UnifiedCanadianAboriginalSyllabics"
+                                                                                                                                                                            else
+                                                                                                                                                                                if (functx:between-inclusive($x, 5760, 5791)) then
+                                                                                                                                                                                    "Ogham"
+                                                                                                                                                                                else
+                                                                                                                                                                                    if (functx:between-inclusive($x, 5792, 5887)) then
+                                                                                                                                                                                        "Runic"
+                                                                                                                                                                                    else
+                                                                                                                                                                                        if (functx:between-inclusive($x, 5888, 5919)) then
+                                                                                                                                                                                            "Tagalog"
+                                                                                                                                                                                        else
+                                                                                                                                                                                            if (functx:between-inclusive($x, 5920, 5951)) then
+                                                                                                                                                                                                "Hanunoo"
+                                                                                                                                                                                            else
+                                                                                                                                                                                                if (functx:between-inclusive($x, 5952, 5983)) then
+                                                                                                                                                                                                    "Buhid"
+                                                                                                                                                                                                else
+                                                                                                                                                                                                    if (functx:between-inclusive($x, 5984, 6015)) then
+                                                                                                                                                                                                        "Tagbanwa"
+                                                                                                                                                                                                    else
+                                                                                                                                                                                                        if (functx:between-inclusive($x, 6016, 6143)) then
+                                                                                                                                                                                                            "Khmer"
+                                                                                                                                                                                                        else
+                                                                                                                                                                                                            if (functx:between-inclusive($x, 6144, 6319)) then
+                                                                                                                                                                                                                "Mongolian"
+                                                                                                                                                                                                            else
+                                                                                                                                                                                                                if (functx:between-inclusive($x, 6320, 6399)) then
+                                                                                                                                                                                                                    "Unified Canadian Aboriginal Syllabics Extended"
+                                                                                                                                                                                                                
+                                                                                                                                                                                                                else
+                                                                                                                                                                                                                    if (functx:between-inclusive($x, 6400, 6479)) then
+                                                                                                                                                                                                                        "Limbu"
+                                                                                                                                                                                                                    else
+                                                                                                                                                                                                                        if (functx:between-inclusive($x, 6480, 6527)) then
+                                                                                                                                                                                                                            "TaiLe"
+                                                                                                                                                                                                                        else
+                                                                                                                                                                                                                            if (functx:between-inclusive($x, 6528, 6623)) then
+                                                                                                                                                                                                                                "NewTaiLue"
+                                                                                                                                                                                                                            else
+                                                                                                                                                                                                                                if (functx:between-inclusive($x, 6624, 6655)) then
+                                                                                                                                                                                                                                    "KhmerSymbols"
+                                                                                                                                                                                                                                else
+                                                                                                                                                                                                                                    if (functx:between-inclusive($x, 6656, 6887)) then
+                                                                                                                                                                                                                                        "Buginese"
+                                                                                                                                                                                                                                    else
+                                                                                                                                                                                                                                        if (functx:between-inclusive($x, 6688, 6831)) then
+                                                                                                                                                                                                                                            "TaiTham"
+                                                                                                                                                                                                                                        else
+                                                                                                                                                                                                                                            if (functx:between-inclusive($x, 6832, 6911)) then
+                                                                                                                                                                                                                                                "CombiningDiacriticalMarksExtended"
+                                                                                                                                                                                                                                            else
+                                                                                                                                                                                                                                                if (functx:between-inclusive($x, 6912, 7039)) then
+                                                                                                                                                                                                                                                    "Balinesee"
+                                                                                                                                                                                                                                                else
+                                                                                                                                                                                                                                                    if (functx:between-inclusive($x, 7040, 7103)) then
+                                                                                                                                                                                                                                                        "Sundanese"
+                                                                                                                                                                                                                                                    else
+                                                                                                                                                                                                                                                        if (functx:between-inclusive($x, 7104, 7167)) then
+                                                                                                                                                                                                                                                            "Batak"
+                                                                                                                                                                                                                                                        else
+                                                                                                                                                                                                                                                            if (functx:between-inclusive($x, 7168, 7247)) then
+                                                                                                                                                                                                                                                                "Lepcha"
+                                                                                                                                                                                                                                                            else
+                                                                                                                                                                                                                                                                if (functx:between-inclusive($x, 7248, 7295)) then
+                                                                                                                                                                                                                                                                    "OlChiki"
+                                                                                                                                                                                                                                                                else
+                                                                                                                                                                                                                                                                    if (functx:between-inclusive($x, 7296, 7311)) then
+                                                                                                                                                                                                                                                                        "CyrillicExtended-C"
+                                                                                                                                                                                                                                                                    else
+                                                                                                                                                                                                                                                                        if (functx:between-inclusive($x, 77312, 7359)) then
+                                                                                                                                                                                                                                                                            "unassigned"
+                                                                                                                                                                                                                                                                        else
+                                                                                                                                                                                                                                                                            if (functx:between-inclusive($x, 7360, 7375)) then
+                                                                                                                                                                                                                                                                                "SundaneseSupplement"
+                                                                                                                                                                                                                                                                            else
+                                                                                                                                                                                                                                                                                if (functx:between-inclusive($x, 7376, 7423)) then
+                                                                                                                                                                                                                                                                                    "VedicExtensions"
+                                                                                                                                                                                                                                                                                else
+                                                                                                                                                                                                                                                                                    if (functx:between-inclusive($x, 7424, 7551)) then
+                                                                                                                                                                                                                                                                                        "PhoneticExtensions"
+                                                                                                                                                                                                                                                                                    else
+                                                                                                                                                                                                                                                                                        if (functx:between-inclusive($x, 7552, 7615)) then
+                                                                                                                                                                                                                                                                                            "PhoneticExtensionsSupplement"
+                                                                                                                                                                                                                                                                                        else
+                                                                                                                                                                                                                                                                                            if (functx:between-inclusive($x, 7616, 7679)) then
+                                                                                                                                                                                                                                                                                                "CombiningDiacriticalMarksSupplement"
+                                                                                                                                                                                                                                                                                            else
+                                                                                                                                                                                                                                                                                                if (functx:between-inclusive($x, 7680, 7935)) then
+                                                                                                                                                                                                                                                                                                    "LatinExtendedAdditional"
+                                                                                                                                                                                                                                                                                                else
+                                                                                                                                                                                                                                                                                                    if (functx:between-inclusive($x, 7936, 8191)) then
+                                                                                                                                                                                                                                                                                                        "GreekExtended"
+                                                                                                                                                                                                                                                                                                    else
+                                                                                                                                                                                                                                                                                                        if (functx:between-inclusive($x, 8192, 8303)) then
+                                                                                                                                                                                                                                                                                                            "GeneralPunctuation"
+                                                                                                                                                                                                                                                                                                        else
+                                                                                                                                                                                                                                                                                                            if (functx:between-inclusive($x, 8304, 8351)) then
+                                                                                                                                                                                                                                                                                                                "SuperscriptsandSubscripts"
+                                                                                                                                                                                                                                                                                                            else
+                                                                                                                                                                                                                                                                                                                if (functx:between-inclusive($x, 8352, 8399)) then
+                                                                                                                                                                                                                                                                                                                    "CurrencySymbols"
+                                                                                                                                                                                                                                                                                                                else
+                                                                                                                                                                                                                                                                                                                    if (functx:between-inclusive($x, 8400, 8447)) then
+                                                                                                                                                                                                                                                                                                                        "CombiningMarksforSymbols"
+                                                                                                                                                                                                                                                                                                                    else
+                                                                                                                                                                                                                                                                                                                        if (functx:between-inclusive($x, 8448, 8527)) then
+                                                                                                                                                                                                                                                                                                                            "LetterlikeSymbols"
+                                                                                                                                                                                                                                                                                                                        else
+                                                                                                                                                                                                                                                                                                                            if (functx:between-inclusive($x, 8528, 8591)) then
+                                                                                                                                                                                                                                                                                                                                "NumberForms"
+                                                                                                                                                                                                                                                                                                                            else
+                                                                                                                                                                                                                                                                                                                                if (functx:between-inclusive($x, 8592, 8703)) then
+                                                                                                                                                                                                                                                                                                                                    "Arrows"
+                                                                                                                                                                                                                                                                                                                                else
+                                                                                                                                                                                                                                                                                                                                    if (functx:between-inclusive($x, 8704, 8959)) then
+                                                                                                                                                                                                                                                                                                                                        "MathematicalOperators"
+                                                                                                                                                                                                                                                                                                                                    else
+                                                                                                                                                                                                                                                                                                                                        if (functx:between-inclusive($x, 8960, 9215)) then
+                                                                                                                                                                                                                                                                                                                                            "MiscellaneousTechnical"
+                                                                                                                                                                                                                                                                                                                                        else
+                                                                                                                                                                                                                                                                                                                                            if (functx:between-inclusive($x, 9216, 9279)) then
+                                                                                                                                                                                                                                                                                                                                                "ControlPictures"
+                                                                                                                                                                                                                                                                                                                                            else
+                                                                                                                                                                                                                                                                                                                                                if (functx:between-inclusive($x, 9280, 9311)) then
+                                                                                                                                                                                                                                                                                                                                                    "OpticalCharacterRecognition"
+                                                                                                                                                                                                                                                                                                                                                else
+                                                                                                                                                                                                                                                                                                                                                    if (functx:between-inclusive($x, 9312, 9471)) then
+                                                                                                                                                                                                                                                                                                                                                        "EnclosedAlphanumerics"
+                                                                                                                                                                                                                                                                                                                                                    else
+                                                                                                                                                                                                                                                                                                                                                        if (functx:between-inclusive($x, 9472, 9599)) then
+                                                                                                                                                                                                                                                                                                                                                            "BoxDrawing"
+                                                                                                                                                                                                                                                                                                                                                        else
+                                                                                                                                                                                                                                                                                                                                                            if (functx:between-inclusive($x, 9600, 9631)) then
+                                                                                                                                                                                                                                                                                                                                                                "BlockElements"
+                                                                                                                                                                                                                                                                                                                                                            else
+                                                                                                                                                                                                                                                                                                                                                                if (functx:between-inclusive($x, 9632, 9727)) then
+                                                                                                                                                                                                                                                                                                                                                                    "GeometricShapes"
+                                                                                                                                                                                                                                                                                                                                                                else
+                                                                                                                                                                                                                                                                                                                                                                    if (functx:between-inclusive($x, 9728, 9983)) then
+                                                                                                                                                                                                                                                                                                                                                                        "MiscellaneousSymbols"
+                                                                                                                                                                                                                                                                                                                                                                    else
+                                                                                                                                                                                                                                                                                                                                                                        if (functx:between-inclusive($x, 9984, 10175)) then
+                                                                                                                                                                                                                                                                                                                                                                            "Dingbats"
+                                                                                                                                                                                                                                                                                                                                                                        else
+                                                                                                                                                                                                                                                                                                                                                                            if (functx:between-inclusive($x, 10176, 10223)) then
+                                                                                                                                                                                                                                                                                                                                                                                "MiscellaneousMathematicalSymbols-A"
+                                                                                                                                                                                                                                                                                                                                                                            else
+                                                                                                                                                                                                                                                                                                                                                                                if (functx:between-inclusive($x, 10224, 10239)) then
+                                                                                                                                                                                                                                                                                                                                                                                    "SupplementalArrows-A"
+                                                                                                                                                                                                                                                                                                                                                                                else
+                                                                                                                                                                                                                                                                                                                                                                                    if (functx:between-inclusive($x, 10240, 10495)) then
+                                                                                                                                                                                                                                                                                                                                                                                        "BraillePatterns"
+                                                                                                                                                                                                                                                                                                                                                                                    else
+                                                                                                                                                                                                                                                                                                                                                                                        if (functx:between-inclusive($x, 10496, 10623)) then
+                                                                                                                                                                                                                                                                                                                                                                                            "SupplementalArrows-B"
+                                                                                                                                                                                                                                                                                                                                                                                        else
+                                                                                                                                                                                                                                                                                                                                                                                            if (functx:between-inclusive($x, 10624, 10751)) then
+                                                                                                                                                                                                                                                                                                                                                                                                "MiscellaneousMathematicalSymbols-B"
+                                                                                                                                                                                                                                                                                                                                                                                            else
+                                                                                                                                                                                                                                                                                                                                                                                                if (functx:between-inclusive($x, 10752, 11007)) then
+                                                                                                                                                                                                                                                                                                                                                                                                    "SupplementalMathematicalOperators"
+                                                                                                                                                                                                                                                                                                                                                                                                else
+                                                                                                                                                                                                                                                                                                                                                                                                    if (functx:between-inclusive($x, 11008, 11263)) then
+                                                                                                                                                                                                                                                                                                                                                                                                        "MiscellaneousSymbolsandArrows"
+                                                                                                                                                                                                                                                                                                                                                                                                    else
+                                                                                                                                                                                                                                                                                                                                                                                                        if (functx:between-inclusive($x, 11264, 11359)) then
+                                                                                                                                                                                                                                                                                                                                                                                                            "Glagolitic"
+                                                                                                                                                                                                                                                                                                                                                                                                        else
+                                                                                                                                                                                                                                                                                                                                                                                                            if (functx:between-inclusive($x, 11360, 11391)) then
+                                                                                                                                                                                                                                                                                                                                                                                                                "LatinExtended-C"
+                                                                                                                                                                                                                                                                                                                                                                                                            else
+                                                                                                                                                                                                                                                                                                                                                                                                                if (functx:between-inclusive($x, 11392, 11519)) then
+                                                                                                                                                                                                                                                                                                                                                                                                                    "Coptic"
+                                                                                                                                                                                                                                                                                                                                                                                                                else
+                                                                                                                                                                                                                                                                                                                                                                                                                    if (functx:between-inclusive($x, 11520, 11567)) then
+                                                                                                                                                                                                                                                                                                                                                                                                                        "GeorgianSupplement"
+                                                                                                                                                                                                                                                                                                                                                                                                                    else
+                                                                                                                                                                                                                                                                                                                                                                                                                        if (functx:between-inclusive($x, 11568, 11647)) then
+                                                                                                                                                                                                                                                                                                                                                                                                                            "Tifinagh"
+                                                                                                                                                                                                                                                                                                                                                                                                                        else
+                                                                                                                                                                                                                                                                                                                                                                                                                            if (functx:between-inclusive($x, 11648, 11743)) then
+                                                                                                                                                                                                                                                                                                                                                                                                                                "EthiopicExtended"
+                                                                                                                                                                                                                                                                                                                                                                                                                            else
+                                                                                                                                                                                                                                                                                                                                                                                                                                if (functx:between-inclusive($x, 11744, 11775)) then
+                                                                                                                                                                                                                                                                                                                                                                                                                                    "CyrillicExtended"
+                                                                                                                                                                                                                                                                                                                                                                                                                                else
+                                                                                                                                                                                                                                                                                                                                                                                                                                    if (functx:between-inclusive($x, 11776, 11903)) then
+                                                                                                                                                                                                                                                                                                                                                                                                                                        "SupplementalPunctuation"
+                                                                                                                                                                                                                                                                                                                                                                                                                                    else
+                                                                                                                                                                                                                                                                                                                                                                                                                                        if (functx:between-inclusive($x, 11904, 12031)) then
+                                                                                                                                                                                                                                                                                                                                                                                                                                            "CJKRadicalsSupplement"
+                                                                                                                                                                                                                                                                                                                                                                                                                                        else
+                                                                                                                                                                                                                                                                                                                                                                                                                                            if (functx:between-inclusive($x, 12032, 12255)) then
+                                                                                                                                                                                                                                                                                                                                                                                                                                                "KangxiRadicals"
+                                                                                                                                                                                                                                                                                                                                                                                                                                            else
+                                                                                                                                                                                                                                                                                                                                                                                                                                                if (functx:between-inclusive($x, 12256, 12271)) then
+                                                                                                                                                                                                                                                                                                                                                                                                                                                    "unassigned"
+                                                                                                                                                                                                                                                                                                                                                                                                                                                else
+                                                                                                                                                                                                                                                                                                                                                                                                                                                    if (functx:between-inclusive($x, 12272, 12287)) then
+                                                                                                                                                                                                                                                                                                                                                                                                                                                        "IdeographicDescriptionCharacters"
+                                                                                                                                                                                                                                                                                                                                                                                                                                                    else
+                                                                                                                                                                                                                                                                                                                                                                                                                                                        if (functx:between-inclusive($x, 12288, 12351)) then
+                                                                                                                                                                                                                                                                                                                                                                                                                                                            "CJKSymbolsandPunctuation"
+                                                                                                                                                                                                                                                                                                                                                                                                                                                        else
+                                                                                                                                                                                                                                                                                                                                                                                                                                                            if (functx:between-inclusive($x, 12352, 12447)) then
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                "Hiragana"
+                                                                                                                                                                                                                                                                                                                                                                                                                                                            else
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                if (functx:between-inclusive($x, 12448, 12543)) then
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                    "Katakana"
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                else
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                    if (functx:between-inclusive($x, 12544, 12591)) then
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                        "Bopomofo"
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                    else
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                        if (functx:between-inclusive($x, 12592, 12687)) then
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                            "HangulCompatibilityJamo"
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                        else
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                            if (functx:between-inclusive($x, 12688, 12703)) then
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                "Kanbun"
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                            else
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                if (functx:between-inclusive($x, 12704, 12735)) then
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    "BopomofoExtended"
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                else
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    if (functx:between-inclusive($x, 12736, 12783)) then
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        "CJKStrokes"
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    else
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        if (functx:between-inclusive($x, 12784, 12799)) then
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            "KatakanaPhoneticExtensions"
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        else
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            if (functx:between-inclusive($x, 12800, 13055)) then
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                "EnclosedCJKLettersandMonths"
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            else
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                if (functx:between-inclusive($x, 13056, 13311)) then
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    "CJKCompatibility"
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                else
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    if (functx:between-inclusive($x, 13312, 19903)) then
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        "CJKUnifiedIdeographsExtensionA"
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    else
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        if (functx:between-inclusive($x, 19904, 19967)) then
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            "YijingHexagramSymbols"
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        else
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            if (functx:between-inclusive($x, 19968, 40959)) then
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                "CJKUnifiedIdeographs"
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            else
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                if (functx:between-inclusive($x, 40960, 42127)) then
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    "YiSyllables"
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                else
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    if (functx:between-inclusive($x, 42128, 42191)) then
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        "YiRadicals"
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    else
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        if (functx:between-inclusive($x, 44032, 55203)) then
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            "HangulSyllables"
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        else
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            if (functx:between-inclusive($x, 55296, 56191)) then
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                "HighSurrogates"
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            else
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                if (functx:between-inclusive($x, 56192, 56319)) then
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    "HighPrivateUseSurrogates"
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                else
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    if (functx:between-inclusive($x, 56320, 57343)) then
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        "LowSurrogates"
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    else
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        if (functx:between-inclusive($x, 57344, 63743)) then
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            "PrivateUse"
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        else
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            if (functx:between-inclusive($x, 63744, 64255)) then
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                "CJKCompatibilityIdeographs"
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            else
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                if (functx:between-inclusive($x, 64256, 64335)) then
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    "AlphabeticPresentationForms"
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                else
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    if (functx:between-inclusive($x, 64336, 65023)) then
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        "ArabicPresentationForms-A"
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    else
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        if (functx:between-inclusive($x, 65056, 65071)) then
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            "CombiningHalfMarks"
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        else
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            if (functx:between-inclusive($x, 65072, 65103)) then
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                "CJKCompatibilityForms"
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            else
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                if (functx:between-inclusive($x, 65104, 65135)) then
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    "SmallFormVariants"
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                else
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    if (functx:between-inclusive($x, 65136, 65278)) then
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        "ArabicPresentationForms-B"
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    else
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        if (functx:between-inclusive($x, 65279, 65279)) then
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            "Specials"
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        else
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            if (functx:between-inclusive($x, 65280, 65519)) then
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                "HalfwidthandFullwidthForms"
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            else
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                if (functx:between-inclusive($x, 65520, 65533)) then
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    "Specials"
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                else
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    ()
+
 };
 
 
-declare variable $EAD as document-node()+ := collection("/Users/heberleinr/Documents/SVN_Working_Copies/trunk/eads/eng?recurse=yes;select=*.xml")/doc(document-uri(.));
+declare variable $EAD as document-node()+ := collection("/Users/heberleinr/Documents/SVN_Working_Copies/trunk/eads?recurse=yes;select=*.xml")/doc(document-uri(.));
 let $results :=
-<result>
+	<result>
 	{
-		let $accessrestrict := ($EAD//accessrestrict/p/text()[matches(., '\P{IsBasicLatin}')], $EAD//accessrestrict/p/text()[matches(., '[\p{Po}-[.,]]')])
-		for $a in $accessrestrict
-		return
-			for $get-match in (functx:get-matches($a, '\P{IsBasicLatin}')[not(. = '')], functx:get-matches($a, '[\p{Po}-[.,]]')[not(. = '')])
-			let $codepoint := string-to-codepoints($get-match)
-				order by $codepoint
-			return
-				
-				normalize-space(string-join(
-				(
-				$a/ancestor::ead//eadid/text(),
-				$a/ancestor::ead//archdesc/did/unitid[@type = "aspace_uri"]/text(),
-				if ($get-match = '"') then
-					replace($get-match, '"', '""""')
-				else
-					$get-match,
+	let $accessrestrict := ($EAD//accessrestrict/p/text()[matches(., '\P{IsBasicLatin}')], $EAD//accessrestrict/p/text()[matches(.,'[\p{Po}-[.,]]')])
+	for $a in $accessrestrict
+	return
+	    for $get-match in (functx:get-matches($a, '\P{IsBasicLatin}')[not(. = '')], functx:get-matches($a, '[\p{Po}-[.,]]')[not(. = '')])
+	    let $codepoint := string-to-codepoints($get-match)
+	    order by $codepoint
+	    return
+		
+			normalize-space(string-join(
+			(
+				$a/ancestor::ead//eadid/text(), 
+				$a/ancestor::ead//archdesc/did/unitid[@type="aspace_uri"]/text(),
+				if($get-match = '"') then replace($get-match, '"', '""""') else $get-match,
 				$codepoint,
-				local:blockname($codepoint)
-				)
-				
-				, ",")) || codepoints-to-string(10)
-	}
-</result>
+			    local:blockname($codepoint)
+			)
+			
+			, ",")) || codepoints-to-string(10)
+		}
+		</result>
 
 return
-	$results
-	(:return
-	put($results, '/Users/heberleinr/Documents/aspace_helpers/reports/special_character_issues/get_special_characters.csv')
-:)
+put($results, '/Users/heberleinr/Documents/aspace_helpers/reports/special_character_issues/get_special_characters.csv')
+
