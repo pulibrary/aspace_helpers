@@ -435,21 +435,23 @@ declare variable $EAD as document-node()+ := collection("/Users/heberleinr/Docum
 let $results :=
 	<result>
 	{
-	let $accessrestrict := ($EAD//accessrestrict/p/text()[matches(., '\P{IsBasicLatin}')], $EAD//accessrestrict/p/text()[matches(.,'[\p{Po}-[.,]]')])
-	for $a in $accessrestrict
+	for $p in ($EAD//accessrestrict/p[1][matches(string(), '\P{IsBasicLatin}')], $EAD//accessrestrict/p[1][matches(string(),'[\p{Po}-[.,]]')])
+	let $accessrestrict-node := $p/../self::accessrestrict
+	let $accessrestrict-string := string($p)
 	return
-	    for $get-match in (functx:get-matches($a, '\P{IsBasicLatin}')[not(. = '')], functx:get-matches($a, '[\p{Po}-[.,]]')[not(. = '')])
+	    for $get-match in (functx:get-matches($p, '\P{IsBasicLatin}')[not(. = '')], functx:get-matches($p, '[\p{Po}-[.,]]')[not(. = '')])
 	    let $codepoint := string-to-codepoints($get-match)
 	    order by $codepoint
-	    return
-		
+	    return	
 			normalize-space(string-join(
 			(
-				if($a/ancestor::c) then $a/ancestor::c[1]/@id else $a/ancestor::ead//eadid/text(), 
-				if($a/ancestor::c) then $a/ancestor::c[1]/did/unitid[@type="aspace_uri"]/text() else $a/ancestor::ead//archdesc/did/unitid[@type="aspace_uri"]/text(),
+				if($accessrestrict-node/ancestor::c) then $accessrestrict-node/ancestor::c[1]/@id else $accessrestrict-node/ancestor::ead//eadid/text(), 
+				if($accessrestrict-node/ancestor::c) then $accessrestrict-node/ancestor::c[1]/did/unitid[@type="aspace_uri"]/text() else $accessrestrict-node/ancestor::ead//archdesc/did/unitid[@type="aspace_uri"]/text(),
 				if($get-match = '"') then replace($get-match, '"', '""""') else $get-match,
 				$codepoint,
-			    local:blockname($codepoint)
+			    local:blockname($codepoint),
+			(:check whether the character occurs within the Aeon 75-character truncation limit:)
+				if(string-length(substring-before($accessrestrict-string, $get-match))<=75) then "true" else "false"
 			)
 			
 			, ",")) || codepoints-to-string(10)
