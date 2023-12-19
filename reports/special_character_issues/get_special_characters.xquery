@@ -5,10 +5,9 @@ declare copy-namespaces no-preserve, inherit;
 import module namespace functx = "http://www.functx.com"
 at "http://www.xqueryfunctions.com/xq/functx-1.0-doc-2007-01.xq";
 
-declare function local:blockname($co)
+declare function local:blockname($x)
 as xs:string {
-    for $x in $co
-    return
+
         if (functx:between-inclusive($x, 0, 127)) then
             "BasicLatin"
         else
