@@ -435,7 +435,7 @@ declare variable $EAD as document-node()+ := collection("/Users/heberleinr/Docum
 let $results :=
 	<result>
 	{
-	for $p in ($EAD//accessrestrict/p[1][matches(string(), '\P{IsBasicLatin}')], $EAD//accessrestrict/p[1][matches(string(),'[\p{Po}-[.,]]')])
+	for $p in ($EAD//accessrestrict[1]/p[1][matches(string(), '\P{IsBasicLatin}')], $EAD//accessrestrict[1]/p[1][matches(string(),'[\p{Po}-[.,]]')])
 	let $accessrestrict-node := $p/../self::accessrestrict
 	let $accessrestrict-string := string($p)
 	return
