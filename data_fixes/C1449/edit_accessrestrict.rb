@@ -2,14 +2,14 @@ require 'archivesspace/client'
 require 'json'
 require_relative '../../helper_methods.rb'
 
+aspace_staging_login
+
 resource_uri = "/repositories/5/resources/3838"
 resource = @client.get(resource_uri).parsed
 phrase = /RBSC's/
 input_file = "input.csv"
 csv = CSV.parse(File.read(input_file), :headers => true)
 log = "log_replace_text.txt"
-
-aspace_login
 
 start_time = "Process started: #{Time.now}"
 puts start_time
