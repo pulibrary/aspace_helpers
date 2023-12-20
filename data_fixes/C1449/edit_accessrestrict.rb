@@ -2,7 +2,7 @@ require 'archivesspace/client'
 require 'json'
 require_relative '../../helper_methods.rb'
 
-aspace_staging_login
+aspace_login
 
 resource_uri = "/repositories/5/resources/3838"
 resource = @client.get(resource_uri).parsed
@@ -24,8 +24,8 @@ csv.each do |row|
         note_text = accessrestrict['subnotes'][0]['content']
         next if accessrestrict.empty?
 
-        if note_text.match(phrase)
-            note_text = note_text.gsub(phrase, "the RBSC")
+        if note_text.match?(phrase)
+            accessrestrict['subnotes'][0]['content'] = note_text.gsub(phrase, "the RBSC")
         end
     end
     post = @client.post(uri, record.to_json)
@@ -37,7 +37,7 @@ csv.each do |row|
     puts error
 end
 
-#write a revision statement to the record at the same time
+write a revision statement to the record at the same time
 add_resource_revision_statement(resource, "Reworded accessrestrict without apostrophe to avoid known requesting issue.")
 post = @client.post(resource_uri, resource.to_json)
 puts post.body
