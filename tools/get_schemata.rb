@@ -20,5 +20,6 @@ def db_schemas_to_csv(hash, csv, level = 0)
     end
 end
 
-csv = CSV.open(output_file, "w", :write_headers => false)
-db_schemas_to_csv(schemas, csv)
+CSV.open(output_file, "w", :write_headers => false) do |csv|
+    db_schemas_to_csv(schemas, csv)
+end
