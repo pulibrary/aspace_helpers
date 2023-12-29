@@ -2,7 +2,6 @@ require 'archivesspace/client'
 require 'active_support/all'
 require_relative 'helper_methods.rb'
 
-
 @client = aspace_login
 
 log = "log_benchmark.txt"
