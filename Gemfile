@@ -20,7 +20,7 @@ end
 group :development, :test do
   gem "byebug"
   gem "rspec", require: false
-  gem "rubocop",  "~> 1.27.0", require: false
+  gem "rubocop", "~> 1.27.0", require: false
   gem "rubocop-rake", require: false
   gem "rubocop-rspec", require: false
   gem "timecop"
