@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="21.1">
+    <meta>
+        <filters directoryPatterns="" filePatterns="\Qstudent_life_files.xpr\E" positiveFilePatterns="" showHiddenFiles="false"/>
+        <options/>
+    </meta>
+    <projectTree name="student_life_files.xpr">
+        <file name="../../../../Downloads/student_fas/AC109_20220707_133317_UTC__ead.xml"/>
+        <file name="../../../../Downloads/student_fas/AC117_20220707_133421_UTC__ead.xml"/>
+        <file name="../../../../Downloads/student_fas/AC136_20220707_133449_UTC__ead.xml"/>
+        <file name="../../../../Downloads/student_fas/AC183_20220707_133526_UTC__ead.xml"/>
+        <file name="../../../../Downloads/student_fas/AC187_20220707_133604_UTC__ead.xml"/>
+        <file name="../../../../Downloads/student_fas/AC193_20220707_133653_UTC__ead.xml"/>
+        <file name="../../../../Downloads/student_fas/AC195_20220707_133721_UTC__ead.xml"/>
+        <file name="../../../../Downloads/student_fas/AC264_20220707_133805_UTC__ead.xml"/>
+        <file name="../../../../Downloads/student_fas/AC271_20220707_133836_UTC__ead.xml"/>
+        <file name="../../../../Downloads/student_fas/AC342_20220707_133932_UTC__ead.xml"/>
+        <file name="../../../../Downloads/student_fas/AC365_20220707_134018_UTC__ead.xml"/>
+        <file name="../../../../Downloads/student_fas/AC379_20220707_134050_UTC__ead.xml"/>
+        <file name="../../../../Downloads/student_fas/AC427_20220707_134136_UTC__ead.xml"/>
+        <file name="../../../../Downloads/student_fas/AC470_20220707_134302_UTC__ead.xml"/>
+    </projectTree>
+</project>
