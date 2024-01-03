@@ -1,11 +1,13 @@
 authentication.rb
-authentication-production.sh
-authentication-staging.sh
+authenticate-production.sh
+authenticate-staging.sh
 test.rb
 Gemfile
 Gemfile.lock
 *.csv
 *.xml
+*.rtf
+*.mmd
 !spec/fixtures/marc_1511.xml
 !spec/fixtures/marc_1512.xml
 .byebug_history
