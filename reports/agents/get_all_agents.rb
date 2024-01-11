@@ -30,7 +30,7 @@ CSV.open(output_file, "w",
         #get relevant fields from full records
         uri = agent['uri']
         record_title = agent['title']
-        dates_of_existence = "#{agent['dates_of_existence']['structured_date_range']['begin_date_standardized']}-#{agent['dates_of_existence']['structured_date_range']['begin_date_standardized']}"
+        dates_of_existence = "#{agent['dates_of_existence']['structured_date_range']['begin_date_standardized']}-#{agent['dates_of_existence']['structured_date_range']['end_date_standardized']}"
         agent_type = agent['jsonmodel_type']
         usage = agent['linked_agent_roles']
         occurrence = agent['used_within_repositories']
