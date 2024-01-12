@@ -1,7 +1,7 @@
 require 'archivesspace/client'
 require 'active_support/all'
 require 'nokogiri'
-require_relative 'helper_methods.rb'
+require_relative '../../helper_methods.rb'
 
 aspace_login
 
@@ -20,8 +20,14 @@ all_uris.each do |hash|
   refs << uris.map{ |uri| uri['ref'] }
 end
 refs = refs.flatten
-refs[0..1].each do |ref|
-  puts @client.get(ref).parsed
+refs[0..-1].each do |ref|
+  record = @client.get(ref).parsed
+#   subjects = record['subjects']
+#   puts subjects
+  agents = record['linked_agents']
+  agents.map do |agent|
+    puts "#{record['uri']}, #{agent['ref']}, #{agent['role']}, #{agent['relator']}, #{agent['terms']}"
+  end unless agents.empty?
 end
 # resolve agents and subjects
 # [{uris => {'ref'=>'123'}, {'ref'=>'234'}}, {uris => {'ref'=>'345'}, {'ref'=>'456'}}]
