@@ -1,11 +1,11 @@
 require 'archivesspace/client'
 require 'active_support/all'
-require_relative 'helper_methods.rb'
+require_relative '../helper_methods.rb'
 
-@client = aspace_login
+aspace_staging_login
 
-log = "log_benchmark.txt"
-repos = (12..12).to_a
+log = "log_benchmark_staging.txt"
+repos = (3..12).to_a
 
 File.write(log, Time.now, mode: 'a')
 
