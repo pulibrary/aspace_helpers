@@ -1,34 +1,64 @@
 require 'archivesspace/client'
 require 'active_support/all'
-require 'nokogiri'
 require_relative '../../helper_methods.rb'
 
-aspace_login
+aspace_staging_login
+puts Time.now
+output_file = "linked_agents.csv"
 
-#get all resource uri's
-resource_uris = get_all_resource_uris_for_institution
-#get uri's for all ao's (published only)
-all_uris = []
-resource_uris[0..1].each do |resource_uri|
-  all_uris << @client.get("#{resource_uri}/ordered_records").parsed
+repositories = (3..12).to_a
+
+CSV.open(output_file, "w",
+    :write_headers => true,
+    :headers => ["agent_uri", "agent_role", "agent_relator", "agent_terms", "ao_uri"]) do |row|
+
+    repositories.each do |repo|
+
+        #get all ao id's for the repository
+        all_ao_ids = @client.get("/repositories/#{repo}/archival_objects",
+            query: {
+                all_ids: true
+            }
+            ).parsed
+
+        #get all resolved ao's from id's and select those with linked agents
+        all_aos = @client.get("/repositories/#{repo}/archival_objects",
+            query: {
+                id_set: all_ao_ids
+                }
+        ).parsed.select { |ao| ao['linked_agents'].empty? == false}
+
+        #construct CSV row for ao's
+        all_aos.map do |ao| 
+            ao['linked_agents'].each do |linked_agent|
+                row << [linked_agent['ref'], linked_agent['role'], '', linked_agent['terms'], ao['uri']]
+                puts "#{linked_agent['ref']}, #{linked_agent['role']}, '', #{linked_agent['terms']}, #{resource['uri']}"
+
+        end
+        end
+
+        #get all resources for the repository
+        resource_ids = @client.get("/repositories/#{repo}/resources",
+            query: {
+                all_ids: true
+            }).parsed
+
+        #get all resolved resources from id's and select those with linked agents
+        all_resources = @client.get("/repositories/#{repo}/resources",
+            query: {
+                id_set: resource_ids
+                }
+        ).parsed.select { |resource| resource['linked_agents'].empty? == false}
+
+        #construct CSV row for resources
+        all_resources.map do |resource| 
+            resource['linked_agents'].each do |linked_agent|
+                row << [linked_agent['ref'], linked_agent['role'], linked_agent['relator'], linked_agent['terms'], resource['uri']]
+                puts "#{linked_agent['ref']}, #{linked_agent['role']}, #{linked_agent['relator']}, #{linked_agent['terms']}, #{resource['uri']}"
+        end
+        end
+    end
 end
-all_uris = all_uris.flatten
-#get each individual uri
-refs = []
-all_uris.each do |hash|
-  uris = hash['uris']
-  refs << uris.map{ |uri| uri['ref'] }
-end
-refs = refs.flatten
-refs[0..-1].each do |ref|
-  record = @client.get(ref).parsed
-#   subjects = record['subjects']
-#   puts subjects
-  agents = record['linked_agents']
-  agents.map do |agent|
-    puts "#{record['uri']}, #{agent['ref']}, #{agent['role']}, #{agent['relator']}, #{agent['terms']}"
-  end unless agents.empty?
-end
-# resolve agents and subjects
-# [{uris => {'ref'=>'123'}, {'ref'=>'234'}}, {uris => {'ref'=>'345'}, {'ref'=>'456'}}]
-#report out agent/subject uri, type, resource/ao uri
+
+puts Time.now
+
