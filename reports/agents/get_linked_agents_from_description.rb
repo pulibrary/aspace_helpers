@@ -6,7 +6,7 @@ aspace_login
 puts Time.now
 output_file = "linked_agents.csv"
 
-repositories = (6..6).to_a
+repositories = (3..12).to_a
 
 CSV.open(output_file, "w",
     :write_headers => true,
@@ -28,7 +28,7 @@ CSV.open(output_file, "w",
             last_record = [count_processed_records+249, count_ids].min
             all_aos << @client.get("/repositories/#{repo}/archival_objects",
                     query: {
-                        id_set: all_ao_ids
+                        id_set: all_ao_ids[count_processed_records..last_record]
                         }
                 ).parsed
             count_processed_records = last_record
@@ -39,7 +39,7 @@ CSV.open(output_file, "w",
             ao['linked_agents'].empty? == false
         end
 
-        #construct CSV row for ao's
+        # #construct CSV row for ao's
         all_aos.map do |ao| 
             ao['linked_agents'].each do |linked_agent|
                 row << [linked_agent['ref'], linked_agent['role'], linked_agent['relator'] || '', linked_agent['terms'], ao['uri']]
@@ -53,14 +53,14 @@ CSV.open(output_file, "w",
                 all_ids: true
             }).parsed
 
-        #get all resolved resources from id's and select those with linked agents
+        # #get all resolved resources from id's and select those with linked agents
         all_resources = @client.get("/repositories/#{repo}/resources",
             query: {
                 id_set: resource_ids
                 }
         ).parsed.select { |resource| resource['linked_agents'].nil? == false}
 
-        #construct CSV row for resources
+        # #construct CSV row for resources
         all_resources.map do |resource| 
             resource['linked_agents'].each do |linked_agent|
                 row << [linked_agent['ref'], linked_agent['role'], linked_agent['relator'], linked_agent['terms'], resource['uri']]
