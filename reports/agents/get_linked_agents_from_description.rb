@@ -48,17 +48,29 @@ CSV.open(output_file, "w",
         end
 
         #get all resources for the repository
-        resource_ids = @client.get("/repositories/#{repo}/resources",
+        all_resource_ids = @client.get("/repositories/#{repo}/resources",
             query: {
                 all_ids: true
             }).parsed
 
+        all_resources = []
+        count_processed_records = 0
+        count_ids = all_resource_ids.count
+        while count_processed_records < count_ids do
+            last_record = [count_processed_records+249, count_ids].min
+            all_resources << @client.get("/repositories/#{repo}/resources",
+                    query: {
+                        id_set: all_resource_ids[count_processed_records..last_record]
+                        }
+                ).parsed
+            count_processed_records = last_record
+        end
+
         # #get all resolved resources from id's and select those with linked agents
-        all_resources = @client.get("/repositories/#{repo}/resources",
-            query: {
-                id_set: resource_ids
-                }
-        ).parsed.select { |resource| resource['linked_agents'].nil? == false}
+        all_resources = all_resources.flatten.select do |resource| 
+            next if resource['linked_agents'].nil?
+            resource['linked_agents'].empty? == false
+        end
 
         # #construct CSV row for resources
         all_resources.map do |resource| 
