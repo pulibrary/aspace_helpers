@@ -11,69 +11,67 @@ repositories = (3..12).to_a
 CSV.open(output_file, "w",
     :write_headers => true,
     :headers => ["agent_uri", "agent_role", "agent_relator", "agent_terms", "ao_uri"]) do |row|
-
     repositories.each do |repo|
         #get all ao id's for the repository
         all_ao_ids = @client.get("/repositories/#{repo}/archival_objects",
             query: {
-                all_ids: true
-            }
-            ).parsed
+              all_ids: true
+            }).parsed
 
         #get all resolved ao's from id's and select those with linked agents
         all_aos = []
         count_processed_records = 0
         count_ids = all_ao_ids.count
-        while count_processed_records < count_ids do
+        while count_processed_records < count_ids
             last_record = [count_processed_records+249, count_ids].min
             all_aos << @client.get("/repositories/#{repo}/archival_objects",
                     query: {
-                        id_set: all_ao_ids[count_processed_records..last_record]
-                        }
-                ).parsed
+                      id_set: all_ao_ids[count_processed_records..last_record]
+                    }).parsed
             count_processed_records = last_record
         end
 
-        all_aos = all_aos.flatten.select do |ao| 
+        all_aos = all_aos.flatten.select do |ao|
             next if ao['linked_agents'].nil?
+
             ao['linked_agents'].empty? == false
         end
 
         # #construct CSV row for ao's
-        all_aos.map do |ao| 
+        all_aos.map do |ao|
             ao['linked_agents'].each do |linked_agent|
                 row << [linked_agent['ref'], linked_agent['role'], linked_agent['relator'] || '', linked_agent['terms'], ao['uri']]
                 puts "#{linked_agent['ref']}, #{linked_agent['role']}, #{linked_agent['relator'] || ''}, #{linked_agent['terms']}, #{ao['uri']}"
-            end 
+            end
         end
 
         #get all resources for the repository
         all_resource_ids = @client.get("/repositories/#{repo}/resources",
             query: {
-                all_ids: true
+              all_ids: true
             }).parsed
 
         all_resources = []
         count_processed_records = 0
         count_ids = all_resource_ids.count
-        while count_processed_records < count_ids do
+        while count_processed_records < count_ids
             last_record = [count_processed_records+249, count_ids].min
             all_resources << @client.get("/repositories/#{repo}/resources",
                     query: {
-                        id_set: all_resource_ids[count_processed_records..last_record]
-                        }
-                ).parsed
+                      id_set: all_resource_ids[count_processed_records..last_record]
+                    }).parsed
             count_processed_records = last_record
         end
 
         # #get all resolved resources from id's and select those with linked agents
-        all_resources = all_resources.flatten.select do |resource| 
+        all_resources = all_resources.flatten.select do |resource|
             next if resource['linked_agents'].nil?
+
             resource['linked_agents'].empty? == false
         end
 
         # #construct CSV row for resources
-        all_resources.map do |resource| 
+        all_resources.map do |resource|
             resource['linked_agents'].each do |linked_agent|
                 row << [linked_agent['ref'], linked_agent['role'], linked_agent['relator'], linked_agent['terms'], resource['uri']]
                 puts "#{linked_agent['ref']}, #{linked_agent['role']}, #{linked_agent['relator']}, #{linked_agent['terms']}, #{resource['uri']}"
@@ -83,4 +81,3 @@ CSV.open(output_file, "w",
 end
 
 puts Time.now
-
