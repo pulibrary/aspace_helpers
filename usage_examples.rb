@@ -108,7 +108,7 @@ puts ao
 
 # model for the search API
 record = @client.get(
-    "repositories/12/top_containers/search",
+  "repositories/12/top_containers/search",
     query: { q: "collection_uri_u_sstr:\"/repositories/12/resources/1467\"" }
-  ).parsed['response']
+).parsed['response']
 puts record
