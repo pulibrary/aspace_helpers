@@ -105,3 +105,10 @@ puts agents
 #use the resolve parameter to get e.g. digital object instance records
 ao = get_single_archival_object_by_id(5, 4016, ['digital_object'])
 puts ao
+
+# model for the search API
+record = @client.get(
+  "repositories/12/top_containers/search",
+    query: { q: "collection_uri_u_sstr:\"/repositories/12/resources/1467\"" }
+).parsed['response']
+puts record
