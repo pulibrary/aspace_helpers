@@ -77,8 +77,8 @@ CSV.open(output_file, "w",
         # #construct CSV row for resources
         all_resources.map do |resource|
             resource['linked_agents'].each do |linked_agent|
-                # row << [linked_agent['ref'], linked_agent['resolved']['names']['title'], linked_agent['role'], linked_agent['relator'], linked_agent['terms'], resource['uri']]
-                # puts "#{linked_agent['ref']}, #{linked_agent['resolved']['names']['title']}, #{linked_agent['role']}, #{linked_agent['relator']}, #{linked_agent['terms']}, #{resource['uri']}"
+                row << [linked_agent['ref'], linked_agent['resolved']['title'], linked_agent['role'], linked_agent['relator'], linked_agent['terms'], resource['uri']]
+                puts "#{linked_agent['ref']}, #{linked_agent['resolved']['title']}, #{linked_agent['role']}, #{linked_agent['relator']}, #{linked_agent['terms']}, #{resource['uri']}"
             end
         end
     end
