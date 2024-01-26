@@ -12,6 +12,8 @@ CSV.open(output_file, "w",
     :write_headers => true,
     :headers => ["agent_uri", "agent_role", "agent_relator", "agent_terms", "ao_uri"]) do |row|
     repositories.each do |repo|
+        #define resolve parameter
+        resolve = ['subjects']
         #get all ao id's for the repository
         all_ao_ids = @client.get("/repositories/#{repo}/archival_objects",
             query: {
@@ -27,6 +29,7 @@ CSV.open(output_file, "w",
             all_aos << @client.get("/repositories/#{repo}/archival_objects",
                     query: {
                       id_set: all_ao_ids[count_processed_records..last_record]
+                      resolve: resolve
                     }).parsed
             count_processed_records = last_record
         end
@@ -40,8 +43,8 @@ CSV.open(output_file, "w",
         # #construct CSV row for ao's
         all_aos.map do |ao|
             ao['linked_agents'].each do |linked_agent|
-                row << [linked_agent['ref'], linked_agent['role'], linked_agent['relator'] || '', linked_agent['terms'], ao['uri']]
-                puts "#{linked_agent['ref']}, #{linked_agent['role']}, #{linked_agent['relator'] || ''}, #{linked_agent['terms']}, #{ao['uri']}"
+                row << [linked_agent['ref'], linked_agent['role'], linked_agent['relator'] || '', linked_agent['terms'].map {|term| term['term'] + " : " + term['term_type'] + " : " + term['vocabulary']}.join(';'), ao['uri']]
+                puts "#{linked_agent['ref']}, #{linked_agent['role']}, #{linked_agent['relator'] || ''}, #{linked_agent['terms'].map {|term| term['term'] + " : " + term['term_type'] + " : " + term['vocabulary']}.join(';')}, #{ao['uri']}"
             end
         end
 
@@ -59,6 +62,7 @@ CSV.open(output_file, "w",
             all_resources << @client.get("/repositories/#{repo}/resources",
                     query: {
                       id_set: all_resource_ids[count_processed_records..last_record]
+                      resolve: resolve
                     }).parsed
             count_processed_records = last_record
         end
