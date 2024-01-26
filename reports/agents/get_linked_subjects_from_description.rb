@@ -12,6 +12,8 @@ CSV.open(output_file, "w",
     :write_headers => true,
     :headers => ["subject_uri", "subject_title", "subject_source", "subject_terms", "ao_uri"]) do |row|
     repositories.each do |repo|
+        #define resolve parameter
+        resolve = ['subjects']
         #get all ao id's for the repository
         all_ao_ids = @client.get("/repositories/#{repo}/archival_objects",
             query: {
@@ -19,7 +21,6 @@ CSV.open(output_file, "w",
             }).parsed
 
         #get all resolved ao's from id's and select those with linked agents
-        resolve = ['subjects']
         all_aos = []
         count_processed_records = 0
         count_ids = all_ao_ids.count
@@ -38,41 +39,6 @@ CSV.open(output_file, "w",
 
             ao['subjects'].empty? == false
         end
-
-        # "subjects"=>[{
-            # "ref"=>"/subjects/11975", 
-            # "_resolved"=>{
-            #     "lock_version"=>12, 
-            #     "title"=>"Diplomatic documents -- China -- 19th century.", 
-            #     "created_by"=>"admin", 
-            #     "last_modified_by"=>"admin", 
-            #     "create_time"=>"2021-01-24T01:51:24Z", 
-            #     "system_mtime"=>"2024-01-25T13:18:47Z", 
-            #     "user_mtime"=>"2021-01-24T01:51:24Z", 
-            #     "is_slug_auto"=>true, 
-            #     "source"=>"aat", 
-            #     "jsonmodel_type"=>"subject", 
-            #     "external_ids"=>[], 
-            #     "publish"=>true, 
-            #     "used_within_repositories"=>[], 
-            #     "used_within_published_repositories"=>[], 
-            #     "terms"=>[
-            #         {"lock_version"=>0, 
-            #         "term"=>"Diplomatic documents -- China -- 19th century.", 
-            #         "created_by"=>"admin", "last_modified_by"=>"admin", 
-            #         "create_time"=>"2021-01-24T01:51:24Z", 
-            #         "system_mtime"=>"2021-01-24T01:51:24Z", 
-            #         "user_mtime"=>"2021-01-24T01:51:24Z", 
-            #         "term_type"=>"genre_form", 
-            #         "jsonmodel_type"=>"term", 
-            #         "uri"=>"/terms/11165", 
-            #         "vocabulary"=>"/vocabularies/1"}
-            #         ], 
-            #     "external_documents"=>[], 
-            #     "metadata_rights_declarations"=>[], 
-            #     "uri"=>"/subjects/11975", 
-            #     "vocabulary"=>"/vocabularies/1", 
-            #     "is_linked_to_published_record"=>true}}]
 
         # #construct CSV row for ao's
         all_aos.map do |ao|
