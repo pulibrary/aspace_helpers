@@ -28,7 +28,7 @@ CSV.open(output_file, "w",
             last_record = [count_processed_records+249, count_ids].min
             all_aos << @client.get("/repositories/#{repo}/archival_objects",
                     query: {
-                      id_set: all_ao_ids[count_processed_records..last_record]
+                      id_set: all_ao_ids[count_processed_records..last_record],
                       resolve: resolve
                     }).parsed
             count_processed_records = last_record
@@ -61,7 +61,7 @@ CSV.open(output_file, "w",
             last_record = [count_processed_records+249, count_ids].min
             all_resources << @client.get("/repositories/#{repo}/resources",
                     query: {
-                      id_set: all_resource_ids[count_processed_records..last_record]
+                      id_set: all_resource_ids[count_processed_records..last_record],
                       resolve: resolve
                     }).parsed
             count_processed_records = last_record
