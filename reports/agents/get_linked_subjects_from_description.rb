@@ -10,7 +10,7 @@ repositories = (12..12).to_a
 
 CSV.open(output_file, "w",
     :write_headers => true,
-    :headers => ["subject_uri", "subject_title", "subject_source", "subject_terms", "ao_uri"]) do |row|
+    :headers => ["subject_uri", "subject_title", "subject_source", "subject_terms", "record_uri"]) do |row|
     repositories.each do |repo|
         #define resolve parameter
         resolve = ['subjects']
