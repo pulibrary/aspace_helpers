@@ -38,7 +38,6 @@ CSV.open(output_file, "w",
 
             ao['subjects'].empty? == false
         end
-        puts all_aos
 
         # "subjects"=>[{
             # "ref"=>"/subjects/11975", 
@@ -79,42 +78,42 @@ CSV.open(output_file, "w",
         all_aos.map do |ao|
             ao['subjects'].each do |subject|
                 row << [subject['ref'], subject['_resolved']['title'], subject['_resolved']['source'] || '', subject['_resolved']['terms'].map {|term| term['term'] + " : " + term['term_type'] + " : " + term['vocabulary']}.join(';'), ao['uri']]
-                puts "#{subject['ref']}, #{subject['_resolved']['title']}, #{subject['_resolved']['source'] || ''}, #{subject['_resolved']['terms'].map {|term| term['term'] + " : " + term['term_type'] + " : " + term['vocabulary']}.join(';')}, ao['uri']"
+                puts "#{subject['ref']}, #{subject['_resolved']['title']}, #{subject['_resolved']['source'] || ''}, #{subject['_resolved']['terms'].map {|term| term['term'] + " : " + term['term_type'] + " : " + term['vocabulary']}.join(';')}, #{ao['uri']}"
             end
         end
 
-        # #get all resources for the repository
-        # all_resource_ids = @client.get("/repositories/#{repo}/resources",
-        #     query: {
-        #       all_ids: true
-        #     }).parsed
+        #get all resources for the repository
+        all_resource_ids = @client.get("/repositories/#{repo}/resources",
+            query: {
+              all_ids: true
+            }).parsed
 
-        # all_resources = []
-        # count_processed_records = 0
-        # count_ids = all_resource_ids.count
-        # while count_processed_records < count_ids
-        #     last_record = [count_processed_records+249, count_ids].min
-        #     all_resources << @client.get("/repositories/#{repo}/resources",
-        #             query: {
-        #               id_set: all_resource_ids[count_processed_records..last_record]
-        #             }).parsed
-        #     count_processed_records = last_record
-        # end
+        all_resources = []
+        count_processed_records = 0
+        count_ids = all_resource_ids.count
+        while count_processed_records < count_ids
+            last_record = [count_processed_records+249, count_ids].min
+            all_resources << @client.get("/repositories/#{repo}/resources",
+                    query: {
+                      id_set: all_resource_ids[count_processed_records..last_record],
+                      resolve: resolve
+                    }).parsed
+            count_processed_records = last_record
+        end
 
-        # # #get all resolved resources from id's and select those with linked agents
-        # all_resources = all_resources.flatten.select do |resource|
-        #     next if resource['linked_agents'].nil?
+        #get all resolved resources from id's and select those with linked agents
+        all_resources = all_resources.flatten.select do |resource|
+            next if resource['subjects'].nil?
 
-        #     resource['linked_agents'].empty? == false
-        # end
-
-        # # #construct CSV row for resources
-        # all_resources.map do |resource|
-        #     resource['linked_agents'].each do |linked_agent|
-        #         row << [linked_agent['ref'], linked_agent['role'], linked_agent['relator'], linked_agent['terms'], resource['uri']]
-        #         puts "#{linked_agent['ref']}, #{linked_agent['role']}, #{linked_agent['relator']}, #{linked_agent['terms']}, #{resource['uri']}"
-        #     end
-        # end
+            resource['subjects'].empty? == false
+        end
+        #construct CSV row for resources
+        all_resources.map do |resource|
+            resource['subjects'].each do |subject|
+                row << [subject['ref'], subject['_resolved']['title'], subject['_resolved']['source'] || '', subject['_resolved']['terms'].map {|term| term['term'] + " : " + term['term_type'] + " : " + term['vocabulary']}.join(';'), resource['uri']]
+                puts "#{subject['ref']}, #{subject['_resolved']['title']}, #{subject['_resolved']['source'] || ''}, #{subject['_resolved']['terms'].map {|term| term['term'] + " : " + term['term_type'] + " : " + term['vocabulary']}.join(';')}, #{resource['uri']}"
+            end
+        end
     end
 end
 
