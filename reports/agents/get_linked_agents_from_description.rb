@@ -2,18 +2,18 @@ require 'archivesspace/client'
 require 'active_support/all'
 require_relative '../../helper_methods.rb'
 
-aspace_login
+aspace_staging_login
 puts Time.now
 output_file = "linked_agents.csv"
 
-repositories = (3..12).to_a
+repositories = (12..12).to_a
 
 CSV.open(output_file, "w",
     :write_headers => true,
-    :headers => ["agent_uri", "agent_role", "agent_relator", "agent_terms", "ao_uri"]) do |row|
+    :headers => ["agent_uri", "agent_title", "agent_role", "agent_relator", "agent_terms", "record_uri"]) do |row|
     repositories.each do |repo|
         #define resolve parameter
-        resolve = ['subjects']
+        resolve = ['linked_agents']
         #get all ao id's for the repository
         all_ao_ids = @client.get("/repositories/#{repo}/archival_objects",
             query: {
@@ -43,8 +43,8 @@ CSV.open(output_file, "w",
         # #construct CSV row for ao's
         all_aos.map do |ao|
             ao['linked_agents'].each do |linked_agent|
-                row << [linked_agent['ref'], linked_agent['role'], linked_agent['relator'] || '', linked_agent['terms'].map {|term| term['term'] + " : " + term['term_type'] + " : " + term['vocabulary']}.join(';'), ao['uri']]
-                puts "#{linked_agent['ref']}, #{linked_agent['role']}, #{linked_agent['relator'] || ''}, #{linked_agent['terms'].map {|term| term['term'] + " : " + term['term_type'] + " : " + term['vocabulary']}.join(';')}, #{ao['uri']}"
+                row << [linked_agent['ref'], linked_agent['_resolved']['title'], linked_agent['role'], linked_agent['relator'] || '', linked_agent['terms'].map {|term| term['term'] + " : " + term['term_type'] + " : " + term['vocabulary']}.join(';'), ao['uri']]
+                puts "#{linked_agent['ref']}, #{linked_agent['_resolved']['title']}, #{linked_agent['role']}, #{linked_agent['relator'] || ''}, #{linked_agent['terms'].map {|term| term['term'] + " : " + term['term_type'] + " : " + term['vocabulary']}.join(';')}, #{ao['uri']}"
             end
         end
 
@@ -77,8 +77,8 @@ CSV.open(output_file, "w",
         # #construct CSV row for resources
         all_resources.map do |resource|
             resource['linked_agents'].each do |linked_agent|
-                row << [linked_agent['ref'], linked_agent['role'], linked_agent['relator'], linked_agent['terms'], resource['uri']]
-                puts "#{linked_agent['ref']}, #{linked_agent['role']}, #{linked_agent['relator']}, #{linked_agent['terms']}, #{resource['uri']}"
+                # row << [linked_agent['ref'], linked_agent['resolved']['names']['title'], linked_agent['role'], linked_agent['relator'], linked_agent['terms'], resource['uri']]
+                # puts "#{linked_agent['ref']}, #{linked_agent['resolved']['names']['title']}, #{linked_agent['role']}, #{linked_agent['relator']}, #{linked_agent['terms']}, #{resource['uri']}"
             end
         end
     end
