@@ -2,7 +2,7 @@ require 'archivesspace/client'
 require 'active_support/all'
 require_relative '../../helper_methods.rb'
 
-aspace_staging_login
+aspace_login
 puts Time.now
 
 output_file = "linked_agents.csv"
