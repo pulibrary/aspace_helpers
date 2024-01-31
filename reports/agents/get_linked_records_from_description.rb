@@ -54,21 +54,46 @@ CSV.open(output_file, "w",
               all_records.map do |record|
                 record[prefetch].each do |linked_record|
                   row << [
-                          linked_record['ref'], 
-                          linked_record['_resolved']['title'], 
-                          if prefetch == "linked_agents"
+                    linked_record['ref'],
+                    linked_record['_resolved']['title'],
+                    if prefetch == "linked_agents"
+                      linked_record['_resolved']['names'].map do |name|
+                        "#{name['authority_id']} | #{name['source']}"
+                      end.join(';')
+                    else
+                      linked_record['source']
+                    end,
+                    linked_record['role'],
+                    linked_record['relator'],
+                    if prefetch == "linked_agents"
+                      if ['archival_objects', 'resources'].include?(record_type)
+                        linked_record['terms'].map do |term|
+                          "#{term['term']} | #{term['term_type']} | #{term['vocabulary']}"
+                        end.join(';')
+                      else
+                        ''
+                      end
+                    else
+                      linked_record['_resolved']['terms'].map do |term|
+                        "#{term['term']} : #{term['term_type']} : #{term['vocabulary']}"
+                      end.join(';')
+                    end,
+                    record['uri']
+                  ]
+
+                  #write to the console for monitoring
+                  puts "#{linked_record['ref']}, #{linked_record['_resolved']['title']}, #{
+                          if prefetch == 'linked_agents'
                             linked_record['_resolved']['names'].map do |name|
-                              "#{name['authority_id']} | #{name['source']}"
+                              "#{name['authority_id']}, #{name['source']}"
                             end.join(';')
-                          else 
-                            linked_record['source']
-                          end, 
-                          linked_record['role'], 
-                          linked_record['relator'], 
-                          if prefetch == "linked_agents"
+                          else
+                            ''
+                          end}, #{linked_record['role']}, #{linked_record['relator']}, #{
+                          if prefetch == 'linked_agents'
                             if ['archival_objects', 'resources'].include?(record_type)
                               linked_record['terms'].map do |term|
-                                "#{term['term']} | #{term['term_type']} | #{term['vocabulary']}"
+                                "#{term['term']} : #{term['term_type']} : #{term['vocabulary']}"
                               end.join(';')
                             else
                               ''
@@ -76,30 +101,6 @@ CSV.open(output_file, "w",
                           else
                             linked_record['_resolved']['terms'].map do |term|
                               "#{term['term']} : #{term['term_type']} : #{term['vocabulary']}"
-                            end.join(';')
-                          end, 
-                          record['uri']]
-
-                  #write to the console for monitoring
-                  puts "#{linked_record['ref']}, #{linked_record['_resolved']['title']}, #{
-                          if prefetch == "linked_agents"
-                            linked_record['_resolved']['names'].map do |name|
-                              "#{name['authority_id']}, #{name['source']}"
-                            end.join(';')
-                          else
-                            ''
-                          end}, #{linked_record['role']}, #{linked_record['relator']}, #{
-                          if prefetch == "linked_agents"
-                            if ['archival_objects', 'resources'].include?(record_type)
-                              linked_record['terms'].map do |term|
-                                term['term'] + ":" + term['term_type'] + ":" + term['vocabulary']
-                              end.join(';')
-                            else
-                              ''
-                            end
-                          else
-                            linked_record['_resolved']['terms'].map do |term|
-                              term['term'] + ":" + term['term_type'] + ":" + term['vocabulary']
                             end.join(';')
                           end}, #{record['uri']}"
                     end
