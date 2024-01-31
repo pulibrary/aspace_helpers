@@ -6,8 +6,8 @@ aspace_login
 puts Time.now
 
 output_file = "linked_agents.csv"
-prefetch = "linked_agents"
-repositories = (3..12).to_a
+records_to_prefetch = ["linked_agents", "subjects"]
+repositories = (10..12).to_a
 record_types = ["archival_objects", "resources", "events", "accessions", "digital_objects"]
 
 def get_resolved_objects_from_ids(repository_id, input_ids, record_type, linked_record_type_to_prefetch)
@@ -37,39 +37,72 @@ end
 
 CSV.open(output_file, "w",
     :write_headers => true,
-    :headers => ["agent_uri", "agent_title", "agent_authority", "agent_role", "agent_relator", "agent_terms", "record_uri"]) do |row|
+    :headers => ["uri", "title", "authority", "role", "relator", "terms", "uri"]) do |row|
     repositories.each do |repo|
         record_types.each do |record_type|
-            #get all ao id's for the repository
+            #get all record id's for the repository
             all_record_ids = @client.get("/repositories/#{repo}/#{record_type}",
                 query: {
                   all_ids: true
                 }).parsed
 
-            #get all resolved ao's from id's and select those with linked agents
-            all_records = get_resolved_objects_from_ids(repo, all_record_ids, record_type, prefetch)
+            #get all resolved records from id's and select those with linked agents
+            records_to_prefetch.each do |prefetch|
+              all_records = get_resolved_objects_from_ids(repo, all_record_ids, record_type, prefetch)
 
-            # #construct CSV row for ao's
-            all_records.map do |record|
-                record[prefetch].each do |linked_agent|
-                    row << [linked_agent['ref'], linked_agent['_resolved']['title'], linked_agent['_resolved']['names'].map do |name|
- name['authority_id']
-end.join(';'), linked_agent['role'], linked_agent['relator'], if ['archival_objects', 'resources'].include?(record_type)
-  linked_agent['terms'].map do |term|
- "#{term['term']} : #{term['term_type']} : #{term['vocabulary']}"
-end.join(';')
-                                                              else
-  ''
-end, record['uri']]
-                    puts "#{linked_agent['ref']}, #{linked_agent['_resolved']['title']}, #{linked_agent['_resolved']['names'].map do |name|
- name['authority_id']
-end.join(';')}, #{linked_agent['role']}, #{linked_agent['relator']}, #{if ['archival_objects', 'resources'].include?(record_type)
-  linked_agent['terms'].map do |term|
-    "#{term['term']} : #{term['term_type']} : #{term['vocabulary']}"
-end.join(';')
-                                                                       else
-  ''
-end}, #{record['uri']}"
+              #construct CSV row for records
+              all_records.map do |record|
+                record[prefetch].each do |linked_record|
+                  row << [
+                          linked_record['ref'], 
+                          linked_record['_resolved']['title'], 
+                          if prefetch == "linked_agents"
+                            linked_record['_resolved']['names'].map do |name|
+                              "#{name['authority_id']} | #{name['source']}"
+                            end.join(';')
+                          else 
+                            linked_record['source']
+                          end, 
+                          linked_record['role'], 
+                          linked_record['relator'], 
+                          if prefetch == "linked_agents"
+                            if ['archival_objects', 'resources'].include?(record_type)
+                              linked_record['terms'].map do |term|
+                                "#{term['term']} | #{term['term_type']} | #{term['vocabulary']}"
+                              end.join(';')
+                            else
+                              ''
+                            end
+                          else
+                            linked_record['_resolved']['terms'].map do |term|
+                              "#{term['term']} : #{term['term_type']} : #{term['vocabulary']}"
+                            end.join(';')
+                          end, 
+                          record['uri']]
+
+                  #write to the console for monitoring
+                  puts "#{linked_record['ref']}, #{linked_record['_resolved']['title']}, #{
+                          if prefetch == "linked_agents"
+                            linked_record['_resolved']['names'].map do |name|
+                              "#{name['authority_id']}, #{name['source']}"
+                            end.join(';')
+                          else
+                            ''
+                          end}, #{linked_record['role']}, #{linked_record['relator']}, #{
+                          if prefetch == "linked_agents"
+                            if ['archival_objects', 'resources'].include?(record_type)
+                              linked_record['terms'].map do |term|
+                                term['term'] + ":" + term['term_type'] + ":" + term['vocabulary']
+                              end.join(';')
+                            else
+                              ''
+                            end
+                          else
+                            linked_record['_resolved']['terms'].map do |term|
+                              term['term'] + ":" + term['term_type'] + ":" + term['vocabulary']
+                            end.join(';')
+                          end}, #{record['uri']}"
+                    end
                 end
             end
         end
