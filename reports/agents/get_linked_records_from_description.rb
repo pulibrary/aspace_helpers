@@ -5,7 +5,7 @@ require_relative '../../helper_methods.rb'
 aspace_login
 puts Time.now
 
-output_file = "linked_agents.csv"
+output_file = "linked_records.csv"
 records_to_prefetch = ["linked_agents", "subjects"]
 repositories = (10..12).to_a
 record_types = ["archival_objects", "resources", "events", "accessions", "digital_objects"]
