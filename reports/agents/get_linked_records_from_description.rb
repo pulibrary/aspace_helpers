@@ -43,12 +43,12 @@ CSV.open(output_file, "w",
 
             #get all resolved records from id's and select those with linked agents
             records_to_prefetch.each do |prefetch|
-              puts "Now resolving repo #{repo}: #{prefetch} linked from #{record_type}"
+              puts "#{Time.now}: resolving repo #{repo}: #{prefetch} linked from #{record_type}"
               all_records = get_resolved_objects_from_ids(repo, all_record_ids, record_type, prefetch)
 
               #construct CSV row for records
               all_records.map do |record|
-                puts "Now getting #{prefetch} for #{record['uri']}"
+                puts "getting #{prefetch} for #{record['uri']...}"
                 record[prefetch].each do |linked_record|
                   row << [
                     linked_record['ref'],
