@@ -8,14 +8,14 @@ puts Time.now
 output_file = "linked_records.csv"
 records_to_prefetch = ["linked_agents", "subjects"]
 repositories = (3..12).to_a
-record_types = ["archival_objects", "resources", "events", "accessions", "digital_objects"]
+record_types = ["archival_objects", "resources", "events", "accessions", "digital_objects"] #
 
 def get_resolved_objects_from_ids(repository_id, input_ids, record_type, linked_record_type_to_prefetch)
     all_records = []
     count_processed_records = 0
     count_ids = input_ids.count
     while count_processed_records < count_ids
-        last_record = [count_processed_records+249, count_ids].min
+        last_record = [count_processed_records+59, count_ids].min
         all_records << @client.get("/repositories/#{repository_id}/#{record_type}",
                 query: {
                   id_set: input_ids[count_processed_records..last_record],
@@ -43,7 +43,7 @@ CSV.open(output_file, "w",
 
             #get all resolved records from id's and select those with linked agents
             records_to_prefetch.each do |prefetch|
-              puts "Now resolving #{prefetch} linked from #{record_type}"
+              puts "Now resolving repo #{repo}: #{prefetch} linked from #{record_type}"
               all_records = get_resolved_objects_from_ids(repo, all_record_ids, record_type, prefetch)
 
               #construct CSV row for records
@@ -77,29 +77,6 @@ CSV.open(output_file, "w",
                     end,
                     record['uri']
                   ]
-
-                  #write to the console for monitoring
-                  puts "#{linked_record['ref']}, #{linked_record['_resolved']['title']}, #{
-                          if prefetch == 'linked_agents'
-                            linked_record['_resolved']['names'].map do |name|
-                              "#{name['authority_id']}, #{name['source']}"
-                            end.join(';')
-                          else
-                            ''
-                          end}, #{linked_record['role']}, #{linked_record['relator']}, #{
-                          if prefetch == 'linked_agents'
-                            if ['archival_objects', 'resources'].include?(record_type)
-                              linked_record['terms'].map do |term|
-                                "#{term['term']} : #{term['term_type']} : #{term['vocabulary']}"
-                              end.join(';')
-                            else
-                              ''
-                            end
-                          else
-                            linked_record['_resolved']['terms'].map do |term|
-                              "#{term['term']} : #{term['term_type']} : #{term['vocabulary']}"
-                            end.join(';')
-                          end}, #{record['uri']}"
                     end
                 end
             end
