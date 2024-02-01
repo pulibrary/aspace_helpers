@@ -15,7 +15,7 @@ def get_resolved_objects_from_ids(repository_id, input_ids, record_type, linked_
     count_processed_records = 0
     count_ids = input_ids.count
     while count_processed_records < count_ids
-        last_record = [count_processed_records+59, count_ids].min
+        last_record = [count_processed_records+39, count_ids].min
         all_records << @client.get("/repositories/#{repository_id}/#{record_type}",
                 query: {
                   id_set: input_ids[count_processed_records..last_record],
