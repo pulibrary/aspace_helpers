@@ -7,7 +7,7 @@ puts Time.now
 
 output_file = "linked_records.csv"
 records_to_prefetch = ["linked_agents", "subjects"]
-repositories = (10..12).to_a
+repositories = (3..12).to_a
 record_types = ["archival_objects", "resources", "events", "accessions", "digital_objects"]
 
 def get_resolved_objects_from_ids(repository_id, input_ids, record_type, linked_record_type_to_prefetch)
@@ -16,15 +16,10 @@ def get_resolved_objects_from_ids(repository_id, input_ids, record_type, linked_
     count_ids = input_ids.count
     while count_processed_records < count_ids
         last_record = [count_processed_records+249, count_ids].min
-        @client.get("/repositories/#{repository_id}/#{record_type}",
-        query: {
-          id_set: input_ids[count_processed_records..last_record],
-            resolve: linked_record_type_to_prefetch
-        }).parsed
         all_records << @client.get("/repositories/#{repository_id}/#{record_type}",
                 query: {
                   id_set: input_ids[count_processed_records..last_record],
-                    resolve: [linked_record_type_to_prefetch]
+                  resolve: [linked_record_type_to_prefetch]
                 }).parsed
         count_processed_records = last_record
     end
@@ -48,10 +43,12 @@ CSV.open(output_file, "w",
 
             #get all resolved records from id's and select those with linked agents
             records_to_prefetch.each do |prefetch|
+              puts "Now resolving #{prefetch} linked from #{record_type}"
               all_records = get_resolved_objects_from_ids(repo, all_record_ids, record_type, prefetch)
 
               #construct CSV row for records
               all_records.map do |record|
+                puts "Now getting #{prefetch} for #{record['uri']}"
                 record[prefetch].each do |linked_record|
                   row << [
                     linked_record['ref'],
