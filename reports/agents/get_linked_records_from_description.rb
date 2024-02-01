@@ -8,7 +8,7 @@ puts Time.now
 output_file = "linked_records.csv"
 records_to_prefetch = ["linked_agents", "subjects"]
 repositories = (3..12).to_a
-record_types = ["archival_objects", "resources", "events", "accessions", "digital_objects"] #
+record_types = ["archival_objects", "resources", "events", "accessions", "digital_objects"]
 
 def get_resolved_objects_from_ids(repository_id, input_ids, record_type, linked_record_type_to_prefetch)
     all_records = []
