@@ -45,8 +45,9 @@ CSV.open(output_file, "w",
             #construct CSV row for records
             all_records.map do |record|
             record_types_to_prefetch.map do |record_type_to_prefetch|
-                next if (record[record_type_to_prefetch].nil? || 
-                  record[record_type_to_prefetch].empty?)
+                next if record[record_type_to_prefetch].nil? ||
+                        record[record_type_to_prefetch].empty?
+
                 puts "getting records for #{record['uri']...}"
                 record[record_type_to_prefetch].each do |linked_record|
                   row << [
