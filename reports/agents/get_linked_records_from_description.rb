@@ -2,12 +2,12 @@ require 'archivesspace/client'
 require 'active_support/all'
 require_relative '../../helper_methods.rb'
 
-aspace_staging_login
+aspace_login
 puts Time.now
 
 output_file = "linked_records.csv"
 record_types_to_prefetch = ["linked_agents", "subjects"]
-repositories = (10..12).to_a
+repositories = (3..12).to_a
 record_types = ["archival_objects", "resources", "events", "accessions", "digital_objects"]
 
 def get_resolved_objects_from_ids(repository_id, input_ids, record_type, record_types_to_prefetch)
