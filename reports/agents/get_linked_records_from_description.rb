@@ -72,7 +72,7 @@ CSV.open(output_file, "w",
                       end
                     else
                       linked_record['_resolved']['terms'].map do |term|
-                        "#{term['term']} : #{term['term_type']} : #{term['vocabulary']}"
+                        "#{term['term']} | #{term['term_type']} | #{term['vocabulary']}"
                       end.join(';')
                     end,
                     record['uri']
