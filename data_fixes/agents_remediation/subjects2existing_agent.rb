@@ -2,45 +2,63 @@ require 'archivesspace/client'
 require 'active_support/all'
 require_relative '../../helper_methods.rb'
 
-aspace_login
+#_____________________________
+#
+# WORKFLOW FOR REPLACING A SUBJECT WITH AN EXISTING AGENT
+# AND ADDING SUBDIVISIONS TO THE DESCRIPTIVE RECORD
+# 1. delete subject record
+# 2. get descriptive record formerly linking to the deleted subject
+# 3. link existing agent to descriptive record
+# 4. add subdivisions from deleted subject record
+# 5. post descriptive record
+# ____________________________
+
+aspace_staging_login
 puts Time.now
 
-subject_to_delete = ""
-agent_to_delete = ""
 csv = CSV.parse(File.read("input.csv"), :headers => true)
-record_uris = []
-term1 = ""
-term1type = ""
-term1 = ""
-term1type = ""
-agent_ref = "" #/corporate_entities/1942 (Princeton University)
+term1 = "Alumni and alumnae"
+term1type = "topical"
+term2 = ""
+term2type = ""
+agent_ref = "/agents/corporate_entities/1942" #/corporate_entities/1942 (Princeton University)
 
-#1. delete subject and agent record as appropriate
-@client.delete(subject_to_delete)
-#2. for each descriptive object:
-record_uris.each do |record_uri|
-    record = @client.get(record_uri).parsed
-    uri = record['uri']
+#1. for each row:
+#2. delete subject and agent record as appropriate
+csv.each do |row|
+    delete = @client.delete(row['heading_uri'])
+    puts delete.body
+    record = @client.get(row['record_uri']).parsed
     # link to agent and apply subject role and terms
     agent = {
-        "ref" => ref
         "role"=>"subject", 
         "terms"=>[
-         {
-            "term"=>term1, 
-            "term_type"=>term1type, 
-            "jsonmodel_type"=>"term"
-        },
-        {
-            "term"=>term2, 
-            "term_type"=>term2type, 
-            "jsonmodel_type"=>"term"
-        }
-    ]
+        if term1.blank? == false
+            {
+                "term"=>term1, 
+                "term_type"=>term1type, 
+                "jsonmodel_type"=>"term",
+                "vocabulary"=>"/vocabularies/1"
+            }
+            if term2.blank? == false
+                {
+                    "term"=>term2, 
+                    "term_type"=>term2type, 
+                    "jsonmodel_type"=>"term",
+                    "vocabulary"=>"/vocabularies/1"
+                }
+            end
+        end
+    ],
+    "ref" => agent_ref
     }
     # link to agent record
-    record['linked_agends'] << agent
+    record['linked_agents'] << agent
+    post = @client.post(row['record_uri'], record.to_json)
+    puts post.body
 end
+
+puts Time.now
 
 # {"role"=>"subject", 
 #     "terms"=>[
