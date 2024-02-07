@@ -68,7 +68,7 @@ end
 #delete false subject headings
 @deletes = @deletes.uniq
 @deletes.each do |uri_to_delete|
-    @client.delete(uri_to_delete)
+    delete = @client.delete(uri_to_delete)
     puts delete.body
 end
 
