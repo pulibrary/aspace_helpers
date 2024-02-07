@@ -17,7 +17,7 @@ aspace_login
 puts Time.now
 
 csv = CSV.parse(File.read("input.csv"), :headers => true)
-agent_ref = "/agents/corporate_entities/1942" #/corporate_entities/1942 (Princeton University)
+agent_ref = "/agents/corporate_entities/4453" #/corporate_entities/1942 (Princeton University)
 
 #1. gather subjects and agents to delete
 @deletes = []
@@ -28,47 +28,46 @@ csv.each do |row|
     record = @client.get(row['record_uri']).parsed
     # link to agent and apply subject role and terms
     agent = {
-        "role"=>"subject",
+      "role"=>"subject",
         "terms"=>[
-            if row['term1'].blank? == false
-            {
-                "term"=>row['term1'], 
-                "term_type"=>row['term1type'], 
-                "jsonmodel_type"=>"term",
-                "vocabulary"=>"/vocabularies/1"
-            }
-            end,
-            if row['term2'].blank? == false
-            {
-                "term"=>row['term2'], 
-                "term_type"=>row['term2type'], 
-                "jsonmodel_type"=>"term",
-                "vocabulary"=>"/vocabularies/1"
-            }
-            end,
-            if row['term3'].blank? == false
-            {
-                "term"=>row['term3'], 
-                "term_type"=>row['term3type'], 
-                "jsonmodel_type"=>"term",
-                "vocabulary"=>"/vocabularies/1"
-            }
-            end
+          if row['term1'].blank? == false
+          {
+            "term"=>row['term1'],
+              "term_type"=>row['term1type'],
+              "jsonmodel_type"=>"term",
+              "vocabulary"=>"/vocabularies/1"
+          }
+          end,
+          if row['term2'].blank? == false
+          {
+            "term"=>row['term2'],
+              "term_type"=>row['term2type'],
+              "jsonmodel_type"=>"term",
+              "vocabulary"=>"/vocabularies/1"
+          }
+          end,
+          if row['term3'].blank? == false
+          {
+            "term"=>row['term3'],
+              "term_type"=>row['term3type'],
+              "jsonmodel_type"=>"term",
+              "vocabulary"=>"/vocabularies/1"
+          }
+          end
         ],
     "ref" => agent_ref
     }
     #puts agent
-    unless record['linked_agents'].nil?
-        # link to agent record
-        record['linked_agents'] << agent 
-        # add a revision statement
-        if row['record_uri'] =~ /resources/
-            add_resource_revision_statement(record, "Subject remediation: replaced subject #{row['title']} with agent record.")
-        end
-        post = @client.post(row['record_uri'], record.to_json)
-        puts post.body
-    end 
+    next if record['linked_agents'].nil?
 
+    # link to agent record
+    record['linked_agents'] << agent
+    # add a revision statement
+    if row['record_uri'] =~ /resources/
+        add_resource_revision_statement(record, "Subject remediation: replaced subject #{row['title']} with agent.")
+    end
+    post = @client.post(row['record_uri'], record.to_json)
+    puts post.body
 end
 #delete false subject headings
 @deletes = @deletes.uniq
@@ -78,4 +77,3 @@ end
 end
 
 puts Time.now
-
