@@ -13,7 +13,7 @@ require_relative '../../helper_methods.rb'
 # 5. post descriptive record
 # ____________________________
 
-aspace_staging_login
+aspace_login
 puts Time.now
 
 csv = CSV.parse(File.read("input.csv"), :headers => true)
@@ -61,9 +61,14 @@ csv.each do |row|
     unless record['linked_agents'].nil?
         # link to agent record
         record['linked_agents'] << agent 
+        # add a revision statement
+        if row['record_uri'] =~ /resources/
+            add_resource_revision_statement(record, "Subject remediation: replaced subject #{row['title']} with agent record.")
+        end
         post = @client.post(row['record_uri'], record.to_json)
         puts post.body
     end 
+
 end
 #delete false subject headings
 @deletes = @deletes.uniq
