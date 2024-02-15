@@ -116,6 +116,5 @@ puts record
 #get linked objects from any record id
 record_types_to_prefetch = ["linked_agents", "subjects"]
 record_types = ["archival_objects", "resources", "events", "accessions", "digital_objects"]
-
-def get_resolved_objects_from_ids(repository_id, input_ids, record_type, record_types_to_prefetch)
+get_resolved_objects_from_ids(repository_id, input_ids, record_type, record_types_to_prefetch)
 
