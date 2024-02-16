@@ -12,14 +12,14 @@ let $computed_date :=
 	then
 		(:date range:)
 		replace($title, '^([\D\S]*?)(\d{4})(-)(\d{4})?([\D\S]*?)$', '$2^$4')
-	else if (matches($title, '^([\D\S]*? b\.\s?)(\d{4})([\D\S]*?)$'))
+	else if (matches($title, '^([\D\S]*?b\.\s?)(\d{4})([\D\S]*?)$'))
 	then
 		(:b. date:)
-		replace($title, '^([\D\S]*? b\.\s?)(\d{4})([\D\S]*?)$', '$2') 
-	else if (matches($title, '^([\D\S]*? d\.\s?)(\d{4})([\D\S]*?)$'))
+		replace($title, '^([\D\S]*?b\.\s?)(\d{4})([\D\S]*?)$', '$2') 
+	else if (matches($title, '^([\D\S]*?(d\.|-)\s?)(\d{4})([\D\S]*?)$'))
 	then
 		(:d. date:)
-		replace($title, '^([\D\S]*? d\.\s?)(\d{4})([\D\S]*?)$', '^$2')
+		replace($title, '^([\D\S]*?(d\.|-)\s?)(\d{4})([\D\S]*?)$', '^$3')
 	else()
 return 
 	normalize-space(
