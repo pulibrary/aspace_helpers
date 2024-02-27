@@ -2,7 +2,7 @@ require 'archivesspace/client'
 require 'active_support/all'
 require_relative '../../helper_methods.rb'
 
-aspace_login
+aspace_staging_login
 puts Time.now
 
 output_file = "linked_records.csv"
@@ -11,8 +11,7 @@ record_types = ["resources", "archival_objects"]
 record_types_to_prefetch = []
 
 def count_of_links(array)
-    # array.flatten.map { |group| group.map {|k,v| {k=>v.length}}}.flatten
-    array.map {|k,v| {k=>v.length}}.flatten
+    array.map {|k,v| {k=>v.compact_blank.count}}.flatten
 end
 
 def group_array_of_hashes(array)
@@ -41,12 +40,26 @@ end
 #     :write_headers => true,
 #     :headers => ["uri", "eadid or cid", "linked_agents", "linked_containers", "linked_digital_objects", "linked_events", "linked_accessions", "linked_deaccessions", "linked_subjects", "uri"]) do |row|
     repositories.each do |repo|
-        @report = []
+        report = []
         @linked_aos = []
         @linked_agents = []
+        @linked_subjects = []
+        @linked_accessions = []
+        @linked_deaccessions = []
         @linked_instances = []
-        @linked_digital_objects = []
         @linked_top_containers = []
+        @linked_digital_objects = []
+        linked_object_arrays = 
+            [
+                @linked_aos, 
+                @linked_agents, 
+                @linked_subjects,
+                @linked_accessions,
+                @linked_deaccessions,
+                @linked_instances, 
+                @linked_top_containers,
+                @linked_digital_objects
+            ]
         @eadids = {}
         record_types.each do |record_type|
             #get all record id's for the repository
@@ -65,18 +78,49 @@ end
                     else record['uri']
                     end
                 @eadids.store("#{resource_uri}",  record['ead_id']) if record['resource'].nil?
-                @linked_aos << {resource_uri => record['uri']} unless record['resource'].nil?
+                @linked_aos << 
+                    if record['resource'].nil?
+                        {resource_uri => nil}
+                    else {resource_uri => record['uri']} 
+                    end
                 @linked_agents << 
-                    record['linked_agents'].map do |agent|
+                    if record['linked_agents'].empty?
+                        {resource_uri => nil}
+                    else record['linked_agents'].map do |agent|
                        {resource_uri => agent['ref']}
-                    end unless record['linked_agents'].empty?
+                        end
+                    end 
+                @linked_subjects << 
+                    if record['subjects'].empty?
+                        {resource_uri => nil}
+                    else record['subjects'].map do |subject|
+                       {resource_uri => subject['ref']}
+                        end
+                    end 
+                @linked_accessions << 
+                    if record['related_accessions'].nil?
+                        {resource_uri => nil}
+                    else record['related_accessions'].map do |accession|
+                       {resource_uri => accession['ref']}
+                        end 
+                    end
+                @linked_deaccessions << 
+                    if record['deaccessions'].nil?
+                        {resource_uri => nil}
+                    else record['deaccessions'].map do |deaccession|
+                       {resource_uri => deaccession['ref']}
+                        end 
+                    end
                 @linked_instances << 
-                    record['instances'].map do |instance|
-                        {resource_uri => instance.dig('sub_container', 'top_container', 'ref') || instance['ref']}
-                    end unless record['instances'].empty?
-                record['instances'].select do |instance|
+                    if record['instances'].empty?
+                        {resource_uri => nil}
+                    else record['instances'].map do |instance|
+                        {resource_uri => instance.dig('sub_container', 'top_container', 'ref') || instance['ref'] || instance['digital_object']['ref']}
+                        end 
+                    end
+                instance_types = record['instances'].select do |instance|
                     if instance['instance_type'] == "digital_object"
-                        @linked_digital_objects << {resource_uri => instance['ref']}
+                        @linked_digital_objects << {resource_uri => instance['digital_object']['ref']}
                     else
                         @linked_top_containers << {resource_uri => instance.dig('sub_container', 'top_container', 'ref') || instance['ref']}
                     end
@@ -84,36 +128,20 @@ end
             end
         end
 
-        @linked_aos_grouped = group_array_of_hashes(@linked_aos)
-        @linked_agents_grouped = group_array_of_hashes(@linked_agents)
-        @linked_instances_grouped = group_array_of_hashes(@linked_instances)
-        @linked_top_containers_grouped = group_array_of_hashes(@linked_top_containers)
-        @linked_digital_objects_grouped = group_array_of_hashes(@linked_digital_objects)
-
-        # puts @linked_aos_grouped
-        # puts @linked_agents_grouped
-        # puts @linked_instances_grouped
-        # puts @linked_top_containers_grouped
-        # puts @linked_digital_objects_grouped
-        #puts @linked_aos_grouped
-        @report << @linked_aos_grouped.map do |group| 
+        #add all counts by linked object type to the report array
+        linked_object_arrays.each do |array|
+            report << group_array_of_hashes(array).map do |group| 
                 count_of_links(group)
             end
-        @report << @linked_agents_grouped.map do |group| 
-            count_of_links(group)
         end
-        grouped_report = group_array_of_hashes(@report)
+        #group the report again by resource uri
+        grouped_report = group_array_of_hashes(report)
+        #construct csv row from the grouped report
+        #counts are in order of the linked_objects_array
         grouped_report.map do |hash|
-            row = [hash.map {|key,array| "#{key},#{array.map {|value| value}.join(',')}"}]
+            row = [hash.map {|key,array| "#{key},#{@eadids[key]}, #{array.map {|value| value}.join(',')}"}]
             puts row
-            
         end
-
-        #puts "count linked_aos links: #{count_of_links(@linked_aos_grouped)}"
-        # puts "count linked_agents links: #{count_of_links(@linked_agents_grouped)}"
-        # puts "count total instances links: #{count_of_links(@linked_instances_grouped)}"  
-        # puts "count top_containers links: #{count_of_links(@linked_top_containers_grouped)}"   
-        # puts "count digital_objects links: #{count_of_links(@linked_digital_objects_grouped)}"
     end
 # end
 
