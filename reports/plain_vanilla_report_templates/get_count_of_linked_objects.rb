@@ -121,8 +121,10 @@ end
                 instance_types = record['instances'].select do |instance|
                     if instance['instance_type'] == "digital_object"
                         @linked_digital_objects << {resource_uri => instance['digital_object']['ref']}
+                        @linked_top_containers << {resource_uri => nil}
                     else
                         @linked_top_containers << {resource_uri => instance.dig('sub_container', 'top_container', 'ref') || instance['ref']}
+                        @linked_digital_objects << {resource_uri => nil}
                     end
                 end unless record['instances'].empty?
             end
