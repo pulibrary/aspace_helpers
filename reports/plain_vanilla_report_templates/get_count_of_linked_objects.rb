@@ -1,12 +1,13 @@
 require 'archivesspace/client'
 require 'active_support/all'
+require 'csv'
 require_relative '../../helper_methods.rb'
 
 aspace_staging_login
 puts Time.now
 
 output_file = "linked_records.csv"
-repositories = (11..12).to_a
+repositories = (12..12).to_a
 record_types = ["resources", "archival_objects"]
 record_types_to_prefetch = []
 
@@ -36,9 +37,9 @@ def get_resolved_objects_from_ids(repository_id, input_ids, record_type, record_
     all_records = all_records.flatten
 end
 
-# CSV.open(output_file, "w",
-#     :write_headers => true,
-#     :headers => ["uri", "eadid or cid", "linked_agents", "linked_containers", "linked_digital_objects", "linked_events", "linked_accessions", "linked_deaccessions", "linked_subjects", "uri"]) do |row|
+CSV.open(output_file, "w",
+    :write_headers => true,
+    :headers => ["uri", "eadid or cid", "linked_aos", "linked_agents", "linked_subjects", "linked_accessions", "linked_deaccessions", "linked_instances", "linked_containers", "linked_digital_objects", "linked_events"]) do |row|
     repositories.each do |repo|
         report = []
         @linked_aos = []
@@ -49,6 +50,7 @@ end
         @linked_instances = []
         @linked_top_containers = []
         @linked_digital_objects = []
+        @linked_events = []
         linked_object_arrays = 
             [
                 @linked_aos, 
@@ -58,7 +60,8 @@ end
                 @linked_deaccessions,
                 @linked_instances, 
                 @linked_top_containers,
-                @linked_digital_objects
+                @linked_digital_objects,
+                @linked_events
             ]
         @eadids = {}
         record_types.each do |record_type|
@@ -77,7 +80,7 @@ end
                         record['resource']['ref']
                     else record['uri']
                     end
-                @eadids.store("#{resource_uri}",  record['ead_id']) if record['resource'].nil?
+                @eadids.store("#{resource_uri}",  record['id_0']) if record['resource'].nil?
                 @linked_aos << 
                     if record['resource'].nil?
                         {resource_uri => nil}
@@ -127,6 +130,13 @@ end
                         @linked_digital_objects << {resource_uri => nil}
                     end
                 end unless record['instances'].empty?
+                @linked_events << 
+                    if record['linked_events'].empty?
+                        {resource_uri => nil}
+                    else record['linked_events'].map do |event|
+                       {resource_uri => event['ref']}
+                        end 
+                    end
             end
         end
 
@@ -141,10 +151,15 @@ end
         #construct csv row from the grouped report
         #counts are in order of the linked_objects_array
         grouped_report.map do |hash|
-            row = [hash.map {|key,array| "#{key},#{@eadids[key]}, #{array.map {|value| value}.join(',')}"}]
-            puts row
+            row_to_terminal = hash.map {|key,array| "#{key},#{@eadids[key]},#{array.map {|value| value}.join(',')}"}
+            puts row_to_terminal
+            #row << CSV.parse(row_to_terminal[0], :col_sep=>',')
+            hash.map do |key,array| 
+                row << [key, @eadids[key], array.to_csv]
+            end
+            # row << CSV::Row.new(hash.keys, hash.values)
         end
     end
-# end
+end
 
 puts Time.now
