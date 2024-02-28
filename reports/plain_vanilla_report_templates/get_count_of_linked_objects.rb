@@ -3,11 +3,11 @@ require 'active_support/all'
 require 'csv'
 require_relative '../../helper_methods.rb'
 
-aspace_staging_login
+aspace_login
 puts Time.now
 
 output_file = "linked_records.csv"
-repositories = (12..12).to_a
+repositories = (3..12).to_a
 record_types = ["resources", "archival_objects"]
 record_types_to_prefetch = []
 
