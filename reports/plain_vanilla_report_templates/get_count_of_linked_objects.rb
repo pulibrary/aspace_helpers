@@ -21,22 +21,6 @@ def group_array_of_hashes(array)
     end
 end
 
-def get_resolved_objects_from_ids(repository_id, input_ids, record_type, record_types_to_prefetch)
-    all_records = []
-    count_processed_records = 0
-    count_ids = input_ids.count
-    while count_processed_records < count_ids
-        last_record = [count_processed_records+29, count_ids].min
-        all_records << @client.get("/repositories/#{repository_id}/#{record_type}",
-                query: {
-                  id_set: input_ids[count_processed_records..last_record],
-                  resolve: record_types_to_prefetch
-                }).parsed
-        count_processed_records = last_record
-    end
-    all_records = all_records.flatten
-end
-
 CSV.open(output_file, "w",
     :write_headers => true,
     :headers => ["uri", "eadid or cid", "linked_aos", "linked_agents", "linked_subjects", "linked_accessions", "linked_deaccessions", "linked_instances", "linked_containers", "linked_digital_objects", "linked_events"]) do |row|
@@ -73,7 +57,7 @@ CSV.open(output_file, "w",
 
             #get all resolved records from id's and select those with linked agents
             all_records = get_resolved_objects_from_ids(repo, all_record_ids, record_type, record_types_to_prefetch)
-            #construct CSV row for records
+            #store data points in variables
             all_records.each do |record|
                 resource_uri = 
                     unless record['resource'].nil?
@@ -153,11 +137,9 @@ CSV.open(output_file, "w",
         grouped_report.map do |hash|
             row_to_terminal = hash.map {|key,array| "#{key},#{@eadids[key]},#{array.map {|value| value}.join(',')}"}
             puts row_to_terminal
-            #row << CSV.parse(row_to_terminal[0], :col_sep=>',')
             hash.map do |key,array| 
                 row << [key, @eadids[key]] + array.to_csv.split(",").map(&:strip)
             end
-            # row << CSV::Row.new(hash.keys, hash.values)
         end
     end
 end
