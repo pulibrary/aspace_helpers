@@ -155,7 +155,7 @@ CSV.open(output_file, "w",
             puts row_to_terminal
             #row << CSV.parse(row_to_terminal[0], :col_sep=>',')
             hash.map do |key,array| 
-                row << [key, @eadids[key], array.to_csv]
+                row << [key, @eadids[key]] + array.to_csv.split(",").map(&:strip)
             end
             # row << CSV::Row.new(hash.keys, hash.values)
         end
