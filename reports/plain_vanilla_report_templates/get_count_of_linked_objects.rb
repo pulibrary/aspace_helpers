@@ -58,7 +58,7 @@ CSV.open(output_file, "w",
             #get all resolved records from id's and select those with linked agents
             all_records = get_resolved_objects_from_ids(repo, all_record_ids, record_type, record_types_to_prefetch)
             #store data points in variables
-            all_records.each do |record|
+            all_records.map do |record|
                 resource_uri =
                   if record['resource'].nil?
                       record['uri']
@@ -67,10 +67,10 @@ CSV.open(output_file, "w",
                   end
                 @eadids.store(resource_uri.to_s, record['id_0']) if record['resource'].nil?
                 @linked_aos <<
-                  if record['resource'].nil?
-                      {resource_uri => nil}
-                  else
+                  if record['jsonmodel_type'] == "archival_object"
                       {resource_uri => record['uri']}
+                  else
+                    {resource_uri => nil}
                   end
                 @linked_agents <<
                   if record['linked_agents'].empty?
@@ -118,7 +118,7 @@ CSV.open(output_file, "w",
                           @linked_digital_objects << {resource_uri => instance['digital_object']['ref']}
                           @linked_top_containers << {resource_uri => nil}
                       else
-                          @linked_top_containers << {resource_uri => instance.dig('sub_container', 'top_container', 'ref') || instance['ref']}
+                          @linked_top_containers << {resource_uri => instance.dig('sub_container', 'top_container', 'ref')}
                           @linked_digital_objects << {resource_uri => nil}
                       end
                   end
