@@ -397,7 +397,7 @@ def get_resolved_objects_from_ids(repository_id, input_ids, record_type, record_
                 id_set: input_ids[count_processed_records..last_record],
                 resolve: record_types_to_prefetch
               }).parsed
-      count_processed_records = last_record
+      count_processed_records = last_record+1
   end
   all_records = all_records.flatten
 end
