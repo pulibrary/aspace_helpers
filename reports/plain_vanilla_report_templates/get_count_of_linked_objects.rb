@@ -69,7 +69,8 @@ CSV.open(output_file, "w",
                 @linked_aos <<
                   if record['jsonmodel_type'] == "archival_object"
                       {resource_uri => record['uri']}
-                  else {resource_uri => nil}
+                  else
+                    {resource_uri => nil}
                   end
                 @linked_agents <<
                   if record['linked_agents'].empty?
