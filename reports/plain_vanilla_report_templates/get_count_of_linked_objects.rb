@@ -7,7 +7,7 @@ aspace_login
 puts Time.now
 
 output_file = "linked_records.csv"
-repositories = (3..12).to_a
+repositories = (12..12).to_a
 record_types = ["resources", "archival_objects"]
 record_types_to_prefetch = []
 
@@ -117,7 +117,8 @@ CSV.open(output_file, "w",
                       if instance['instance_type'] == "digital_object"
                           @linked_digital_objects << {resource_uri => instance['digital_object']['ref']}
                           @linked_top_containers << {resource_uri => nil}
-                      else
+                      end
+                      if instance['instance_type'] == "mixed_materials"
                           @linked_top_containers << {resource_uri => instance.dig('sub_container', 'top_container', 'ref')}
                           @linked_digital_objects << {resource_uri => nil}
                       end
