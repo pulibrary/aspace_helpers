@@ -7,7 +7,7 @@ aspace_login
 puts Time.now
 
 output_file = "linked_records.csv"
-repositories = (12..12).to_a
+repositories = (3..12).to_a
 record_types = ["resources", "archival_objects"]
 record_types_to_prefetch = []
 
@@ -69,8 +69,6 @@ CSV.open(output_file, "w",
                 @linked_aos <<
                   if record['jsonmodel_type'] == "archival_object"
                       {resource_uri => record['uri']}
-                  else
-                    {resource_uri => nil}
                   end
                 @linked_agents <<
                   if record['linked_agents'].empty?
