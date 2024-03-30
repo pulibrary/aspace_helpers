@@ -10,8 +10,8 @@ aspace_login
 
 top_containers = get_all_top_container_records_for_institution
 
-not_boxes = top_containers.select do |container|
-    container['type'] != "box"
+not_boxes = top_containers.reject do |container|
+    container['type'] = "box"
 end
 
 CSV.open(output_file, "w",
