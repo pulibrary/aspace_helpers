@@ -202,8 +202,6 @@ top_containers =
     ).parsed['response']['docs']
 end
 
-puts top_containers
-
 top_containers.flatten!
 
 CSV.open("top_containers_by_collection_2.csv", "a",
