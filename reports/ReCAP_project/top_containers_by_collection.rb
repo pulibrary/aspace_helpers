@@ -189,15 +189,14 @@ eadids = %w[C0019
             C1079
             C1194]
 
-  resource_uris = get_uris_by_eadids(eadids)
+resource_uris = get_uris_by_eadids(eadids)
 
-#NB this still hardcodes repo 5, todo for next time
 top_containers =
   resource_uris.map do |k, _v|
     @client.get(
       'repositories/5/top_containers/search',
     query: {
-      q: 'collection_uri_u_sstr:"'+k+'"'
+      q: "collection_uri_u_sstr:\"#{k}\""
     }
     ).parsed['response']['docs']
 end
