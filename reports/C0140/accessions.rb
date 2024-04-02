@@ -11,7 +11,7 @@ record_uri = "repositories/5/resources/3950"
 
 CSV.open(output_file, "w",
     :write_headers => true,
-    :headers => ["uri", "title", "identifier_1", "identifier_2", "identifier_3", "identifier_4", "description", "disposition", "linked_to_resource", "provenance"]) do |row|
+    :headers => ["uri", "title", "identifier_1", "identifier_2", "identifier_3", "identifier_4", "description", "disposition", "note", "linked_to_resource", "provenance"]) do |row|
         record = @client.get(record_uri, query: {
                                #the record has no deaccessions, so only grabbing accessions here
                                resolve: ["related_accessions"]
@@ -26,6 +26,7 @@ CSV.open(output_file, "w",
           accession['_resolved']['id_3'],
           accession['_resolved']['content_description'],
           accession['_resolved']['disposition'],
+          accession['_resolved']['general_note'],
           accession['_resolved']['related_resources'].map {|resource| resource['ref']}.join(';'),
           accession['_resolved']['provenance']
         ]
