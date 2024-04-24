@@ -288,7 +288,7 @@ def process_resource(resource, file, log_out, remote_file)
 
   #append record to file
   #the unless clause addresses #186 and #268 and #284
-  file << doc.at_xpath('//marc:record') unless tag099_a.content =~ /C0140|AC214|AC364/ || tag856.nil?
+  file << doc.at_xpath('//marc:record') unless tag099_a.content =~ /C0140|AC214|AC364|C0744.06/ || tag856.nil?
   file.flush
   log_out.flush
 rescue Errno::ECONNRESET,Errno::ECONNABORTED,Errno::ETIMEDOUT,Errno::ECONNREFUSED => error
