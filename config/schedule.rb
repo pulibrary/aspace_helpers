@@ -19,14 +19,14 @@
 
 # Learn more: http://github.com/javan/whenever
 
-# Run on production at 03:30 am EST or 2:30 am EDT every morning except
+# Run on production at 10:30am UTC (6:30 EDT / 5:30 EST) every morning except
 # Monday (Alma jobs are backed up) or Saturday (ASpace maintenance window)
-every '30 8 * * 2-5,7', roles: [:cron] do
+every '30 10 * * 2-5,7', roles: [:cron] do
   command "cd /opt/aspace_helpers/current/reports/aspace2alma && bundle exec ruby get_MARCxml.rb"
 end
 
-# Run on production at 03:30 am EST or 2:30 am EDT on days we are skipping aspace2alma:
+# Run on production at 10:30am UTC (6:30 EDT / 5:30 EST) on days we are skipping aspace2alma:
 # Monday (Alma jobs are backed up) or Saturday (ASpace maintenance window)
-every '30 8 * * 1,6', roles: [:cron] do
+every '30 10 * * 1,6', roles: [:cron] do
   command "cd /opt/aspace_helpers/current/reports/aspace2alma && bundle exec ruby delete_from_sftp.rb"
 end
