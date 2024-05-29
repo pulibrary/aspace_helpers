@@ -6,7 +6,7 @@ require_relative '../../helper_methods.rb'
 
 #log errors to file
 $stderr.reopen("log_err.txt", "w")
-# #keep values synced so they're not going to the buffer
+#keep values synced so they're not going to the buffer
 $stderr.sync = true
 
 remote_filename = "sc_active_barcodes.csv"
@@ -73,19 +73,19 @@ def fetch_and_process_records(remote_filename)
   log_out.puts "Process started fetching records at #{Time.now}"
   filename = "MARC_out.xml"
   #get file from remote server
-  #get_file_from_sftp(remote_filename)
+  get_file_from_sftp(remote_filename)
   remote_file = remote_filename
   #rename MARC file:
   #in case the export fails, this ensures that
   #Alma will not find a stale file to import
-  #remove_file("/alma/aspace/MARC_out_old.xml")
-  #rename_file("/alma/aspace/#{filename}", "/alma/aspace/MARC_out_old.xml")
+  remove_file("/alma/aspace/MARC_out_old.xml")
+  rename_file("/alma/aspace/#{filename}", "/alma/aspace/MARC_out_old.xml")
   #rename barcodes report after download:
   #this will keep the process from running if
   #either the fresh report from Alma does not arrive
   #or the ASpace export fails
-  #remove_file("/alma/aspace/sc_active_barcodes_old.csv")
-  #rename_file("/alma/aspace/#{remote_filename}", "/alma/aspace/sc_active_barcodes_old.csv")
+  remove_file("/alma/aspace/sc_active_barcodes_old.csv")
+  rename_file("/alma/aspace/#{remote_filename}", "/alma/aspace/sc_active_barcodes_old.csv")
 
   #get collection records from ASpace
   resources = get_all_resource_uris_for_institution
@@ -101,7 +101,7 @@ def fetch_and_process_records(remote_filename)
   file.close
 
   #send to alma
-  #alma_sftp(filename)
+  alma_sftp(filename)
 
   #log when the process finished.
   log_out.puts "Process finished at #{Time.now}"
