@@ -45,7 +45,7 @@ it checks each top_container record of the current resource
     - if its location code is a ReCAP location and it has a barcode and the barcode is not included in the Alma barcode report, it constructs a 949 with $a [barcode], $b [container type + container indicator], $c [container location code], $d ["(PULFA)"+099]
 it appends the record to the output file
 it excludes records with blank 856 and with call number /^(C0140|C1771|AC214|AC364|C0744.06|C0935)$/
-it adds a delay of 0.25 before doing the next record (this is a rate limit hack)
+it adds a delay of 0.25 before doing the next record to get around rate limiting
 it sends the output file to sftp
 
 
