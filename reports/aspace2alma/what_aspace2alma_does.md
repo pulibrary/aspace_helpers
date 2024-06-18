@@ -12,7 +12,7 @@
 - it renames sc_active_barcodes.csv sc_active_barcodes_old.csv on sftp
 - it gets all resource records from ArchivesSpace serialized as MARC-xml
 - it retries when the connection hiccups
-- it opens a single new output file with the marx:collection wrapper element
+- it opens a single new output file with the marc:collection wrapper element
 - it strips empty elements (blank text and no children or attributes)
 - it removes hard line breaks from note fields
 - it constructs a 001 from 099$a
