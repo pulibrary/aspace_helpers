@@ -2,7 +2,7 @@
 class Resource
   attr_reader :resource_uri
 
-  def initialize(resource_uri, file, log_out, remote_file)
+  def initialize(resource_uri, _file, _log_out, _remote_file)
     @resource_uri = resource_uri
   end
 
