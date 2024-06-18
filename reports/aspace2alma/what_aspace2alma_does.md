@@ -31,16 +31,17 @@
     - else it creates a new $x for it
     - if it has $0 that contains value "viaf", it recodes the field to $1
     - if it has ind2 set to "7" and $2 set to "viaf", it removes $2 and sets ind2 to "0"
-    - it checks whether the last subfield (or second-to-last when $2 is the last) ends with punctuation (?-.) and adds "." if not it removes
-      - 852
-      - 500
-      - 524
-      - 535
-      - 540
-      - 541
-      - 544
-      - 561
-      - 583
+    - it checks whether the last subfield (or second-to-last when $2 is the last) ends with punctuation (?-.) and adds "." if not
+- it removes
+  - 852
+  - 500
+  - 524
+  - 535
+  - 540
+  - 541
+  - 544
+  - 561
+  - 583
 - it replaces the 856 with a new 856 with ind1 "4", ind2 "2", $z Search and Request, $u [kept from 865$u], $y Princeton University Library Finding Aids
 - it constructs a new 982 for each 500 that matches a location code and puts the code in $c
   - (sca)?(anxb|ea|ex|flm|flmp|gax|hsvc|hsvm|mss|mudd|prnc|rarebooks|rcpph|rcppf|rcppl|rcpxc|rcpxg|rcpxm|rcpxr|st|thx|wa|review|oo|sc|sls)
