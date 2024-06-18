@@ -113,16 +113,4 @@ RSpec.describe 'regular aspace2alma process' do
         .to have_been_made.times(1)
     end
   end
-  describe "#path_for_resource" do
-    it 'turns a resource identifier into a path' do
-      resource = '/repositories/3/resources/1511'
-      expect(path_for_resource(resource)).to eq("/repositories/3/resources/marc21/1511.xml")
-    end
-
-    it 'can be run multiple times on the same resource' do
-      resource = '/repositories/3/resources/1511'
-      expect(path_for_resource(resource)).to eq("/repositories/3/resources/marc21/1511.xml")
-      expect(path_for_resource(resource)).to eq("/repositories/3/resources/marc21/1511.xml")
-    end
-  end
 end

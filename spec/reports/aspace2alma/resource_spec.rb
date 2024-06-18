@@ -1,0 +1,21 @@
+require 'spec_helper.rb'
+require_relative '../../../reports/aspace2alma/resource'
+
+RSpec.describe Resource do
+  let(:resource_uri) { '/repositories/3/resources/1511' }
+  let(:our_resource) { described_class.new(resource_uri, 'file', 'log_out', 'remote_file') }
+  it 'can be instantiated' do
+    expect(described_class.new(resource_uri, 'file', 'log_out', 'remote_file')).to be
+  end
+
+  describe '#marc_uri' do
+    it 'has a uri' do
+      expect(our_resource.marc_uri).to eq('/repositories/3/resources/marc21/1511.xml')
+    end
+
+    it 'can be run multiple times on the same resource' do
+      expect(our_resource.marc_uri).to eq("/repositories/3/resources/marc21/1511.xml")
+      expect(our_resource.marc_uri).to eq("/repositories/3/resources/marc21/1511.xml")
+    end
+  end
+end
