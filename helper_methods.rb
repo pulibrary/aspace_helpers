@@ -213,9 +213,9 @@ end
 def get_uris_by_eadids(eadids, resolve = [])
   collections_all = get_all_resource_records_for_institution()
   selected_resources = []
-  uris = []
+  uris = {}
   selected_resources << collections_all.select {|collection| eadids.include? collection['ead_id']}
-  selected_resources.flatten.each {|resource| uris << "#{resource['uri']}, #{resource['ead_id']}"}
+  selected_resources.flatten.each {|resource| uris[resource['uri']] = resource['ead_id']}
   uris
 end
 
