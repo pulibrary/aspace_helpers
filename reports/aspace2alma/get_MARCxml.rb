@@ -3,6 +3,7 @@ require 'active_support/all'
 require 'nokogiri'
 require 'net/sftp'
 require_relative '../../helper_methods.rb'
+require_relative 'resource'
 
 #log errors to file
 $stderr.reopen("log_err.txt", "w")
@@ -57,10 +58,6 @@ def remove_linebreaks(node)
   node.xpath("//marc:subfield/text()").map { |text| text.content = text.content.gsub(/[\n\r]+/," ") }
 end
 
-def path_for_resource(resource)
-  resource.gsub("resources", "resources/marc21") + ".xml"
-end
-
 def datestamp
   Time.now.utc.strftime('%Y%m%d%H%M')
 end
@@ -93,8 +90,8 @@ def fetch_and_process_records(remote_filename)
   file =  File.open(filename, "w")
   file << '<collection xmlns="http://www.loc.gov/MARC21/slim" xmlns:marc="http://www.loc.gov/MARC21/slim" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.loc.gov/MARC21/slim http://www.loc.gov/standards/marcxml/schema/MARC21slim.xsd">'
 
-  resources.each do |resource|
-    process_resource(resource, file, log_out, remote_file)
+  resources.each do |resource_uri|
+    process_resource(resource_uri, file, log_out, remote_file)
   end
 
   file << '</collection>'
@@ -110,7 +107,8 @@ end
 def process_resource(resource, file, log_out, remote_file)
   retries ||= 0
 
-  uri = path_for_resource(resource)
+  my_resource = Resource.new(resource, file, log_out, remote_file)
+  uri = my_resource.marc_uri
   marc_record = @client.get(uri)
   doc = Nokogiri::XML(marc_record.body)
 
