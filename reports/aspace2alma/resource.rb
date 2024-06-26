@@ -9,4 +9,8 @@ class Resource
   def marc_uri
     "#{resource_uri.gsub('resources', 'resources/marc21')}.xml"
   end
+
+  def marc_xml
+    ""
+  end
 end
