@@ -1,4 +1,5 @@
 require 'spec_helper.rb'
+require 'nokogiri'
 require_relative '../../../reports/aspace2alma/resource'
 
 RSpec.describe Resource do
@@ -16,6 +17,13 @@ RSpec.describe Resource do
     it 'can be run multiple times on the same resource' do
       expect(our_resource.marc_uri).to eq("/repositories/3/resources/marc21/1511.xml")
       expect(our_resource.marc_uri).to eq("/repositories/3/resources/marc21/1511.xml")
+    end
+  end
+
+  describe '#marc_record' do
+    pending("fetching and parsing the MARC record")
+    it 'gets a marc record from the marc_uri' do
+      expect(our_resource.marc_xml).to be_an_instance_of(Nokogiri::XML)
     end
   end
 end
