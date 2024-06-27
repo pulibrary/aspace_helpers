@@ -333,18 +333,7 @@ end
 
 #add a maintenance statement to agent records or create the field if it doesn't exist
 def add_maintenance_history(record, text)
-  unless record['agent_maintenance_histories'].nil?
-    record['agent_maintenance_histories'] << {
-      "maintenance_event_type"=>"updated",
-      "maintenance_agent_type"=>"machine",
-      "agent"=>"system",
-      "event_date"=>"#{Time.now}",
-      "descriptive_note"=>text.to_s,
-      "created_by"=>"aspace_helpers",
-      "publish"=>true,
-      "jsonmodel_type"=>"agent_maintenance_history"
-    }
-  else 
+  if record['agent_maintenance_histories'].nil?
     record['agent_maintenance_histories'] = [{
       "maintenance_event_type"=>"updated",
       "maintenance_agent_type"=>"machine",
@@ -355,6 +344,17 @@ def add_maintenance_history(record, text)
       "publish"=>true,
       "jsonmodel_type"=>"agent_maintenance_history"
     }]
+  else
+    record['agent_maintenance_histories'] << {
+      "maintenance_event_type"=>"updated",
+      "maintenance_agent_type"=>"machine",
+      "agent"=>"system",
+      "event_date"=>"#{Time.now}",
+      "descriptive_note"=>text.to_s,
+      "created_by"=>"aspace_helpers",
+      "publish"=>true,
+      "jsonmodel_type"=>"agent_maintenance_history"
+    }
   end
 end
 
