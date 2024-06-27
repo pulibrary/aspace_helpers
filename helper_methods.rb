@@ -213,9 +213,9 @@ end
 def get_uris_by_eadids(eadids, resolve = [])
   collections_all = get_all_resource_records_for_institution()
   selected_resources = []
-  uris = {}
+  uris = []
   selected_resources << collections_all.select {|collection| eadids.include? collection['ead_id']}
-  selected_resources.flatten.each {|resource| uris[resource['uri']] = resource['ead_id']}
+  selected_resources.flatten.each {|resource| uris << "#{resource['uri']}, #{resource['ead_id']}"}
   uris
 end
 
@@ -331,18 +331,31 @@ def get_user_permissions()
   ids.map { |id| @client.get("/users/#{id}").parsed }
 end
 
-#add a maintenance statement to agent records
+#add a maintenance statement to agent records or create the field if it doesn't exist
 def add_maintenance_history(record, text)
-  record['agent_maintenance_histories'] << {
-    "maintenance_event_type"=>"updated",
-    "maintenance_agent_type"=>"machine",
-    "agent"=>"system",
-    "event_date"=>"#{Time.now}",
-    "descriptive_note"=>text.to_s,
-    "created_by"=>"aspace_helpers",
-    "publish"=>true,
-    "jsonmodel_type"=>"agent_maintenance_history"
-  }
+  unless record['agent_maintenance_histories'].nil?
+    record['agent_maintenance_histories'] << {
+      "maintenance_event_type"=>"updated",
+      "maintenance_agent_type"=>"machine",
+      "agent"=>"system",
+      "event_date"=>"#{Time.now}",
+      "descriptive_note"=>text.to_s,
+      "created_by"=>"aspace_helpers",
+      "publish"=>true,
+      "jsonmodel_type"=>"agent_maintenance_history"
+    }
+  else 
+    record['agent_maintenance_histories'] = [{
+      "maintenance_event_type"=>"updated",
+      "maintenance_agent_type"=>"machine",
+      "agent"=>"system",
+      "event_date"=>"#{Time.now}",
+      "descriptive_note"=>text.to_s,
+      "created_by"=>"aspace_helpers",
+      "publish"=>true,
+      "jsonmodel_type"=>"agent_maintenance_history"
+    }]
+  end
 end
 
 #add a revision statement to a resource record
@@ -397,7 +410,7 @@ def get_resolved_objects_from_ids(repository_id, input_ids, record_type, record_
                 id_set: input_ids[count_processed_records..last_record],
                 resolve: record_types_to_prefetch
               }).parsed
-      count_processed_records = last_record+1
+      count_processed_records = last_record
   end
   all_records = all_records.flatten
 end
