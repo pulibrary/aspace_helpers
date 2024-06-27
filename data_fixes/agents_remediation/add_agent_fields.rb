@@ -2,7 +2,7 @@ require 'archivesspace/client'
 require 'active_support/all'
 require_relative '../../helper_methods.rb'
 
-@client = aspace_login 
+@client = aspace_login
 csv = CSV.parse(File.read("DO_NOT_EDIT-agents_parsed_dates.csv"), :headers => true)
 
 puts Time.now
