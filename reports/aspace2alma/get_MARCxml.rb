@@ -107,10 +107,10 @@ end
 def process_resource(resource, file, log_out, remote_file)
   retries ||= 0
 
-  my_resource = Resource.new(resource, file, log_out, remote_file)
-  uri = my_resource.marc_uri
-  marc_record = @client.get(uri)
-  doc = Nokogiri::XML(marc_record.body)
+  my_resource = Resource.new(resource, @client, file, log_out, remote_file)
+  # uri = my_resource.marc_uri
+  # marc_record = @client.get(uri)
+  doc = my_resource.marc_xml
 
   # set up variables (these may return a sequence)
   ##################
