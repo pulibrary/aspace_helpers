@@ -13,4 +13,6 @@ Gemfile.lock
 .byebug_history
 .DS_Store
 log
+vendor
 .env*
+.bundle
