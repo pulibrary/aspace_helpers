@@ -29,7 +29,7 @@ csv.each do |row|
               }
           }
         ]
-                                    else
+        else
         [
           {
             "date_type_structured"=>"range",
@@ -48,7 +48,7 @@ csv.each do |row|
               }
           }
         ]
-                                        end
+        end
     @record['names'] = [
       {
         "jsonmodel_type"=>"name_person",
@@ -60,7 +60,8 @@ csv.each do |row|
       "suffix"=>row['suffix'],
       "number"=>row['number'],
       "dates"=>row['dates'],
-      "prefix"=>row['prefix']
+      "prefix"=>row['prefix'],
+      "title"=>row['title']
       }
     ]
 
