@@ -29,7 +29,7 @@ csv.each do |row|
               }
           }
         ]
-        else
+                                    else
         [
           {
             "date_type_structured"=>"range",
