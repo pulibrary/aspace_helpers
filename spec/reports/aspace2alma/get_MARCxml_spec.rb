@@ -84,6 +84,9 @@ RSpec.describe 'regular aspace2alma process' do
         expect(doc.at(subfield_b_xpath).to_s).to eq('eng')
         expect(doc.at(subfield_e_xpath).to_s).to eq('dacs')
       end
+      #it 'adds fields in the correct order' do
+      #byebug
+      #end
     end
   end
 

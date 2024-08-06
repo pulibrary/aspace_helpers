@@ -114,27 +114,26 @@ def process_resource(resource, file, log_out, remote_file)
 
   # set up variables (these may return a sequence)
   ##################
-  tag008 = doc.at_xpath('//marc:controlfield[@tag="008"]')
-  tags040 = doc.xpath('//marc:datafield[@tag="040"]')
-  tag041 = doc.at_xpath('//marc:datafield[@tag="041"]')
-  tag099_a = doc.at_xpath('//marc:datafield[@tag="099"]/marc:subfield[@code="a"]')
-  tag351 = doc.at_xpath('//marc:datafield[@tag="351"]')
-  tags500 = doc.xpath('//marc:datafield[@tag="500"]')
-  tags500_a = doc.xpath('//marc:datafield[@tag="500"]/marc:subfield[@code="a"]')
-  tags520 = doc.xpath('//marc:datafield[@tag="520"]')
-  tags524 = doc.xpath('//marc:datafield[@tag="524"]')
-  tags535 = doc.xpath('//marc:datafield[@tag="535"]')
-  tags540 = doc.xpath('//marc:datafield[@tag="540"]')
-  tags541 = doc.xpath('//marc:datafield[@tag="541"]')
-  tags544 = doc.xpath('//marc:datafield[@tag="544"]')
-  tags561 = doc.xpath('//marc:datafield[@tag="561"]')
-  tags583 = doc.xpath('//marc:datafield[@tag="583"]')
-  tags852 = doc.xpath('//marc:datafield[@tag="852"]')
-  tag856 = doc.at_xpath('//marc:datafield[@tag="856"]')
-  tags6xx = doc.xpath('//marc:datafield[@tag = "700" or @tag = "650" or
-    @tag = "651" or @tag = "600" or @tag = "610" or @tag = "630" or @tag = "648" or
-    @tag = "655" or @tag = "656" or @tag = "657"]')
-  subfields = doc.xpath('//marc:subfield')
+  tag008 = my_resource.tag008
+
+  tags040 = my_resource.tags040
+  tag041 = my_resource.tag041
+  tag099_a = my_resource.tag099_a
+  tag351 = my_resource.tag351
+  tags500 = my_resource.tags500
+  tags500_a = my_resource.tags500_a
+  tags520 = my_resource.tags520
+  tags524 = my_resource.tags524
+  tags535 = my_resource.tags535
+  tags540 = my_resource.tags540
+  tags541 = my_resource.tags541
+  tags544 = my_resource.tags544
+  tags561 = my_resource.tags561
+  tags583 = my_resource.tags583
+  tags852 = my_resource.tags852
+  tag856 = my_resource.tag856
+  tags6_7xx = my_resource.tags6_7xx
+  subfields = my_resource.subfields
 
   #do stuff
   ##################
@@ -170,8 +169,8 @@ def process_resource(resource, file, log_out, remote_file)
   #addresses github #134
   tag041.next=("<datafield ind1=' ' ind2=' ' tag='046'>
         <subfield code='a'>i</subfield>
-        <subfield code='c'>#{tag008.content[7..10]}</subfield>
-        <subfield code='e'>#{tag008.content[11..14]}</subfield>
+        <subfield code='c'>#{my_resource.tag008.content[7..10]}</subfield>
+        <subfield code='e'>#{my_resource.tag008.content[11..14]}</subfield>
       </datafield>")
 
   #addresses github #168
@@ -194,7 +193,7 @@ def process_resource(resource, file, log_out, remote_file)
 
   #addresses github #143
   #adapted from Mark's implementation of Don's logic
-  tags6xx.each do |tag6xx|
+  tags6_7xx.each do |tag6xx|
     subfield_a = tag6xx.at_xpath('marc:subfield[@code="a"]')
     segments = subfield_a.content.split('--')
     segments.each { |segment| segment.strip! }
