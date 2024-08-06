@@ -4,7 +4,6 @@ require 'nokogiri'
 require 'net/sftp'
 require_relative '../../helper_methods.rb'
 require_relative 'resource'
-require 'byebug'
 
 #log errors to file
 $stderr.reopen("log_err.txt", "w")
@@ -115,7 +114,7 @@ def process_resource(resource, file, log_out, remote_file)
 
   # set up variables (these may return a sequence)
   ##################
-  tag008 = my_resource.tag008 
+  tag008 = my_resource.tag008
 
   tags040 = my_resource.tags040
   tag041 = my_resource.tag041

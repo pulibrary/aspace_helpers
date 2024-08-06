@@ -39,5 +39,4 @@ RSpec.describe Resource do
       expect(our_resource.tag008.content).to eq("221215i19171950xx                  eng d")
     end
   end
-
 end

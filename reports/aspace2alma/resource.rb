@@ -95,5 +95,4 @@ class Resource
   def subfields
     @subfields ||= marc_xml.xpath('//marc:subfield')
   end
-
 end
