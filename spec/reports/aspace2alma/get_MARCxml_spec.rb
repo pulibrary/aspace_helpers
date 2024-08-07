@@ -77,6 +77,8 @@ RSpec.describe 'regular aspace2alma process' do
 
     context 'when aspace returns a single record' do
       let(:resource_uris) { ["/repositories/3/resources/1511"] }
+      let(:doc_file) { File.open('MARC_out.xml') }
+      let(:doc_after_processing_fixture) { File.open(File.join('spec', 'fixtures', 'doc_after_processing.xml')) }
 
       it 'corrects the data in the 040 field' do
         subfield_b_xpath = '//marc:datafield[@tag = "040"]/marc:subfield[@code = "b"]/text()'
@@ -84,9 +86,9 @@ RSpec.describe 'regular aspace2alma process' do
         expect(doc.at(subfield_b_xpath).to_s).to eq('eng')
         expect(doc.at(subfield_e_xpath).to_s).to eq('dacs')
       end
-      #it 'adds fields in the correct order' do
-      #byebug
-      #end
+      it 'creates the expected document' do
+        expect(FileUtils.compare_file(doc_file, doc_after_processing_fixture)).to be_truthy
+      end
     end
   end
 
@@ -114,6 +116,72 @@ RSpec.describe 'regular aspace2alma process' do
         .to have_been_made.times(4)
       expect(a_request(:get, "https://example.com/staff/api/repositories/3/resources/marc21/1512.xml"))
         .to have_been_made.times(1)
+    end
+  end
+
+  describe '#remove_empty_elements' do
+    context 'with empty datafield' do
+      let(:node) do
+        xml = <<~XML
+          <record>
+            <datafield ind1=" " ind2=" " tag="049"/>
+          </record>
+        XML
+
+        Nokogiri::XML(xml)
+      end
+
+      it 'removes empty elements' do
+        expect(node.children).not_to be_empty
+        remove_empty_elements(node)
+        expect(node.children).to be_empty
+      end
+    end
+    context 'with non-empty datafield' do
+      let(:node) do
+        xml = <<~XML
+          <record>
+            <datafield ind1=" " ind2=" " tag="099">
+              <subfield code="a">MC001.01</subfield>
+            </datafield>
+          </record>
+        XML
+
+        Nokogiri::XML(xml)
+      end
+
+      it 'does not remove populated elements' do
+        expect(node.children).not_to be_empty
+        remove_empty_elements(node)
+        expect(node.children).not_to be_empty
+        expect(node.children.first.content).to eq('MC001.01')
+      end
+    end
+    context 'with mix of empty and non-empty child nodes' do
+      let(:node) do
+        xml = <<~XML
+          <record>
+            <datafield ind1=" " ind2=" " tag="099">
+              <subfield code="a">MC001.01</subfield>
+              <subfield code="b"></subfield>
+            </datafield>
+          </record>
+        XML
+
+        Nokogiri::XML(xml)
+      end
+
+      it 'does not remove populated elements' do
+        expect(node.children).not_to be_empty
+        # newlines are counted as nodes
+        expect(node.children.children.count).to eq(3)
+        expect(node.children.children[1].children.count).to eq(5)
+        remove_empty_elements(node)
+        expect(node.children.children.count).to eq(1)
+        expect(node.children.children[0].children.count).to eq(1)
+        expect(node.children).not_to be_empty
+        expect(node.content).to eq('MC001.01')
+      end
     end
   end
 end

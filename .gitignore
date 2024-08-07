@@ -10,6 +10,7 @@ Gemfile.lock
 *.mmd
 !spec/fixtures/marc_1511.xml
 !spec/fixtures/marc_1512.xml
+!spec/fixtures/doc_after_processing.xml
 .byebug_history
 .DS_Store
 log
