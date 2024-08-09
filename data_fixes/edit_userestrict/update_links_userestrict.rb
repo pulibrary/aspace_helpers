@@ -2,13 +2,13 @@ require 'archivesspace/client'
 require 'json'
 require_relative '../../helper_methods.rb'
 
-aspace_staging_login
+aspace_login
 
 start_time = "Process started: #{Time.now}"
 puts start_time
 log = "log_userestrict.txt"
 
-repos_all = (12..12).to_a
+repos_all = (3..12).to_a
 
 #iterate over all repositories
 repos_all.each do |repo|
@@ -28,7 +28,7 @@ resources = get_all_records_for_repo_endpoint(repo, "resources")
         end
     end
     #write a revision statement to the record at the same time
-    #add_resource_revision_statement(resource, "Updated links")
+    add_resource_revision_statement(resource, "Updated links")
     post = @client.post(uri, resource.to_json)
     puts post.body
     File.write(log, post.body, mode: 'a')
