@@ -30,7 +30,7 @@ resources = get_all_records_for_repo_endpoint(repo, "resources")
             userestrict['subnotes'][0]['content'] = userestrict['subnotes'][0]['content'].gsub("https://library.princeton.edu/special-collections/ask-us", "https://library.princeton.edu/services/special-collections/ask-special-collections")
         end
         if userestrict['subnotes'][0]['content'].include? old_text.gsub(/\n/, " ")
-            
+
             userestrict['subnotes'][0]['content'] = userestrict['subnotes'][0]['content'].gsub(old_text.gsub(/\n/, " "), new_text.gsub(/\n/, " "))
         end
     end
