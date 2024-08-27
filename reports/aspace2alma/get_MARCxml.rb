@@ -44,15 +44,6 @@ def remove_file(path)
   end
 end
 
-#recursively remove truly empty elements (blank text and attributes)
-#use node.attributes.blank? for all attributes
-def remove_empty_elements(node)
-  node.children.map { |child| remove_empty_elements(child) }
-  node.remove if node.content.blank? && (
-  (node.attribute('@ind1').blank? && node.attribute('@ind2').blank?) ||
-  node.attribute('@code').blank?)
-end
-
 #remove linebreaks from notes
 def remove_linebreaks(node)
   node.xpath("//marc:subfield/text()").map { |text| text.content = text.content.gsub(/[\n\r]+/," ") }
@@ -139,7 +130,8 @@ def process_resource(resource, file, log_out, remote_file)
   ##################
 
   #addresses github #128
-  remove_empty_elements(doc)
+  #recursively remove truly empty elements (blank text and empty attributes)
+  my_resource.remove_empty_elements(doc)
 
   #addresses github #159
   remove_linebreaks(doc)

@@ -1,4 +1,5 @@
 require 'nokogiri'
+require 'active_support/all'
 require 'archivesspace/client'
 
 # A class to manipulate records from ASpace MarcXML
@@ -94,5 +95,13 @@ class Resource
 
   def subfields
     @subfields ||= marc_xml.xpath('//marc:subfield')
+  end
+
+  #use node.attributes.blank? for all attributes
+  def remove_empty_elements(node)
+    node.children.map { |child| remove_empty_elements(child) }
+    node.remove if node.content.blank? && (
+    (node.attribute('@ind1').blank? && node.attribute('@ind2').blank?) ||
+    node.attribute('@code').blank?)
   end
 end
