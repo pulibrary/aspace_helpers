@@ -45,8 +45,11 @@ def remove_file(path)
 end
 
 #remove linebreaks from notes
+#node is a Nokogiri::XML::Element
 def remove_linebreaks(node)
-  node.xpath("//marc:subfield/text()").map { |text| text.content = text.content.gsub(/[\n\r]+/," ") }
+  node.xpath("//marc:subfield/text()").map do |text| 
+    text.content = text.content.gsub(/[\n\r]+/," ") 
+  end
 end
 
 def datestamp
