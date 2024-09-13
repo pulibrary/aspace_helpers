@@ -2,8 +2,6 @@ authentication.rb
 authenticate-production.sh
 authenticate-staging.sh
 test.rb
-Gemfile
-Gemfile.lock
 *.csv
 *.xml
 *.rtf
