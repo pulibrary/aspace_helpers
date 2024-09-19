@@ -3,6 +3,8 @@ declare option saxon:output "omit-xml-declaration=yes";
 
 declare variable $eads as document-node()+ := collection("file:///path/to/svn?recurse=yes;select=*.xml");
 
+(:find all instances of a string in text nodes and return the string, XPath, collection id, and ASpace uri:)
+
 for $match in ($eads//text())[matches(., '<text_to_find>', 'i')]
 return
 	(
