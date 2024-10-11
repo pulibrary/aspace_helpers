@@ -32,9 +32,10 @@ dos = dos.flatten!
 #     puts "don't know what to do with #{dos[0]['collection']}"
 #   end
 
-select_dos = 
+select_dos =
   dos.select do |dobject|
     next if dobject.nil?
+
     dobject['collection'].empty?
   end
 
@@ -42,8 +43,8 @@ CSV.open(out, "w",
     :write_headers => true,
     :headers => ["do_uri", "do_id", "collection_uri", "title", "linked_from"]) do |row|
     select_dos.map do |dobject|
-        puts "#{dobject['uri']}, #{dobject['digital_object_id']}, #{dobject.dig('collection',0,'ref') || ''}, #{dobject['title']}, #{dobject.dig('linked_instances',0,'ref') || ''}"
-        row << [dobject['uri'], (dobject['digital_object_id']), dobject.dig('collection',0,'ref') || '', dobject['title'], dobject.dig('linked_instances',0,'ref') || '']
+        puts "#{dobject['uri']}, #{dobject['digital_object_id']}, #{dobject.dig('collection', 0, 'ref') || ''}, #{dobject['title']}, #{dobject.dig('linked_instances', 0, 'ref') || ''}"
+        row << [dobject['uri'], (dobject['digital_object_id']), dobject.dig('collection', 0, 'ref') || '', dobject['title'], dobject.dig('linked_instances', 0, 'ref') || '']
     end
 end
 
