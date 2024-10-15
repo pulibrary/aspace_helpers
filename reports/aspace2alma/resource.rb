@@ -104,4 +104,11 @@ class Resource
     (node.attribute('@ind1').blank? && node.attribute('@ind2').blank?) ||
     node.attribute('@code').blank?)
   end
+
+  #node is a Nokogiri::XML::Element
+  def remove_linebreaks(node)
+    node.xpath("//marc:subfield/text()").map do |text|
+      text.content = text.content.gsub(/[\n\r]+/, " ")
+    end
+  end
 end

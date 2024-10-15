@@ -44,14 +44,6 @@ def remove_file(path)
   end
 end
 
-#remove linebreaks from notes
-#node is a Nokogiri::XML::Element
-def remove_linebreaks(node)
-  node.xpath("//marc:subfield/text()").map do |text| 
-    text.content = text.content.gsub(/[\n\r]+/," ") 
-  end
-end
-
 def datestamp
   Time.now.utc.strftime('%Y%m%d%H%M')
 end
@@ -137,7 +129,7 @@ def process_resource(resource, file, log_out, remote_file)
   my_resource.remove_empty_elements(doc)
 
   #addresses github #159
-  remove_linebreaks(doc)
+  my_resource.remove_linebreaks(doc)
 
   #addresses github #129
   tag008.previous=("<controlfield tag='001'>#{tag099_a.content}</controlfield>")
