@@ -14,8 +14,6 @@ dos.select do |dobject|
   select_dos << dobject if ["/repositories/3/resources/1860", "/repositories/3/resources/1861"].include? dobject.dig('collection', 0, 'ref')
 end
 
-puts select_dos[0..9]
-
 CSV.open(out, "w",
     :write_headers => true,
     :headers => ["do_uri", "do_id", "collection_uri", "title", "linked_from"]) do |row|
