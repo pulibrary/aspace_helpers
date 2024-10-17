@@ -2,6 +2,7 @@
 
 require_relative '../../../reports/aspace2alma/get_MARCxml'
 require 'spec_helper.rb'
+require 'nokogiri'
 
 RSpec.describe 'regular aspace2alma process' do
   let(:resource_uris) do
