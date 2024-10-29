@@ -105,4 +105,23 @@ RSpec.describe Resource do
       end
     end
   end
+
+  describe 'remove linebreaks' do
+    let(:node) do
+      xml = <<~XML
+        <datafield xmlns:marc="http://www.loc.gov/MARC21/slim" ><marc:subfield code="a">
+          These Records document#{' '}
+          the activities of the American Civil Liberties Union (ACLU) in protecting individual rights between 1947 and 1995.
+          </marc:subfield></datafield>
+      XML
+      #this returns a Nokogiri::XML::Element
+      Nokogiri.parse(xml).first_element_child
+    end
+
+    it 'removes hard linebreaks from text nodes' do
+      expect(node.content.scan(/[\n\r]+/).size).to eq(3)
+      our_resource.remove_linebreaks(node)
+      expect(node.content.scan(/[\n\r]+/).size).to eq(0)
+    end
+  end
 end
