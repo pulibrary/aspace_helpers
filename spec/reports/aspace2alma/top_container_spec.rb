@@ -13,5 +13,4 @@ RSpec.describe TopContainer do
   it 'has a resource uri' do
     expect(container_instance.resource_uri)
   end
-
 end
