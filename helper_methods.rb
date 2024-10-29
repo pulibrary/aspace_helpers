@@ -267,6 +267,27 @@ def get_all_top_container_records_for_institution(resolve = [])
   @results = @results.flatten!
 end
 
+def get_all_digital_object_records_for_a_repository(repo, resolve = [])
+  resources_endpoints = []
+  resources_endpoints << 'repositories/'+repo.to_s+'/digital_objects'
+
+  #for each endpoint, get the count of records
+  @results = []
+  resources_endpoints.each do |endpoint|
+    @ids_by_endpoint = []
+    @ids_by_endpoint << @client.get(endpoint, {
+      query: {
+       all_ids: true
+      }}).parsed
+    @ids_by_endpoint = @ids_by_endpoint.flatten!
+    count_ids = @ids_by_endpoint.count
+
+    #for each endpoint, get the record by id and add to array of records
+    paginate_endpoint(@ids_by_endpoint, count_ids, endpoint, resolve)
+  end #close resources_endpoints.each
+  @results = @results.flatten!
+end
+
 def get_all_archival_objects_for_resource(repo, id, resolve = [])
   archival_objects_all = get_all_records_for_repo_endpoint(repo, 'archival_objects', resolve)
   archival_objects_filtered =
