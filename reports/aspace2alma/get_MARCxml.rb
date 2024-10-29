@@ -1,6 +1,7 @@
 require 'archivesspace/client'
 require 'active_support/all'
 require 'net/sftp'
+require 'nokogiri'
 require_relative '../../helper_methods.rb'
 require_relative 'resource'
 
