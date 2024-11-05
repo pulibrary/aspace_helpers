@@ -299,7 +299,7 @@ def construct_item_records(remote_file, resource, doc, tag099_a, log_out)
     containers_unfiltered.parsed['response']['docs'].sort_by! { |container| JSON.parse(container['json'])['indicator'].scan(/\d+/).first.to_i }
     containers_unfiltered.parsed['response']['docs'].select do |container|
       json = JSON.parse(container['json'])
-      resource_uri = container['collection_uri_u_sstr'] unless container['collection_uri_u_sstr'].nil?
+      #resource_uri = container['collection_uri_u_sstr'] unless container['collection_uri_u_sstr'].nil?
       top_container_location_code = json['container_locations'][0]['_resolved']['classification'] unless json['container_locations'][0].nil?
       at_recap = /^(sca)?rcp\p{L}+/.match?(top_container_location_code)
       has_no_barcode = json['barcode'].blank?
