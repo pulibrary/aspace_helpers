@@ -12,6 +12,10 @@ class TopContainer
 
   def initialize(container_doc)
     #instance variable = the thing that's passed in
-    @container_doc = JSON.parse(container_doc)
+    @container_doc = JSON.parse(container_doc['json'])
+  end
+
+  def location_code
+    container_doc.dig('container_locations', 0, '_resolved', 'classification')
   end
 end
