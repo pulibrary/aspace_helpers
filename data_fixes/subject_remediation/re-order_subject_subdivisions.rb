@@ -17,14 +17,15 @@ subjects =
 subjects.each do |subject|
   next if subject['terms'].count <2
   next if subject['terms'][1]['term_type'] != "genre_form"
+
   uri = subject['uri']
-  if subject['terms'][1]['term_type'] == "genre_form"
-    terms = [subject['terms'][0]]
-    subject['terms'][1..].reverse.map {|term| terms << term}
-    subject['terms'] = terms
-    add_maintenance_history(subject, "Subjects remediation: put genre/form last")
-    post = @client.post(uri, subject.to_json)
-  end
+  next unless subject['terms'][1]['term_type'] == "genre_form"
+
+  terms = [subject['terms'][0]]
+  subject['terms'][1..].reverse.map {|term| terms << term}
+  subject['terms'] = terms
+  add_maintenance_history(subject, "Subjects remediation: put genre/form last")
+  post = @client.post(uri, subject.to_json)
 end
 
 puts Time.now
