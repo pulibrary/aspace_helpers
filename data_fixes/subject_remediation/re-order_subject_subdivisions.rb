@@ -19,7 +19,6 @@ subjects.each do |subject|
   next if subject['terms'][1]['term_type'] != "genre_form"
 
   uri = subject['uri']
-  next unless subject['terms'][1]['term_type'] == "genre_form"
 
   terms = [subject['terms'][0]]
   subject['terms'][1..].reverse.map {|term| terms << term}
