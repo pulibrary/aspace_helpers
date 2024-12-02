@@ -40,7 +40,7 @@ csv.each do |row|
   #add a file history note
   add_maintenance_history(subject, "Subjects remediation: parse subfields")
   #post
-  post = @client.post(uri, subject.to_json)
+  post = @client.post(uri, subject.to_json) unless uri = "uri"
   puts post.body
 end
 puts Time.now
