@@ -33,7 +33,7 @@ class TopContainer
 
   def valid?(set)
     at_recap? &&
-    barcode? &&
-    not_already_in_alma?(set)
+      barcode? &&
+      not_already_in_alma?(set)
   end
 end
