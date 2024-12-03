@@ -19,4 +19,16 @@ RSpec.describe TopContainer do
   it 'has the correct location code' do
     expect(container_instance.location_code).to eq "scarcpph"
   end
+  it 'is at ReCAP' do
+    expect(container_instance.at_recap?).to be true
+  end
+  it 'has a barcode' do
+    expect(container_instance.barcode?).to be true
+  end
+  it 'is not already in Alma' do
+    expect(container_instance.not_already_in_alma?(Set.new)).to be true
+  end
+  it 'is a valid container' do
+    expect(container_instance.valid?(Set.new)).to be true
+  end
 end

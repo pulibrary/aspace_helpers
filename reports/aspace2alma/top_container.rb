@@ -18,4 +18,22 @@ class TopContainer
   def location_code
     container_doc.dig('container_locations', 0, '_resolved', 'classification')
   end
+
+  def at_recap?
+    /^(sca)?rcp\p{L}+/.match?(location_code)
+  end
+
+  def barcode?
+    container_doc['barcode'].present?
+  end
+
+  def not_already_in_alma?(set)
+    !set.include?(container_doc['barcode'])
+  end
+
+  def valid?(set)
+    at_recap? &&
+      barcode? &&
+      not_already_in_alma?(set)
+  end
 end
