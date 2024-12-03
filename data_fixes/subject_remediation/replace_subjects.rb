@@ -7,8 +7,8 @@ require_relative '../../helper_methods.rb'
 puts Time.now
 
 csv = CSV.parse(File.read("topical_United_States.csv"), :headers=>true, :return_headers=>true)
-
-csv.each do |row|
+#skip the header here (we only need it when constructing the terms)
+csv[1..].each do |row|
   uri = row[0]
   terms = []
   row.each_with_index do |field, i|
@@ -40,7 +40,7 @@ csv.each do |row|
   #add a file history note
   add_maintenance_history(subject, "Subjects remediation: parse subfields")
   #post
-  post = @client.post(uri, subject.to_json) unless uri = "uri"
+  post = @client.post(uri, subject.to_json)
   puts post.body
 end
 puts Time.now
