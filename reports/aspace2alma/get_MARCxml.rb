@@ -53,6 +53,7 @@ def fetch_and_process_records(remote_filename)
   #open a quasi log to receive progress output
   log_out = File.open("log_out.txt", "w")
   aspace_login
+  byebug
   #log when the process started
   log_out.puts "Process started fetching records at #{Time.now}"
   filename = "MARC_out.xml"
