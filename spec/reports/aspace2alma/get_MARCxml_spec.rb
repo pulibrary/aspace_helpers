@@ -68,12 +68,14 @@ RSpec.describe 'regular aspace2alma process' do
         .and_return(status: 200, body: "")
       stub_request(:get, "https://example.com/staff/api/repositories/3/resources/marc21/1512.xml")
         .and_return(status: 200, body: File.read(File.open('spec/fixtures/marc_1512.xml')))
-      fetch_and_process_records("spec/fixtures/sc_active_barcodes.csv")
     end
 
     let(:doc) { Nokogiri::XML(File.open('MARC_out.xml')) }
 
     context 'when aspace returns multiple records' do
+      before do
+        fetch_and_process_records("spec/fixtures/sc_active_barcodes.csv")
+      end
       it 'adds a (PULFA) 035 field' do
         expect(doc.xpath('//marc:datafield[@tag = "035"]/marc:subfield/text()').map(&:to_s))
           .to match_array(["(PULFA)MC001.01", "(PULFA)MC001.02.01"])
@@ -85,20 +87,25 @@ RSpec.describe 'regular aspace2alma process' do
       let(:doc_file) { File.open('MARC_out.xml') }
       let(:doc_after_processing_fixture) { File.open(File.join('spec', 'fixtures', 'doc_after_processing.xml')) }
 
-      it 'corrects the data in the 040 field' do
-        subfield_b_xpath = '//marc:datafield[@tag = "040"]/marc:subfield[@code = "b"]/text()'
-        subfield_e_xpath = '//marc:datafield[@tag = "040"]/marc:subfield[@code = "e"]/text()'
-        expect(doc.at(subfield_b_xpath).to_s).to eq('eng')
-        expect(doc.at(subfield_e_xpath).to_s).to eq('dacs')
+      describe 'correcting 040' do
+        before do
+          fetch_and_process_records("spec/fixtures/sc_active_barcodes.csv")
+        end
+        it 'corrects the data in the 040 field' do
+          subfield_b_xpath = '//marc:datafield[@tag = "040"]/marc:subfield[@code = "b"]/text()'
+          subfield_e_xpath = '//marc:datafield[@tag = "040"]/marc:subfield[@code = "e"]/text()'
+          expect(doc.at(subfield_b_xpath).to_s).to eq('eng')
+          expect(doc.at(subfield_e_xpath).to_s).to eq('dacs')
+        end
       end
+
       context 'when the container is not already in Alma' do
         before do
-          allow_any_instance_of(TopContainer).to receive(:barcode?).and_return false
+          allow_any_instance_of(TopContainer).to receive(:valid?).and_return(true)
+          fetch_and_process_records("spec/fixtures/sc_active_barcodes.csv")
         end
         it 'creates the expected document' do
-          byebug
           expect(FileUtils.compare_file(doc_file, doc_after_processing_fixture)).to be_truthy
-          byebug
         end
       end
     end
