@@ -301,6 +301,7 @@ def construct_item_records(remote_file, resource, doc, tag099_a, log_out)
     containers_unfiltered.parsed['response']['docs'].select do |container|
       json = JSON.parse(container['json'])
       top_container = TopContainer.new(container)
+      top_container_location_code = top_container.location_code
       if top_container.valid?(alma_barcodes_set)
         doc.xpath('//marc:datafield').last.next=
           ("<datafield ind1=' ' ind2=' ' tag='949'>
