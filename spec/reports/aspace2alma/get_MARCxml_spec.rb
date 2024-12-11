@@ -16,6 +16,11 @@ RSpec.describe 'regular aspace2alma process' do
   after do
     Timecop.return
   end
+  around do |example|
+    FileUtils.rm('MARC_out.xml') if File.exist?('MARC_out.xml')
+    example.run
+    FileUtils.rm('MARC_out.xml') if File.exist?('MARC_out.xml')
+  end
   before do
     Timecop.freeze(frozen_time)
     stub_aspace_login
@@ -86,8 +91,15 @@ RSpec.describe 'regular aspace2alma process' do
         expect(doc.at(subfield_b_xpath).to_s).to eq('eng')
         expect(doc.at(subfield_e_xpath).to_s).to eq('dacs')
       end
-      it 'creates the expected document' do
-        expect(FileUtils.compare_file(doc_file, doc_after_processing_fixture)).to be_truthy
+      context 'when the container is not already in Alma' do
+        before do
+          allow_any_instance_of(TopContainer).to receive(:barcode?).and_return false
+        end
+        it 'creates the expected document' do
+          byebug
+          expect(FileUtils.compare_file(doc_file, doc_after_processing_fixture)).to be_truthy
+          byebug
+        end
       end
     end
   end
