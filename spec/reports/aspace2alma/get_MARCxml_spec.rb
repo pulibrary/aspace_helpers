@@ -19,7 +19,7 @@ RSpec.describe 'regular aspace2alma process' do
   around do |example|
     FileUtils.rm('MARC_out.xml') if File.exist?('MARC_out.xml')
     example.run
-    FileUtils.rm('MARC_out.xml') if File.exist?('MARC_out.xml')
+    #FileUtils.rm('MARC_out.xml') if File.exist?('MARC_out.xml')
   end
   before do
     Timecop.freeze(frozen_time)
