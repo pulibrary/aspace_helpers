@@ -8,6 +8,7 @@ Gemfile.lock
 *.xml
 *.rtf
 *.mmd
+*.sql
 !spec/fixtures/marc_1511.xml
 !spec/fixtures/marc_1512.xml
 !spec/fixtures/doc_after_processing.xml
