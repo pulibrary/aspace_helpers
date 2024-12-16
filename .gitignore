@@ -17,3 +17,5 @@ log
 vendor
 .env*
 .bundle
+log_err.txt
+log_out.txt
