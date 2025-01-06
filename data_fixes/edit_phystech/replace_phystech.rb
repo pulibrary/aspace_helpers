@@ -29,7 +29,6 @@ csv.each do |row|
     puts post.body
     # write to log
     File.write(log, post.body, mode: 'a')
-
 rescue Exception => e
   error = "Process ended: #{Time.now} with error '#{e.class}: #{e.message}''"
   puts error

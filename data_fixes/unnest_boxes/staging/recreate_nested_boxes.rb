@@ -32,9 +32,7 @@ csv.each do |row|
   aos = []
   aos << row['aos'].split(',')
   aos = aos.flatten!
-  active_restrictions = []
-  aos.each do |ao|
-    active_restrictions <<
+  active_restrictions = aos.map do |ao|
     {
     "restriction_note_type"=>"accessrestrict",
     "jsonmodel_type"=>"rights_restriction",

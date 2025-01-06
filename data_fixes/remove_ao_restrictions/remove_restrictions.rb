@@ -21,7 +21,6 @@ post = @client.post(uri, ao.to_json)
 response = post.body
 puts response
 File.write(log, response, mode: 'a')
-
 rescue Exception => msg
 puts "Processing ended at #{Time.now} with error '#{msg.class}: #{msg.message}'"
 end #row

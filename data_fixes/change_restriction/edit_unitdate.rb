@@ -20,7 +20,6 @@ csv = CSV.parse(File.read("ACLU Paralegal Review Data Collection - Import 2023-0
     #write to log
     File.write(log, post.body, mode: 'a')
     puts post.body
-
     rescue Exception => msg
     error = "Process ended: #{Time.now} with error '#{msg.class}: #{msg.message}''"
     puts error

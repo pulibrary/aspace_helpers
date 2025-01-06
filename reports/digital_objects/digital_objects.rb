@@ -8,9 +8,8 @@ out = "orphaned_dos.csv"
 repos_all = (3..12).to_a
 puts Time.now
 
-dos = []
-repos_all.each do |repo|
-  dos << get_all_digital_object_records_for_a_repository(repo)
+dos = repos_all.map do |repo|
+  get_all_digital_object_records_for_a_repository(repo)
 end
 dos = dos.flatten!
 

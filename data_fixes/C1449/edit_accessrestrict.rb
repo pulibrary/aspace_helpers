@@ -31,7 +31,6 @@ csv.each do |row|
     post = @client.post(uri, record.to_json)
     puts post.body
     File.write(log, post.body, mode: 'a')
-
     rescue Exception => msg
     error = "Process ended: #{Time.now} with error '#{msg.class}: #{msg.message}''"
     puts error

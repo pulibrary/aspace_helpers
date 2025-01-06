@@ -9,11 +9,9 @@ aspace_staging_login()
 log = "log.txt"
 #repos_all = (3..12).to_a
 repos_all = [10]
-aos_to_review = []
-
 #get all ao records for the endpoint
-repos_all.each do |repo|
-  aos_to_review << get_all_records_for_repo_endpoint(repo, 'archival_objects').select do |ao| #3, 1807
+aos_to_review = repos_all.map do |repo|
+  get_all_records_for_repo_endpoint(repo, 'archival_objects').select do |ao| #3, 1807
     #aos must have a parent and a subcontainer to be selected.
     ao['parent'] &&
     #index [0] is a hack but we're looking for a known improperly nested box

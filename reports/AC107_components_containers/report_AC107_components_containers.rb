@@ -37,7 +37,7 @@ CSV.open("AC107.csv", "a",
   :write_headers=> true,
   :headers => ["uri", "ref_id", "level", "title", "instances"]) do |row|
   aos.each do |ao|
-      top_containers2csv = String.new
+      top_containers2csv = ''
       top_containers = unless ao['instances'].nil?
         ao['instances'].each do |instance|
           subcontainer_type = if instance.dig('sub_container', 'type_2') then instance['sub_container']['type_2'] end

@@ -22,7 +22,7 @@ containers =
   records.map do |record|
     record['response']['docs'].select do |container|
     top_container_location_code = container['location_display_string_u_sstr'].nil? ? '' : container['location_display_string_u_sstr'][0].gsub(/(^.+\[)(.+)(\].*)/, '\2')
-    top_container_location_codes << {'location' => top_container_location_code, 'repo' => container['repository'].gsub(/\/repositories\//, '') }
+    top_container_location_codes << {'location' => top_container_location_code, 'repo' => container['repository'].gsub('/repositories/', '') }
   end
 end
 #tally location codes

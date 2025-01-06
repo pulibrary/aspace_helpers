@@ -434,7 +434,6 @@ def process_ao_records
           </record>"
 
         file << record
-
       rescue Exception => e
         end_time = "Process interrupted at #{Time.now} with message '#{e.class}: #{e.message}''"
       end

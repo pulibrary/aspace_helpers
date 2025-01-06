@@ -10,9 +10,8 @@ puts start_time
 output_file = "phystech_notes.csv"
 
 record_uris = get_all_resource_uris_for_repos([3, 4, 5])
-records = []
-record_uris.each do |uri|
-  records << @client.get(uri).parsed
+records = record_uris.map do |uri|
+  @client.get(uri).parsed
 end
 
 CSV.open(output_file, "a",

@@ -6,7 +6,7 @@ require_relative '../../helper_methods.rb'
 
 puts Time.now
 
-temporal_term = Regexp.new(/\d{1,2}(th|nd|d|st)\scentury/i)
+temporal_term = /\d{1,2}(th|nd|d|st)\scentury/i
 
 subject_ids = @client.get(
   "/subjects", { query: { all_ids: true } }
