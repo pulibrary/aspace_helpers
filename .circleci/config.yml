@@ -6,7 +6,7 @@ orbs:
 jobs:
   rubocop:
     docker:
-      - image: cimg/ruby:3.1.2
+      - image: cimg/ruby:3.4.0
     steps:
       - checkout
       - ruby/install-deps
@@ -15,7 +15,7 @@ jobs:
           label: Inspecting with Rubocop
   test:
     docker:
-      - image: cimg/ruby:3.1.2
+      - image: cimg/ruby:3.4.0
     steps:
       - checkout
       - ruby/install-deps
@@ -23,7 +23,7 @@ jobs:
           include: spec/**/*_spec.rb
   bearer:
     docker:
-      - image: cimg/ruby:3.2
+      - image: cimg/ruby:3.4.0
     environment:
       # Set to default branch of your repo
       DEFAULT_BRANCH: main
