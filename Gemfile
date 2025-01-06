@@ -10,8 +10,11 @@ gem 'rake'
 gem 'whenever', require: false
 
 group :development do
+  gem "bcrypt_pbkdf"
   gem "capistrano", "~> 3.16.0"
   gem "capistrano-bundler"
+  gem "ed25519"
+  gem "stringio"
 end
 
 group :test do
