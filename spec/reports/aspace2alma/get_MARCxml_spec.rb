@@ -14,9 +14,9 @@ RSpec.describe 'regular aspace2alma process' do
   let(:frozen_time) { Time.utc(2023, 10, 8, 12, 3, 1) }
 
   around do |example|
-    FileUtils.rm('MARC_out.xml') if File.exist?('MARC_out.xml')
+    FileUtils.rm_f('MARC_out.xml')
     example.run
-    FileUtils.rm('MARC_out.xml') if File.exist?('MARC_out.xml')
+    FileUtils.rm_f('MARC_out.xml')
   end
   after do
     Timecop.return

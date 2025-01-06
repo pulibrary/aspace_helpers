@@ -5,10 +5,10 @@ require 'archivesspace/client'
 def aspace_login()
   #configure access
   @config = ArchivesSpace::Configuration.new({
-    base_uri: ENV['ASPACE_URL'],
+    base_uri: ENV.fetch('ASPACE_URL', nil),
     base_repo: "",
-    username: ENV['ASPACE_USER'],
-    password: ENV['ASPACE_PASSWORD'],
+    username: ENV.fetch('ASPACE_USER', nil),
+    password: ENV.fetch('ASPACE_PASSWORD', nil),
     #page_size: 50,
     throttle: 0,
     verify_ssl: false
@@ -20,10 +20,10 @@ end
 def aspace_staging_login()
   #configure access
   @config = ArchivesSpace::Configuration.new({
-    base_uri: ENV['ASPACE_STAGING_URL'],
+    base_uri: ENV.fetch('ASPACE_STAGING_URL', nil),
     base_repo: "",
-    username: ENV['ASPACE_USER'],
-    password: ENV['ASPACE_PASSWORD'],
+    username: ENV.fetch('ASPACE_USER', nil),
+    password: ENV.fetch('ASPACE_PASSWORD', nil),
     #page_size: 50,
     throttle: 0,
     verify_ssl: false,
@@ -35,10 +35,9 @@ end
 
 def get_all_resource_records_for_institution(resolve = [])
   #run through all repositories (1 and 2 are reserved for admin use)
-  resources_endpoints = []
   repos_all = (3..12).to_a
-  repos_all.each do |repo|
-    resources_endpoints << 'repositories/'+repo.to_s+'/resources'
+  resources_endpoints = repos_all.map do |repo|
+    'repositories/'+repo.to_s+'/resources'
     end
   #debug
   #puts "endpoints to process are:"
@@ -68,10 +67,9 @@ end #close method
 
 def get_all_event_records_for_institution(resolve = [])
   #run through all repositories (1 and 2 are reserved for admin use)
-  resources_endpoints = []
   repos_all = (3..12).to_a
-  repos_all.each do |repo|
-    resources_endpoints << 'repositories/'+repo.to_s+'/events'
+  resources_endpoints = repos_all.map do |repo|
+    'repositories/'+repo.to_s+'/events'
     end
   #debug
   #puts "endpoints to process are:"
@@ -213,10 +211,8 @@ end
 def get_uris_by_eadids(eadids, resolve = [])
   collections_all = get_all_resource_records_for_institution()
   selected_resources = []
-  uris = []
   selected_resources << collections_all.select {|collection| eadids.include? collection['ead_id']}
-  selected_resources.flatten.each {|resource| uris << "#{resource['uri']}, #{resource['ead_id']}"}
-  uris
+  uris = selected_resources.flatten.map {|resource| "#{resource['uri']}, #{resource['ead_id']}"}
 end
 
 #get resource records by eadids
@@ -244,10 +240,9 @@ end
 
 def get_all_top_container_records_for_institution(resolve = [])
   #run through all repositories (1 and 2 are reserved for admin use)
-  resources_endpoints = []
   repos_all = (3..12).to_a
-  repos_all.each do |repo|
-    resources_endpoints << 'repositories/'+repo.to_s+'/top_containers'
+  resources_endpoints = repos_all.map do |repo|
+    'repositories/'+repo.to_s+'/top_containers'
     end
 
   #for each endpoint, get the count of records
@@ -309,10 +304,9 @@ end
 
 def get_all_resource_uris_for_institution()
   #run through all repositories (1 and 2 are reserved for admin use)
-  resources_endpoints = []
   repos_all = (3..12).to_a
-  repos_all.each do |repo|
-    resources_endpoints << 'repositories/'+repo.to_s+'/resources'
+  resources_endpoints = repos_all.map do |repo|
+    'repositories/'+repo.to_s+'/resources'
     end
   @uris = []
   resources_endpoints.each do |endpoint|
@@ -395,9 +389,8 @@ end
 #get resource uri's for specific repositories
 #add repositories in as an array of ids
 def get_all_resource_uris_for_repos(repos = [])
-  resources_endpoints = []
-  repos.each do |repo|
-    resources_endpoints << 'repositories/'+repo.to_s+'/resources'
+  resources_endpoints = repos.map do |repo|
+    'repositories/'+repo.to_s+'/resources'
     end
   @uris = []
   resources_endpoints.each do |endpoint|

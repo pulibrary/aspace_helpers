@@ -5,10 +5,8 @@ require_relative 'helper_methods.rb'
 @client = aspace_login
 
 repositories = (3..12).to_a
-count_all = []
-
-repositories.each do |repo|
-    count_all << @client.get("/repositories/#{repo}/resources",
+count_all = repositories.map do |repo|
+    @client.get("/repositories/#{repo}/resources",
         query: {
           all_ids: true
         }).parsed.count

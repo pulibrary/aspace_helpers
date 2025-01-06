@@ -40,9 +40,8 @@ file_ids = [2044, 2140, 2141, 2152, 2158, 2159, 2160, 2161, 2162, 2163, 2164, 21
 #end
 
 #search across all the top containers in the repository for AC107 containers; get indicator and uri
-top_containers = []
-file_ids.each do |id|
-  top_containers << client.get(
+top_containers = file_ids.map do |id|
+  client.get(
   'repositories/4/top_containers/search',
   #need to use two sets of double quotes to allow query parameters to use interpolation
   query: { q: "collection_uri_u_sstr:\"/repositories/4/resources/#{id}\"" }
@@ -54,7 +53,7 @@ end
 top_containers = top_containers.flatten!
 top_containers_grouped = {}
 top_containers.each do |hash|
-   hash.each do |k, v|
+   hash.each_key do |k|
      if top_containers_grouped.has_key?(k) == false
      then top_containers_grouped.store(k, [])
      end
@@ -68,7 +67,7 @@ end
 #puts top_containers_grouped
 #for each group, take first as target, following as victims, and merge victims into target
 top_containers_grouped = top_containers_grouped.select {|k,v| v.count > 1}
-top_containers_grouped.each do|k,v|
+top_containers_grouped.each_value do|v|
   target =
       v[0]
   victims =

@@ -43,7 +43,7 @@ require 'fileutils'
           when 12
               "ea"
           end
-          FileUtils.mkdir_p(dir) unless Dir.exist?(dir)
+          FileUtils.mkdir_p(dir)
 
         #get resource ids
         resource_ids = @client.get("/repositories/#{repo}/resources", {

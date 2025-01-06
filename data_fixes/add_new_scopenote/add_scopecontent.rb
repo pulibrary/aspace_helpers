@@ -13,14 +13,12 @@ csv = CSV.parse(File.read("JBOH Scope and Contents Enhancement.csv"), :headers =
 
 aos = @client.get('/repositories/3/resources/1586/ordered_records')
 refs = aos.parsed['uris']
-uris = []
-refs[1..].each do |ref|
-  uris << ref['ref']
+uris = refs[1..].map do |ref|
+  ref['ref']
 end
 
-aos_all = []
-uris.each do |uri|
-  aos_all << @client.get(uri)
+aos_all = uris.map do |uri|
+  @client.get(uri)
 end
 
 aos_selected = []

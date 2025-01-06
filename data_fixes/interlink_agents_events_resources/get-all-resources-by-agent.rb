@@ -4,10 +4,7 @@ require_relative 'ASpace_helpers'
 aspace_login()
 
 resources_all = get_all_resource_records()
-resources_all_parsed = []
-resources_all.each do |resource|
-  resources_all_parsed << resource.parsed
-end
+resources_all_parsed = resources_all.map(&:parsed)
 resources_all_parsed = resources_all_parsed.flatten!
 #debug:
 #puts "total objects in array: #{resources_all.count}"

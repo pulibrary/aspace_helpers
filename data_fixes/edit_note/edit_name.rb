@@ -8,8 +8,8 @@ require_relative '../../helper_methods.rb'
 start_time = "Process started: #{Time.now}"
 puts start_time
 
-match_string = ENV['MATCH_STRING']
-replace_string = ENV['REPLACE_STRING']
+match_string = ENV.fetch('MATCH_STRING', nil)
+replace_string = ENV.fetch('REPLACE_STRING', nil)
 resources = get_all_records_for_repo_endpoint(5, "resources")
 resources.each do |resource|
   processinfo_all = resource['notes'].select { |note| note["type"] == "processinfo" }

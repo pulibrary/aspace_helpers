@@ -25,7 +25,6 @@ CSV.open(output_file, "w",
     :write_headers => true,
     :headers => ["uri", "eadid or cid", "linked_aos", "linked_agents", "linked_subjects", "linked_accessions", "linked_deaccessions", "linked_instances", "linked_containers", "linked_digital_objects", "linked_events"]) do |row|
     repositories.each do |repo|
-        report = []
         @linked_aos = []
         @linked_agents = []
         @linked_subjects = []
@@ -134,8 +133,8 @@ CSV.open(output_file, "w",
         end
 
         #add all counts by linked object type to the report array
-        linked_object_arrays.each do |array|
-            report << group_array_of_hashes(array).map do |group|
+        report = linked_object_arrays.map do |array|
+            group_array_of_hashes(array).map do |group|
                 count_of_links(group)
             end
         end

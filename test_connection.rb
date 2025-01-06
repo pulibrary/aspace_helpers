@@ -9,5 +9,5 @@ rescue ArchivesSpace::ConnectionError => e
   exit 1
 end
 
-host = URI.parse(ENV['ASPACE_URL']).host
+host = URI.parse(ENV.fetch('ASPACE_URL', nil)).host
 puts "Successfully authenticated to #{host}"

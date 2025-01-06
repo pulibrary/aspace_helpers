@@ -21,10 +21,9 @@ CSV.open(filename, 'wb',
     resource_records.each do |resource_record|
       resource_uri = resource_record['uri']
       ao_tree = @client.get("#{resource_uri}/ordered_records").parsed
-      ao_uris = []
       # get each tree component's uri
-      ao_tree['uris'].each do |ao_ref|
-        ao_uris << ao_ref['ref']
+      ao_uris = ao_tree['uris'].map do |ao_ref|
+        ao_ref['ref']
       end
       ao_uris.each do |ao_uri|
         ao_record = @client.get(ao_uri).parsed
