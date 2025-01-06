@@ -1,7 +1,8 @@
 source "https://rubygems.org"
 
 gem 'activesupport'
-gem 'archivesspace-client'
+gem 'archivesspace-client', github: 'lyrasis/archivesspace-client', ref: 'a4351eb'
+gem 'csv'
 gem 'net-sftp'
 gem 'net-ssh'
 gem 'nokogiri'

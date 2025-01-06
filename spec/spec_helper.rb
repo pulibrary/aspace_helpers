@@ -16,10 +16,10 @@ require 'timecop'
 # it.
 
 def stub_aspace_login
-  allow(ENV).to receive(:[]).and_call_original
-  allow(ENV).to receive(:[]).with("ASPACE_URL").and_return("https://example.com/staff/api")
-  allow(ENV).to receive(:[]).with("ASPACE_USER").and_return("test_user")
-  allow(ENV).to receive(:[]).with("ASPACE_PASSWORD").and_return("test_pw")
+  allow(ENV).to receive(:fetch).and_call_original
+  allow(ENV).to receive(:fetch).with("ASPACE_URL", nil).and_return("https://example.com/staff/api")
+  allow(ENV).to receive(:fetch).with("ASPACE_USER", nil).and_return("test_user")
+  allow(ENV).to receive(:fetch).with("ASPACE_PASSWORD", nil).and_return("test_pw")
   stub_request(:post, "https://example.com/staff/api/users/test_user/login?password=test_pw").
     to_return(
       status: 200, 
