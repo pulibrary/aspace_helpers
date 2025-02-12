@@ -2,6 +2,7 @@ version: 2.1
 
 orbs:
   ruby: circleci/ruby@2.0.0
+  coveralls: coveralls/coveralls@2.2.5
 
 jobs:
   rubocop:
@@ -21,6 +22,7 @@ jobs:
       - ruby/install-deps
       - ruby/rspec-test:
           include: spec/**/*_spec.rb
+      - coveralls/upload
   bearer:
     docker:
       - image: cimg/ruby:3.4.0
