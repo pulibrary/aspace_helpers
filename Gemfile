@@ -19,6 +19,8 @@ end
 
 group :test do
   gem "rspec_junit_formatter"
+  gem "simplecov"
+  gem "simplecov-lcov"
 end
 
 group :development, :test do
