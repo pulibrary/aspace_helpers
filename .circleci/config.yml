@@ -25,6 +25,7 @@ jobs:
       - coveralls/upload:
           coverage_file: ./coverage/lcov/project.lcov
           coverage_format: lcov
+          debug: true
   bearer:
     docker:
       - image: cimg/ruby:3.4.0
