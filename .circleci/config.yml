@@ -24,6 +24,7 @@ jobs:
           include: spec/**/*_spec.rb
       - coveralls/upload:
           coverage_file: ./coverage/lcov/project.lcov
+          coverage_format: lcov
   bearer:
     docker:
       - image: cimg/ruby:3.4.0
