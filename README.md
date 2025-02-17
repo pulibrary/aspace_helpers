@@ -79,3 +79,18 @@ API client login failed as user [wrong_user], check username and password are co
 - To run Rubocop, from the root of your application, run `bundle exec rubocop`
 - To auto-correct less-risky errors, run `bundle exec rubocop -a`
 - To auto-correct more risky errors (need to be double-checked by a human), run `bundle exec rubocop -A`
+
+### Troubleshooting
+- To troubleshoot the sftp connection:
+  - shh onto lib-jobs-prod2
+  - become the `deploy` user
+  - `cd /opt/aspace_helpers/current/reports/aspace2alma`
+  - create a test file to upload ("test.txt" or similar)
+  - open an IRB session
+  - `require_relative "get_MARCxml"`
+  - `alma_sftp("test.txt")`
+  - will return `nil`
+  - ssh onto lib-sftp-prod1
+  - navigate to `/alma/aspace`
+  - test.txt should be there
+
