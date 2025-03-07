@@ -2,7 +2,9 @@ source "https://rubygems.org"
 
 gem 'activesupport'
 gem 'archivesspace-client', github: 'lyrasis/archivesspace-client', ref: 'a4351eb'
+gem "bcrypt_pbkdf"
 gem 'csv'
+gem "ed25519"
 gem 'net-sftp'
 gem 'net-ssh'
 gem 'nokogiri'
@@ -10,10 +12,8 @@ gem 'rake'
 gem 'whenever', require: false
 
 group :development do
-  gem "bcrypt_pbkdf"
   gem "capistrano", "~> 3.16.0"
   gem "capistrano-bundler"
-  gem "ed25519"
   gem "stringio"
 end
 
