@@ -8,12 +8,14 @@ gem 'net-ssh'
 gem 'nokogiri'
 gem 'rake'
 gem 'whenever', require: false
+gem "bcrypt_pbkdf"
+gem "ed25519"
 
 group :development do
   gem "bcrypt_pbkdf"
   gem "capistrano", "~> 3.16.0"
   gem "capistrano-bundler"
-  gem "ed25519"
+  gem "ed25519" 
   gem "stringio"
 end
 
