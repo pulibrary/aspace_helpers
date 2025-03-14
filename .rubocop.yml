@@ -1,28 +1,52 @@
 inherit_from: .rubocop_todo.yml
+plugins:
+  - rubocop-rake
+  - rubocop-rspec
 
 AllCops:
   TargetRubyVersion: 3.2
   NewCops: enable
+  Exclude:
+    - 'tools/as_marcao/get_marc_ao.rb'
 
 Metrics/AbcSize:
   Exclude:
     - 'reports/aspace2alma/get_MARCxml.rb'
     - 'reports/aspace2alma/get_ao2MARC_data.rb'
+    - 'tools/as_marcao/marc_ao_mapper.rb'
 
 Metrics/MethodLength:
   Exclude:
     - 'reports/aspace2alma/get_MARCxml.rb'
     - 'reports/aspace2alma/get_ao2MARC_data.rb'
+    - 'tools/as_marcao/marc_ao_mapper.rb'
 
 Metrics/CyclomaticComplexity:
   Exclude:
     - 'reports/aspace2alma/get_MARCxml.rb'
     - 'reports/aspace2alma/get_ao2MARC_data.rb'
+    - 'tools/as_marcao/marc_ao_mapper.rb'
 
 Metrics/PerceivedComplexity:
   Exclude:
     - 'reports/aspace2alma/get_MARCxml.rb'
     - 'reports/aspace2alma/get_ao2MARC_data.rb'
+    - 'tools/as_marcao/marc_ao_mapper.rb'
+
+Metrics/ClassLength:
+  Exclude:
+    - 'tools/as_marcao/marc_ao_mapper.rb'
+
+Naming/VariableNumber:
+  Enabled: false
+
+Style/SafeNavigation:
+  Enabled: false
+
+Style/Documentation:
+  Exclude:  
+    - 'tools/as_marcao/marc_ao_mapper.rb'
+    - 'csv_aspace_runner.rb'
 
 Style/MultipleComparison:
   Enabled: false
