@@ -23,3 +23,9 @@ Metrics/PerceivedComplexity:
   Exclude:
     - 'reports/aspace2alma/get_MARCxml.rb'
     - 'reports/aspace2alma/get_ao2MARC_data.rb'
+
+Style/MultipleComparison:
+  Enabled: false
+
+Style/RedundantParentheses:
+  Enabled: false
