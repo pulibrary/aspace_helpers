@@ -28,12 +28,6 @@ Metrics/PerceivedComplexity:
   Exclude:
     - 'reports/aspace2alma/get_MARCxml.rb'
     - 'reports/aspace2alma/get_ao2MARC_data.rb'
-
-Style/MultipleComparison:
-  Enabled: false
-
-Style/RedundantParentheses:
-  Enabled: false
     - 'tools/as_marcao/marc_ao_mapper.rb'
 
 Metrics/ClassLength:
@@ -41,13 +35,18 @@ Metrics/ClassLength:
     - 'tools/as_marcao/marc_ao_mapper.rb'
 
 Naming/VariableNumber:
-  Exclude:
-    - 'tools/as_marcao/marc_ao_mapper.rb'
+  Enabled: false
 
 Style/SafeNavigation:
-  Exclude:  
-    - 'tools/as_marcao/marc_ao_mapper.rb'
+  Enabled: false
 
 Style/Documentation:
   Exclude:  
     - 'tools/as_marcao/marc_ao_mapper.rb'
+    - 'csv_aspace_runner.rb'
+
+Style/MultipleComparison:
+  Enabled: false
+
+Style/RedundantParentheses:
+  Enabled: false
