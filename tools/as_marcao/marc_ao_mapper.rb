@@ -226,7 +226,7 @@ class MarcAOMapper
       tag300 =
         if extents.count > 1
           repeatable_subfields =
-            extents[1..-1].map do |extent|
+            extents[1..].map do |extent|
           "<subfield code = 'a'>#{extent['number']}</subfield>
                    <subfield code = 'f'>#{extent['extent_type']})</subfield>"
         end
@@ -376,7 +376,7 @@ class MarcAOMapper
           7
         end
       main_term = subject['main_term']
-      subterms = subject['terms'][1..-1].map do |subterm|
+      subterms = subject['terms'][1..].map do |subterm|
         subfield_code =
           case subterm['term_type']
           when 'temporal', 'style_period', 'cultural_context'
@@ -395,7 +395,7 @@ class MarcAOMapper
         if subject['terms'].count == 1 && subject['full_first_term'] =~ /--/
           tokens = subject['full_first_term'].split('--')
           tokens.each(&:strip!)
-          tokens[1..-1].map do |token|
+          tokens[1..].map do |token|
           subfield_code = token =~ /^[0-9]{2}/ ? 'y' : 'x'
           "<subfield code = '#{subfield_code}'>#{token}</subfield>"
         end

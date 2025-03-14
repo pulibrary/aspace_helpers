@@ -3,21 +3,26 @@ inherit_from: .rubocop_todo.yml
 AllCops:
   TargetRubyVersion: 3.2
   NewCops: enable
+  Exclude:
+    - 'tools/as_marcao/get_marc_ao.rb'
 
 Metrics/AbcSize:
   Exclude:
     - 'reports/aspace2alma/get_MARCxml.rb'
     - 'reports/aspace2alma/get_ao2MARC_data.rb'
+    - 'tools/as_marcao/marc_ao_mapper.rb'
 
 Metrics/MethodLength:
   Exclude:
     - 'reports/aspace2alma/get_MARCxml.rb'
     - 'reports/aspace2alma/get_ao2MARC_data.rb'
+    - 'tools/as_marcao/marc_ao_mapper.rb'
 
 Metrics/CyclomaticComplexity:
   Exclude:
     - 'reports/aspace2alma/get_MARCxml.rb'
     - 'reports/aspace2alma/get_ao2MARC_data.rb'
+    - 'tools/as_marcao/marc_ao_mapper.rb'
 
 Metrics/PerceivedComplexity:
   Exclude:
@@ -29,3 +34,20 @@ Style/MultipleComparison:
 
 Style/RedundantParentheses:
   Enabled: false
+    - 'tools/as_marcao/marc_ao_mapper.rb'
+
+Metrics/ClassLength:
+  Exclude:
+    - 'tools/as_marcao/marc_ao_mapper.rb'
+
+Naming/VariableNumber:
+  Exclude:
+    - 'tools/as_marcao/marc_ao_mapper.rb'
+
+Style/SafeNavigation:
+  Exclude:  
+    - 'tools/as_marcao/marc_ao_mapper.rb'
+
+Style/Documentation:
+  Exclude:  
+    - 'tools/as_marcao/marc_ao_mapper.rb'
