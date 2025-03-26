@@ -12,16 +12,18 @@ as node()*
 	}</cell>
 };
 
-declare variable $aclu as document-node()+ := doc("file:/Users/heberleinr/Documents/aspace_helpers/data_fixes/ACLU_transfer/Princeton%20Transfer_2025_03_18.xml");
+declare variable $aclu as document-node()+ := doc("/Users/heberleinr/Documents/aspace_helpers/data_fixes/ACLU_transfer/test.xml");
 (:pick and choose columns:)
-let $header-row := for $cell in $aclu//Table/Row[1]/(Cell[1]|Cell[2]|Cell[4]|Cell[6]|Cell[8]|Cell[9]|Cell[10]|Cell[15]|Cell[18]) return $cell
+let $header-row := 
+	for $cell in $aclu//Table/Row[1]/(Cell[1]|Cell[2]|Cell[4]|Cell[6]|Cell[8]|Cell[9]|Cell[10]|Cell[15]|Cell[18])
+	return $cell[not(.="")]
 let $records :=
 	for $row at $ind in subsequence($aclu//Table/Row, 2)
 		let $folders-string := $row/Cell[17]/Data/string()
 		let $restrictions-string := $row/Cell[18]/Data/string()
 	(:parse out folders:)
 		let $unittitles := 
-			for $unittitle in tokenize(replace($folders-string, "(,\s)(\d{1,}\.)", "|$2"), "\|")
+			for $unittitle in tokenize(replace($folders-string, "(,\s)(\d{1,2}\.)", "|$2"), "\|")
 			return 
 	(:take out date at the end of the folder title and stash it for later use:)
 				<cell label="unittitle"
@@ -33,7 +35,7 @@ let $records :=
 					replace($unittitle, "(,|\s-)\s(January|February|March|April|May|June|July|August|September|October|November|December)?(\s\d{1,2})?(,\s)?\d{4}(-\d{4})?\s?$", "")
 				}</cell>
 		let $restrictions := 
-			for $restriction in tokenize(replace($restrictions-string, "(,\s)(\d{1,}\.)", "|$2"), "\|")
+			for $restriction in tokenize(replace($restrictions-string, "(,\s)(\d{1,2}\.)", "|$2"), "\|")
 			return 
 			(:parse out restrictions:)
 				let $restriction-unnumbered := replace($restriction, "^\d{1,}\.\s", "")
