@@ -35,18 +35,19 @@ let $records :=
 		let $restrictions := 
 			for $restriction in tokenize(replace($restrictions-string, "(,\s)(\d{1,}\.)", "|$2"), "\|")
 			return 
-	(:parse out restrictions:)
+			(:parse out restrictions:)
 				let $restriction-unnumbered := replace($restriction, "^\d{1,}\.\s", "")
 				return
 				if (matches($restriction-unnumbered, "^Open\s?\.?$"))
 				then
 					<cell label="accessrestrict">These records are open.</cell>
 				else
-					let $tokens := tokenize($restriction-unnumbered, "-")
-					let $work-product := normalize-space($tokens[1])
+				(:replace hyphen in attorney-client, then replace it back, for the tokenization to work:)
+					let $tokens := tokenize(replace($restriction-unnumbered, "(\p{L})(-)(\p{L})", "$1*$3"), "-")
+					let $work-product := normalize-space(replace($tokens[1], "\*", "-"))
 					let $year := tokenize(normalize-space($tokens[2]), "\s")[2]
 					return
-	(:add the text as well as an extra column for the year-open.:)
+					(:add the text as well as an extra column for the year-open.:)
 					<cell label="accessrestrict">{"These records contain " || $work-product || " information. They will open in " || $year || ".^" || $year || "-01-01"}</cell>
 		return
 		(
