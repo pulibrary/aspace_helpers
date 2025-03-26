@@ -2,8 +2,19 @@ xquery version "3.0";
 declare default element namespace "urn:schemas-microsoft-com:office:spreadsheet";
 declare option saxon:output "omit-xml-declaration=yes";
 
-declare variable $aclu as document-node()+ := doc("file:/Users/heberleinr/Downloads/test.xml");
-let $header-row := for $cell in $aclu//Table/Row[1]/Cell return $cell
+declare function local:insert-cells($from as xs:integer, $to as xs:integer?, $row, $header-row)
+as node()*
+{
+	for $cell at $no in ($row/Cell[position() = ($from to $to)])
+	return
+ 	<cell label="{$header-row/Cell[position()=$no]/string()}">{
+			$cell/string()
+	}</cell>
+};
+
+declare variable $aclu as document-node()+ := doc("file:/Users/heberleinr/Documents/aspace_helpers/data_fixes/ACLU_transfer/Princeton%20Transfer_2025_03_18.xml");
+(:pick and choose columns:)
+let $header-row := for $cell in $aclu//Table/Row[1]/(Cell[1]|Cell[2]|Cell[4]|Cell[6]|Cell[8]|Cell[9]|Cell[10]|Cell[15]|Cell[18]) return $cell
 let $records :=
 	for $row at $ind in subsequence($aclu//Table/Row, 2)
 		let $folders-string := $row/Cell[17]/Data/string()
@@ -38,15 +49,15 @@ let $records :=
 	(:add the text as well as an extra column for the year-open.:)
 					<cell label="accessrestrict">{"These records contain " || $work-product || " information. They will open in " || $year || ".^" || $year || "-01-01"}</cell>
 		return
-(
-			<record row="{$ind+1}">{
-				<cell label="level">2</cell>,
-				for $cell at $no in ($row/Cell[position() = (1 to 16)])
+		(
+		<record row="{$ind+1}">{
+			<cell label="level">2</cell>,
+				for $cell at $no in $row/(Cell[1]|Cell[2]|Cell[4]|Cell[6]|Cell[8]|Cell[9]|Cell[10]|Cell[15])
 				return
-					<cell label="{$header-row/Cell[position()=$no]/string()}">{
+			 	<cell label="{$header-row/Cell[position()=$no]/string()}">{
 						$cell/string()
-					}</cell>
-			}</record>,
+			}</cell>
+		}</record>,
 		for $unittitle at $pos in $unittitles
 		let $restriction := $restrictions[position() = $pos]
 		return
@@ -54,21 +65,14 @@ let $records :=
 			<record row="{$ind+1}">{
 				<cell label="level">3</cell>,
 				<cell>{$unittitle}</cell>,
-				for $cell at $no in ($row/Cell[position() = (2 to 7)])
-				return
-					<cell label="{$header-row/Cell[position()=$no]/string()}">{
-						$cell/string()
-					}</cell>,
-				(:skip box-level date columns:)
+				local:insert-cells(2, 2, $row, $header-row),
+				local:insert-cells(4, 4, $row, $header-row),
+				(:these cells are only populated on the box level:)
+				<cell></cell>,
 				<cell></cell>,
 				<cell></cell>,
 				<cell>{$unittitle/data(@unitdate)}</cell>,
-				for $cell at $no in ($row/Cell[position() = (11 to 16)])
-				return
-					<cell label="{$header-row/Cell[position()=$no]/string()}">{
-						$cell/string()
-					}</cell>,
-				$unittitle, 
+				local:insert-cells(15, 15, $row, $header-row),
 				$restriction
 			}</record>
 )
