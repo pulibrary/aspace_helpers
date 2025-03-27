@@ -52,7 +52,7 @@ let $records :=
 					return
 					(:add the text as well as an extra column for the year-open.:)
 					<cell label="accessrestrict">{"These records contain " || $work-product || " information."|| 
-							(if(matches($year, "\d{4}")) then ("They will open in " || $year || ".^" || $year || "-01-01") else () )}</cell>
+							(if(matches($year, "\d{4}")) then (" They will open in " || $year || ".^" || $year || "-01-01") else () )}</cell>
 		return
 		(
 		<record row="{$ind+1}">{
