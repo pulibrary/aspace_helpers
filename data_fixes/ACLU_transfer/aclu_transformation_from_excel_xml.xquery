@@ -63,11 +63,12 @@ let $records :=
 						$cell/string()
 			}</cell>,
 			if (count(distinct-values($restrictions)) = 1)
-			then for $cell at $no in $row/Cell[16]
+			then 
 			let $distinct-restriction := distinct-values($restrictions)
+			for $cell at $no in $row/Cell[16]
 			return 
-				if($distinct-restriction = "These records are open.") 
-				then "All records in this box are open."
+				if(matches($distinct-restriction, "These records are open\.")) 
+				then <cell label="accessrestrict">"All records in this box are open."</cell>
 				else <cell label="accessrestrict">{$distinct-restriction}</cell>
 			else ()
 		}</record>,
