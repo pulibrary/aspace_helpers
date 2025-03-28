@@ -66,7 +66,6 @@ let $records :=
 			then for $cell at $no in $row/Cell[16]
 			let $distinct-restriction := distinct-values($restrictions)
 			return 
-
 				if($distinct-restriction = "These records are open.") 
 				then "All records in this box are open."
 				else <cell label="accessrestrict">{$distinct-restriction}</cell>
