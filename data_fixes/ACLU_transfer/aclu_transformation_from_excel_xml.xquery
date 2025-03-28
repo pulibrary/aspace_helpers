@@ -61,7 +61,16 @@ let $records :=
 				return
 			 	<cell label="{$header-row/Cell[position()=$no]/string()}">{
 						$cell/string()
-			}</cell>
+			}</cell>,
+			if (count(distinct-values($restrictions)) = 1)
+			then for $cell at $no in $row/Cell[16]
+			let $distinct-restriction := distinct-values($restrictions)
+			return 
+
+				if($distinct-restriction = "These records are open.") 
+				then "All records in this box are open."
+				else <cell label="accessrestrict">{$distinct-restriction}</cell>
+			else ()
 		}</record>,
 		for $unittitle at $pos in $unittitles
 		let $restriction := $restrictions[position() = $pos]
@@ -78,7 +87,9 @@ let $records :=
 				<cell></cell>,
 				<cell>{$unittitle/data(@unitdate)}</cell>,
 				local:insert-cells(15, 15, $row, $header-row),
-				$restriction
+				if (count(distinct-values($restrictions)) = 1)
+				then ""
+				else $restriction
 			}</record>
 )
 		return
