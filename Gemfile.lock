@@ -144,10 +144,6 @@ GEM
     rubocop-ast (1.43.0)
       parser (>= 3.3.7.2)
       prism (~> 1.4)
-    rubocop-performance (1.24.0)
-      lint_roller (~> 1.1)
-      rubocop (>= 1.72.1, < 2.0)
-      rubocop-ast (>= 1.38.0, < 2.0)
     rubocop-rake (0.7.1)
       lint_roller (~> 1.1)
       rubocop (>= 1.72.1)
@@ -169,18 +165,6 @@ GEM
       net-sftp (>= 2.1.2)
       net-ssh (>= 2.8.0)
       ostruct
-    standard (1.47.0)
-      language_server-protocol (~> 3.17.0.2)
-      lint_roller (~> 1.0)
-      rubocop (~> 1.73.0)
-      standard-custom (~> 1.0.0)
-      standard-performance (~> 1.7)
-    standard-custom (1.0.2)
-      lint_roller (~> 1.0)
-      rubocop (~> 1.50)
-    standard-performance (1.7.0)
-      lint_roller (~> 1.1)
-      rubocop-performance (~> 1.24.0)
     stringio (3.1.2)
     timecop (0.9.10)
     tzinfo (2.0.6)
@@ -220,7 +204,6 @@ DEPENDENCIES
   rubocop-rspec
   simplecov
   simplecov-lcov
-  standard (>= 1.35.1)
   stringio
   timecop
   webmock

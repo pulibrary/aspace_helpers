@@ -29,7 +29,6 @@ group :development, :test do
   gem "rubocop", require: false
   gem "rubocop-rake", require: false
   gem "rubocop-rspec", require: false
-  gem 'standard', ">= 1.35.1"
   gem "timecop"
   gem "webmock"
 end
