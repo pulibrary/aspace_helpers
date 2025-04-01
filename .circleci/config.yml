@@ -1,13 +1,13 @@
 version: 2.1
 
 orbs:
-  ruby: circleci/ruby@2.0.0
+  ruby: circleci/ruby@2.5.2
   coveralls: coveralls/coveralls@2.2.5
 
 jobs:
   rubocop:
     docker:
-      - image: cimg/ruby:3.4.0
+      - image: cimg/ruby:3.4.1
     steps:
       - checkout
       - ruby/install-deps
@@ -16,7 +16,7 @@ jobs:
           label: Inspecting with Rubocop
   test:
     docker:
-      - image: cimg/ruby:3.4.0-node
+      - image: cimg/ruby:3.4.1-node
     steps:
       - checkout
       - ruby/install-deps
@@ -26,7 +26,7 @@ jobs:
           coverage_file: ./coverage/lcov/project.lcov
   bearer:
     docker:
-      - image: cimg/ruby:3.4.0
+      - image: cimg/ruby:3.4.1
     environment:
       # Set to default branch of your repo
       DEFAULT_BRANCH: main
