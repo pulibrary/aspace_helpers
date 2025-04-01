@@ -8,6 +8,7 @@ AllCops:
   NewCops: enable
   Exclude:
     - 'tools/as_marcao/get_marc_ao.rb'
+    - 'vendor/**/*'
 
 Metrics/AbcSize:
   Exclude:
