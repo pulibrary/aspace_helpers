@@ -450,4 +450,4 @@ class MarcAOMapper
           </record>"
   end
 end
-# rubocop:disable Style/SlicingWithRange
+# rubocop:enable Style/SlicingWithRange
