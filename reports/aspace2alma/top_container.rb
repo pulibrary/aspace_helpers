@@ -36,4 +36,15 @@ class TopContainer
       barcode? &&
       not_already_in_alma?(set)
   end
+
+  def item_record(tag099_a)
+    <<~XML
+      <datafield ind1=' ' ind2=' ' tag='949'>
+        <subfield code='a'>#{container_doc['barcode']}</subfield>
+        <subfield code='b'>#{container_doc['type']} #{container_doc['indicator']}</subfield>
+        <subfield code='c'>#{location_code}</subfield>
+        <subfield code='d'>(PULFA)#{tag099_a}</subfield>
+      </datafield>
+    XML
+  end
 end

@@ -6,6 +6,16 @@ require 'spec_helper.rb'
 RSpec.describe TopContainer do
   let(:container) { JSON.parse(File.read(File.open('spec/fixtures/single_container.json'))) }
   let(:container_instance) { described_class.new(container) }
+  let(:item_record_xml) do
+    <<~XML
+      <datafield ind1=' ' ind2=' ' tag='949'>
+        <subfield code='a'>32101106176132</subfield>
+        <subfield code='b'>volume 2477</subfield>
+        <subfield code='c'>scarcpph</subfield>
+        <subfield code='d'>(PULFA)MC001.01</subfield>
+      </datafield>
+    XML
+  end
   it 'can be instantiated' do
     #expect(described_class.new(resource_uri, client, 'file', 'log_out', 'remote_file')).to be
     expect(described_class.new(container))
@@ -30,5 +40,9 @@ RSpec.describe TopContainer do
   end
   it 'is a valid container' do
     expect(container_instance.valid?(Set.new)).to be true
+  end
+
+  it 'constructs a MARC item record' do
+    expect(container_instance.item_record('MC001.01')).to eq item_record_xml
   end
 end
