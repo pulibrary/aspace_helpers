@@ -15,13 +15,12 @@ csv.each do |row|
     record = @client.get(uri).parsed
     next if record.nil?
 
-    unless record.dig('agent_record_identifiers').blank?
-        record_id = @record['agent_record_identifiers'][0]['record_identifier'] ||= ''
-        source = record['agent_record_identifiers'][0]['source'] ||= ''
-        authority_id = record_id.gsub(/\D+/, '')
-        puts "#{uri}^#{record_id ||= ''}^#{authority_id ||= ''}^#{source ||= ''}"
-    end
+    next if record.dig('agent_record_identifiers').blank?
 
+    record_id = @record['agent_record_identifiers'][0]['record_identifier'] ||= ''
+    source = record['agent_record_identifiers'][0]['source'] ||= ''
+    authority_id = record_id.gsub(/\D+/, '')
+    puts "#{uri}^#{record_id ||= ''}^#{authority_id ||= ''}^#{source ||= ''}"
 end
 
 puts Time.now

@@ -23,7 +23,6 @@ names = record['names']
 
     post = @client.post(uri, record)
     puts post.body
-
 end
 
 puts Time.now
