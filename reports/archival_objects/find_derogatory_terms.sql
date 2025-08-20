@@ -3,6 +3,7 @@ SELECT ao.id,
        r.ead_id, 
        ao.title, 
        ao.root_record_id,
+       JSON_UNQUOTE(JSON_EXTRACT(CAST(n.notes AS CHAR CHARACTER SET utf8mb4), '$.subnotes[0].content')) AS content_value,
        CASE 
            WHEN fi.instance_type_id = 349 THEN 'yes'
            WHEN fi.instance_type_id = 353 THEN 'no'
@@ -10,6 +11,7 @@ SELECT ao.id,
        END AS instance_type
 FROM archival_object ao
 LEFT JOIN resource r ON ao.root_record_id = r.id
+LEFT JOIN note n ON ao.id = n.archival_object_id
 LEFT JOIN (
     SELECT 
         ao.id AS archival_object_id,
@@ -23,8 +25,8 @@ LEFT JOIN (
     FROM archival_object ao
     LEFT JOIN `instance` i ON ao.id = i.archival_object_id
 ) fi ON ao.id = fi.archival_object_id AND fi.rn = 1
-LEFT JOIN note n ON ao.id = n.archival_object_id
-WHERE (ao.root_record_id LIKE "3933"
+WHERE JSON_UNQUOTE(JSON_EXTRACT(CAST(n.notes AS CHAR CHARACTER SET utf8mb4), '$.type')) = 'scopecontent'
+AND (ao.root_record_id LIKE "3933"
  OR ao.root_record_id LIKE "3950"
  OR ao.root_record_id LIKE "3717"
  OR ao.root_record_id LIKE "3774"
