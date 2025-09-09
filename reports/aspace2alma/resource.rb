@@ -35,6 +35,10 @@ class Resource
     @tag099_a ||= marc_xml.at_xpath('//marc:datafield[@tag="099"]/marc:subfield[@code="a"]')
   end
 
+  def tag245_g
+    @tag245_g ||= marc_xml.at_xpath('//marc:datafield[@tag="245"]/marc:subfield[@code="g"]')
+  end
+
   def tag351
     @tag351 ||= marc_xml.at_xpath('//marc:datafield[@tag="351"]')
   end

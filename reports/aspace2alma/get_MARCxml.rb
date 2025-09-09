@@ -14,37 +14,37 @@ $stderr.sync = true
 
 remote_filename = "sc_active_barcodes.csv"
 
-#configure sendoff to alma
-def alma_sftp (filename)
-  Net::SFTP.start(ENV.fetch('SFTP_HOST', nil), ENV.fetch('SFTP_USERNAME', nil), { password: ENV.fetch('SFTP_PASSWORD', nil) }) do |sftp|
-    sftp.upload!(filename, File.join('/alma/aspace/', File.basename(filename)))
-  end
-end
+# #configure sendoff to alma
+# def alma_sftp (filename)
+#   Net::SFTP.start(ENV.fetch('SFTP_HOST', nil), ENV.fetch('SFTP_USERNAME', nil), { password: ENV.fetch('SFTP_PASSWORD', nil) }) do |sftp|
+#     sftp.upload!(filename, File.join('/alma/aspace/', File.basename(filename)))
+#   end
+# end
 
-#get Alma barcode report from sftp
-def get_file_from_sftp(remote_filename)
-  Net::SFTP.start(ENV.fetch('SFTP_HOST', nil), ENV.fetch('SFTP_USERNAME', nil), { password: ENV.fetch('SFTP_PASSWORD', nil) }) do |sftp|
-    sftp.download!(File.join('/alma/aspace/', File.basename(remote_filename)), remote_filename)
-  end
-end
+# #get Alma barcode report from sftp
+# def get_file_from_sftp(remote_filename)
+#   Net::SFTP.start(ENV.fetch('SFTP_HOST', nil), ENV.fetch('SFTP_USERNAME', nil), { password: ENV.fetch('SFTP_PASSWORD', nil) }) do |sftp|
+#     sftp.download!(File.join('/alma/aspace/', File.basename(remote_filename)), remote_filename)
+#   end
+# end
 
-#rename old files so we never send an outdated file by accident
-def rename_file(original_path, new_path)
-  Net::SFTP.start(ENV.fetch('SFTP_HOST', nil), ENV.fetch('SFTP_USERNAME', nil), { password: ENV.fetch('SFTP_PASSWORD', nil) }) do |sftp|
-    sftp.stat(original_path) do |response|
-      sftp.rename!(original_path, new_path) if response.ok?
-    end
-  end
-end
+# #rename old files so we never send an outdated file by accident
+# def rename_file(original_path, new_path)
+#   Net::SFTP.start(ENV.fetch('SFTP_HOST', nil), ENV.fetch('SFTP_USERNAME', nil), { password: ENV.fetch('SFTP_PASSWORD', nil) }) do |sftp|
+#     sftp.stat(original_path) do |response|
+#       sftp.rename!(original_path, new_path) if response.ok?
+#     end
+#   end
+# end
 
-#remove files in preparation for renaming
-def remove_file(path)
-  Net::SFTP.start(ENV.fetch('SFTP_HOST', nil), ENV.fetch('SFTP_USERNAME', nil), { password: ENV.fetch('SFTP_PASSWORD', nil) }) do |sftp|
-    sftp.stat(path) do |response|
-      sftp.remove!(path) if response.ok?
-    end
-  end
-end
+# #remove files in preparation for renaming
+# def remove_file(path)
+#   Net::SFTP.start(ENV.fetch('SFTP_HOST', nil), ENV.fetch('SFTP_USERNAME', nil), { password: ENV.fetch('SFTP_PASSWORD', nil) }) do |sftp|
+#     sftp.stat(path) do |response|
+#       sftp.remove!(path) if response.ok?
+#     end
+#   end
+# end
 
 def datestamp
   Time.now.utc.strftime('%Y%m%d%H%M')
@@ -53,24 +53,24 @@ end
 def fetch_and_process_records(remote_filename)
   #open a quasi log to receive progress output
   log_out = File.open("log_out.txt", "w")
-  aspace_login
+  aspace_staging_login
   #log when the process started
   log_out.puts "Process started fetching records at #{Time.now}"
   filename = "MARC_out.xml"
   #get file from remote server
-  get_file_from_sftp(remote_filename)
+  # get_file_from_sftp(remote_filename)
   remote_file = remote_filename
   #rename MARC file:
   #in case the export fails, this ensures that
   #Alma will not find a stale file to import
-  remove_file("/alma/aspace/MARC_out_old.xml")
-  rename_file("/alma/aspace/#{filename}", "/alma/aspace/MARC_out_old.xml")
-  #rename barcodes report after download:
-  #this will keep the process from running if
-  #either the fresh report from Alma does not arrive
-  #or the ASpace export fails
-  remove_file("/alma/aspace/sc_active_barcodes_old.csv")
-  rename_file("/alma/aspace/#{remote_filename}", "/alma/aspace/sc_active_barcodes_old.csv")
+  # remove_file("/alma/aspace/MARC_out_old.xml")
+  # rename_file("/alma/aspace/#{filename}", "/alma/aspace/MARC_out_old.xml")
+  # #rename barcodes report after download:
+  # #this will keep the process from running if
+  # #either the fresh report from Alma does not arrive
+  # #or the ASpace export fails
+  # remove_file("/alma/aspace/sc_active_barcodes_old.csv")
+  # rename_file("/alma/aspace/#{remote_filename}", "/alma/aspace/sc_active_barcodes_old.csv")
 
   #get collection records from ASpace
   resources = get_all_resource_uris_for_institution
@@ -107,6 +107,7 @@ def process_resource(resource, file, log_out, remote_file)
   tags040 = my_resource.tags040
   tag041 = my_resource.tag041
   tag099_a = my_resource.tag099_a
+  tag245_g = my_resource.tag245_g
   tag351 = my_resource.tag351
   tags500 = my_resource.tags500
   tags500_a = my_resource.tags500_a
@@ -161,6 +162,9 @@ def process_resource(resource, file, log_out, remote_file)
         <subfield code='c'>#{my_resource.tag008.content[7..10]}</subfield>
         <subfield code='e'>#{my_resource.tag008.content[11..14]}</subfield>
       </datafield>")
+
+  #addresses github #
+  tag245_g.content = "(mostly #{tag245_g.content})" unless tag245_g.nil?
 
   #addresses github #168
   #superseded by github #379
