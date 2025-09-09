@@ -65,10 +65,10 @@ def fetch_and_process_records(remote_filename)
   #Alma will not find a stale file to import
   remove_file("/alma/aspace/MARC_out_old.xml")
   rename_file("/alma/aspace/#{filename}", "/alma/aspace/MARC_out_old.xml")
-  #rename barcodes report after download:
-  #this will keep the process from running if
-  #either the fresh report from Alma does not arrive
-  #or the ASpace export fails
+  # #rename barcodes report after download:
+  # #this will keep the process from running if
+  # #either the fresh report from Alma does not arrive
+  # #or the ASpace export fails
   remove_file("/alma/aspace/sc_active_barcodes_old.csv")
   rename_file("/alma/aspace/#{remote_filename}", "/alma/aspace/sc_active_barcodes_old.csv")
 
@@ -107,6 +107,7 @@ def process_resource(resource, file, log_out, remote_file)
   tags040 = my_resource.tags040
   tag041 = my_resource.tag041
   tag099_a = my_resource.tag099_a
+  tag245_g = my_resource.tag245_g
   tag351 = my_resource.tag351
   tags500 = my_resource.tags500
   tags500_a = my_resource.tags500_a
@@ -161,6 +162,9 @@ def process_resource(resource, file, log_out, remote_file)
         <subfield code='c'>#{my_resource.tag008.content[7..10]}</subfield>
         <subfield code='e'>#{my_resource.tag008.content[11..14]}</subfield>
       </datafield>")
+
+  #addresses github #
+  tag245_g.content = "(mostly #{tag245_g.content})" unless tag245_g.nil?
 
   #addresses github #168
   #superseded by github #379
