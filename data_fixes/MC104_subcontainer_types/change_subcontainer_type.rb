@@ -2,7 +2,6 @@ require 'archivesspace/client'
 require 'active_support/all'
 require_relative 'helper_methods.rb'
 
-
 @client = aspace_login
 
 series = @client.get("/repositories/3/archival_objects/578617/children").parsed
