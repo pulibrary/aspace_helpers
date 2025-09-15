@@ -39,7 +39,7 @@ foreach ($dir in $lowestLevelDirs) {
     if ($numbers.Count -gt 1) {
         for ($i = 0; $i -lt $numbers.Count - 1; $i++) {
             if ($numbers[$i + 1] -ne $numbers[$i] + 1) {
-                $invalidNames += "Non-sequential file names in directory: $($dir.FullName) at: $($i)"
+                $invalidNames += "Non-sequential file names in directory: $($dir.FullName): $($numbers[$i]) followed by $($numbers[$i +1])"
                 break
             }
         }
