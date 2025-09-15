@@ -1,7 +1,7 @@
 # Define regex patterns
 $upperDirPattern = '^[A-Z]{1,2}\d{3,4}_c\d*$'
 $secondTierDirPattern = '^[\w\s\p{P}]+$'
-$filePattern = '^\d+\.(tif)$'
+$filePattern = '^\d{8}\.(tif)$'
 
 # Get all directories and files recursively
 $items = Get-ChildItem -Recurse
