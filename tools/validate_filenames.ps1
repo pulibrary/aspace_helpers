@@ -28,18 +28,18 @@ foreach ($item in $items) {
     }
 }
 
-# Check for sequential filenames
-$filenames = Get-ChildItem -Recurse -Directory | Where-Object { $_.GetFiles().Count -gt 0 }
+# Check for sequential filenames in the lowest level directories
+$lowestLevelDirs = Get-ChildItem -Recurse -Directory | Where-Object { $_.GetFiles().Count -gt 0 }
 
-foreach ($filename in $filenames) {
-    $files = Get-ChildItem -Path $filename.FullName -File | Where-Object { $_.Name -match $filePattern }
+foreach ($dir in $lowestLevelDirs) {
+    $files = Get-ChildItem -Path $dir.FullName -File | Where-Object { $_.Name -match $filePattern }
     $numbers = $files | ForEach-Object { [int]$_.BaseName } | Sort-Object
 
     # Check for sequential numbers
     if ($numbers.Count -gt 1) {
         for ($i = 0; $i -lt $numbers.Count - 1; $i++) {
             if ($numbers[$i + 1] -ne $numbers[$i] + 1) {
-                $invalidNames += "Non-sequential file name at: $($filename.FullName)"
+                $invalidNames += "Non-sequential file names in directory: $($dir.FullName) at: $($i)"
                 break
             }
         }
