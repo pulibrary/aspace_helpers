@@ -1,5 +1,5 @@
 # Define regex patterns
-$upperDirPattern = '^[A-Z]{2}\d{3}_c\d+$'
+$upperDirPattern = '(^C\d{3,4}_c\d+)|([A-Z]{2}\d{3,4}_c\d+)$'
 $secondTierDirPattern = '^[\w\s\p{P}]+$'
 $filePattern = '^\d{8}\.(tif)$'
 
