@@ -3,8 +3,8 @@ $upperDirPattern = '(^C\d{4}_c\d+)|([A-Z]{2}\d{3}_c\d+)$'
 $secondTierDirPattern = '^[\w\s\p{P}]+$'
 $filePattern = '^\d{8}\.(tif)$'
 
-# Get all directories and files recursively
-$items = Get-ChildItem -Recurse
+# Get all directories and files 
+$items = Get-ChildItem -Depth 1
 
 # Make an array for invalid names
 $errors = @()
@@ -18,7 +18,7 @@ foreach ($item in $items) {
         }
         # Check for second-tier directories
         elseif ($item.Parent.FullName -ne (Get-Location).Path -and -not ($item.Name -match $secondTierDirPattern)) {
-            $errors += "Invalid subdirectory name: $($item.FullName)"
+            $errors += "Invalid sub-directory name: $($item.FullName)"
         }
         if ($item.Parent.FullName -ne (Get-Location).Path) {
             $subItems = Get-ChildItem -Path $item.FullName -Directory
