@@ -7,31 +7,31 @@ $filePattern = '^\d{8}\.(tif)$'
 $items = Get-ChildItem -Recurse
 
 # Make an array for invalid names
-$invalidNames = @()
+$errors = @()
 
 # Check each item
 foreach ($item in $items) {
     if ($item.PSIsContainer) {
         # Check for uppermost directories
         if ($item.Parent.FullName -eq (Get-Location).Path -and -not ($item.Name -match $upperDirPattern)) {
-            $invalidNames += "$($item.FullName) is not a valid top-directory name"
+            $errors += "Invalid top-directory name: $($item.FullName)"
         }
         # Check for second-tier directories
         elseif ($item.Parent.FullName -ne (Get-Location).Path -and -not ($item.Name -match $secondTierDirPattern)) {
-            $invalidNames += "$($item.FullName) is not a valid directory name"
+            $errors += "Invalid subdirectory name: $($item.FullName)"
         }
         if ($item.Parent.FullName -ne (Get-Location).Path) {
             $subItems = Get-ChildItem -Path $item.FullName -Directory
             foreach ($subitem in $subItems) {
             if ($subitem.PSIsContainer) {
-                $invalidNames += "$($subitem.FullName) is a subdirectory not allowed at this level"
+                $errors += "Subdirectory nested too deep: $($subitem.FullName)"
             }
           }
         }
     } else {
         # Check for file names
         if (-not ($item.Name -match $filePattern)) {
-            $invalidNames += "$($item.FullName) is not a valid file name or extension"
+            $errors += "Invalid file name or extension: $($item.FullName)"
         }
     }
 }
@@ -47,7 +47,7 @@ foreach ($dir in $lowestLevelDirs) {
     if ($numbers.Count -gt 1) {
         for ($i = 0; $i -lt $numbers.Count - 1; $i++) {
             if ($numbers[$i + 1] -ne $numbers[$i] + 1) {
-                $invalidNames += "$($dir.FullName) contains a sequence break; check following file number $($numbers[$i].ToString().PadLeft(8, '0'))"
+                $errors += "Files out of sequence in directory: $($dir.FullName) (check following file number $($numbers[$i].ToString().PadLeft(8, '0')))"
                 break
             }
         }
@@ -55,8 +55,8 @@ foreach ($dir in $lowestLevelDirs) {
 }
 
 # Output invalid names
-if ($invalidNames.Count -eq 0) {
+if ($errors.Count -eq 0) {
     Write-Host "All directory and file names are valid."
 } else {
-    $invalidNames | ForEach-Object { Write-Host $_ }
+    $errors | ForEach-Object { Write-Host $_ }
 }
