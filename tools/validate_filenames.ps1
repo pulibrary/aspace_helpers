@@ -20,15 +20,13 @@ foreach ($item in $items) {
         elseif ($item.Parent.FullName -ne (Get-Location).Path -and -not ($item.Name -match $secondTierDirPattern)) {
             $invalidNames += "Invalid second-tier directory name: $($item.FullName)"
         }
-        # Check if the second-tier directory contains only files
-
-#Get-ChildItem -Path "C:\YourDirectory" -Directory
-        
         if ($item.Parent.FullName -ne (Get-Location).Path) {
             $subItems = Get-ChildItem -Path $item.FullName -Directory
-            if ($subItems.PSIsContainer) {
-                $invalidNames += "Nested subdirectory $($subitems) not allowed at this level"
+            foreach ($subitem in $subItems) {
+            if ($subitem.PSIsContainer) {
+                $invalidNames += "Nested subdirectory $($subitem) not allowed at this level"
             }
+          }
         }
     } else {
         # Check for file names
