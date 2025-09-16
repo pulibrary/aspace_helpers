@@ -1,5 +1,5 @@
 # Define regex patterns
-$upperDirPattern = '^[A-Z]{1,2}\d{3,4}_c\d*$'
+$upperDirPattern = '^[A-Z]{2}\d{3}_c\d+$'
 $secondTierDirPattern = '^[\w\s\p{P}]+$'
 $filePattern = '^\d{8}\.(tif)$'
 
@@ -39,7 +39,7 @@ foreach ($dir in $lowestLevelDirs) {
     if ($numbers.Count -gt 1) {
         for ($i = 0; $i -lt $numbers.Count - 1; $i++) {
             if ($numbers[$i + 1] -ne $numbers[$i] + 1) {
-                $invalidNames += "Non-sequential file names in directory: $($dir.FullName): $($numbers[$i]) followed by $($numbers[$i +1])"
+                $invalidNames += "Non-sequential file names in directory: $($dir.FullName) following file number $($numbers[$i].ToString().PadLeft(8, '0'))."
                 break
             }
         }
