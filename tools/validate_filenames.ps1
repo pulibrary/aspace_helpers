@@ -24,7 +24,7 @@ foreach ($item in $items) {
             $subItems = Get-ChildItem -Path $item.FullName -Directory
             foreach ($subitem in $subItems) {
             if ($subitem.PSIsContainer) {
-                $invalidNames += "Nested subdirectory $($subitem) not allowed at this level"
+                $invalidNames += "Nested subdirectory $($subitem.FullName) not allowed at this level"
             }
           }
         }
