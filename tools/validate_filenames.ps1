@@ -1,5 +1,5 @@
 # Define regex patterns
-$upperDirPattern = '(^C\d{3,4}_c\d+)|([A-Z]{2}\d{3,4}_c\d+)$'
+$upperDirPattern = '(^C\d{4}_c\d+)|([A-Z]{2}\d{3}_c\d+)$'
 $secondTierDirPattern = '^[\w\s\p{P}]+$'
 $filePattern = '^\d{8}\.(tif)$'
 
@@ -19,6 +19,16 @@ foreach ($item in $items) {
         # Check for second-tier directories
         elseif ($item.Parent.FullName -ne (Get-Location).Path -and -not ($item.Name -match $secondTierDirPattern)) {
             $invalidNames += "Invalid second-tier directory name: $($item.FullName)"
+        }
+        # Check if the second-tier directory contains only files
+
+#Get-ChildItem -Path "C:\YourDirectory" -Directory
+        
+        if ($item.Parent.FullName -ne (Get-Location).Path) {
+            $subItems = Get-ChildItem -Path $item.FullName -Directory
+            if ($subItems.PSIsContainer) {
+                $invalidNames += "Nested subdirectory $($subitems) not allowed at this level"
+            }
         }
     } else {
         # Check for file names
