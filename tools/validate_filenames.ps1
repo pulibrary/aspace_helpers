@@ -14,24 +14,24 @@ foreach ($item in $items) {
     if ($item.PSIsContainer) {
         # Check for uppermost directories
         if ($item.Parent.FullName -eq (Get-Location).Path -and -not ($item.Name -match $upperDirPattern)) {
-            $invalidNames += "Invalid upper directory name: $($item.FullName)"
+            $invalidNames += "$($item.FullName) is not a valid top-directory name"
         }
         # Check for second-tier directories
         elseif ($item.Parent.FullName -ne (Get-Location).Path -and -not ($item.Name -match $secondTierDirPattern)) {
-            $invalidNames += "Invalid second-tier directory name: $($item.FullName)"
+            $invalidNames += "$($item.FullName) is not a valid directory name"
         }
         if ($item.Parent.FullName -ne (Get-Location).Path) {
             $subItems = Get-ChildItem -Path $item.FullName -Directory
             foreach ($subitem in $subItems) {
             if ($subitem.PSIsContainer) {
-                $invalidNames += "Nested subdirectory $($subitem.FullName) not allowed at this level"
+                $invalidNames += "$($subitem.FullName) is a subdirectory not allowed at this level"
             }
           }
         }
     } else {
         # Check for file names
         if (-not ($item.Name -match $filePattern)) {
-            $invalidNames += "Invalid file name: $($item.FullName)"
+            $invalidNames += "$($item.FullName) is not a valid file name or extension"
         }
     }
 }
@@ -47,7 +47,7 @@ foreach ($dir in $lowestLevelDirs) {
     if ($numbers.Count -gt 1) {
         for ($i = 0; $i -lt $numbers.Count - 1; $i++) {
             if ($numbers[$i + 1] -ne $numbers[$i] + 1) {
-                $invalidNames += "Non-sequential file names in directory: $($dir.FullName) following file number $($numbers[$i].ToString().PadLeft(8, '0'))."
+                $invalidNames += "$($dir.FullName) contains a sequence break; check following file number $($numbers[$i].ToString().PadLeft(8, '0'))"
                 break
             }
         }
