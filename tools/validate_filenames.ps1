@@ -48,7 +48,6 @@ foreach ($dir in $lowestLevelDirs) {
         for ($i = 0; $i -lt $numbers.Count - 1; $i++) {
             if ($numbers[$i + 1] -ne $numbers[$i] + 1) {
                 $errors += "Files out of sequence in directory: $($dir.FullName) (check following file number $($numbers[$i].ToString().PadLeft(8, '0')))"
-                break
             }
         }
     }
