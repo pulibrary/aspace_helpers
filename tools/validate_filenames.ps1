@@ -16,8 +16,8 @@ foreach ($item in $items) {
         if ($item.Parent.FullName -eq (Get-Location).Path -and -not ($item.Name -match $upperDirPattern)) {
             $errors += "Invalid top-directory name: $($item.FullName)"
         }
-        # Check for second-tier directories
-        elseif ($item.Parent.FullName -ne (Get-Location).Path -and -not ($item.Name -match $secondTierDirPattern)) {
+        # Check second-tier directories
+        if ($item.Parent.FullName -ne (Get-Location).Path -and -not ($item.Name -match $secondTierDirPattern)) {
             $errors += "Invalid sub-directory name: $($item.FullName)"
         }
         if ($item.Parent.FullName -ne (Get-Location).Path) {
