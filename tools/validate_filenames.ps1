@@ -4,7 +4,7 @@ $secondTierDirPattern = '^[\w\s\p{P}]+$'
 $filePattern = '^\d{8}\.(tif)$'
 
 # Get all directories and files 
-$items = Get-ChildItem -Depth 1
+$items = Get-ChildItem -Recurse
 
 # Make an array for invalid names
 $errors = @()
@@ -20,6 +20,7 @@ foreach ($item in $items) {
         if ($item.Parent.FullName -ne (Get-Location).Path -and -not ($item.Name -match $secondTierDirPattern)) {
             $errors += "Invalid sub-directory name: $($item.FullName)"
         }
+        #Check nesting
         if ($item.Parent.FullName -ne (Get-Location).Path) {
             $subItems = Get-ChildItem -Path $item.FullName -Directory
             foreach ($subitem in $subItems) {
@@ -47,7 +48,7 @@ foreach ($dir in $lowestLevelDirs) {
     if ($numbers.Count -gt 1) {
         for ($i = 0; $i -lt $numbers.Count - 1; $i++) {
             if ($numbers[$i + 1] -ne $numbers[$i] + 1) {
-                $errors += "Files out of sequence in directory: $($dir.FullName) (check following file number $($numbers[$i].ToString().PadLeft(8, '0')))"
+                $errors += "Files out of sequence in this directory: $($dir.FullName) (check following file number $($numbers[$i].ToString().PadLeft(8, '0')))"
             }
         }
     }
