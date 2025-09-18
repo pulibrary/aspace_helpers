@@ -3,35 +3,36 @@ $upperDirPattern = '(^C\d{4}_c\d+)|([A-Z]{2}\d{3}_c\d+)$'
 $secondTierDirPattern = '^[\w\s\p{P}]+$'
 $filePattern = '^\d{8}\.(tif)$'
 
-# Get all directories and files recursively
+# Get all directories and files 
 $items = Get-ChildItem -Recurse
 
 # Make an array for invalid names
-$invalidNames = @()
+$errors = @()
 
 # Check each item
 foreach ($item in $items) {
     if ($item.PSIsContainer) {
         # Check for uppermost directories
         if ($item.Parent.FullName -eq (Get-Location).Path -and -not ($item.Name -match $upperDirPattern)) {
-            $invalidNames += "$($item.FullName) is not a valid top-directory name"
+            $errors += "Invalid top-directory name: $($item.FullName)"
         }
-        # Check for second-tier directories
-        elseif ($item.Parent.FullName -ne (Get-Location).Path -and -not ($item.Name -match $secondTierDirPattern)) {
-            $invalidNames += "$($item.FullName) is not a valid directory name"
+        # Check second-tier directories
+        if ($item.Parent.FullName -ne (Get-Location).Path -and -not ($item.Name -match $secondTierDirPattern)) {
+            $errors += "Invalid sub-directory name: $($item.FullName)"
         }
+        #Check nesting
         if ($item.Parent.FullName -ne (Get-Location).Path) {
             $subItems = Get-ChildItem -Path $item.FullName -Directory
             foreach ($subitem in $subItems) {
             if ($subitem.PSIsContainer) {
-                $invalidNames += "$($subitem.FullName) is a subdirectory not allowed at this level"
+                $errors += "Subdirectory nested too deep: $($subitem.FullName)"
             }
           }
         }
     } else {
         # Check for file names
         if (-not ($item.Name -match $filePattern)) {
-            $invalidNames += "$($item.FullName) is not a valid file name or extension"
+            $errors += "Invalid file name or extension: $($item.FullName)"
         }
     }
 }
@@ -47,16 +48,15 @@ foreach ($dir in $lowestLevelDirs) {
     if ($numbers.Count -gt 1) {
         for ($i = 0; $i -lt $numbers.Count - 1; $i++) {
             if ($numbers[$i + 1] -ne $numbers[$i] + 1) {
-                $invalidNames += "$($dir.FullName) contains a sequence break; check following file number $($numbers[$i].ToString().PadLeft(8, '0'))"
-                break
+                $errors += "Files out of sequence in this directory: $($dir.FullName) (check following file number $($numbers[$i].ToString().PadLeft(8, '0')))"
             }
         }
     }
 }
 
 # Output invalid names
-if ($invalidNames.Count -eq 0) {
+if ($errors.Count -eq 0) {
     Write-Host "All directory and file names are valid."
 } else {
-    $invalidNames | ForEach-Object { Write-Host $_ }
+    $errors | ForEach-Object { Write-Host $_ }
 }
