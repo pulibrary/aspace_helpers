@@ -33,17 +33,17 @@ def aspace_staging_login()
   @client = ArchivesSpace::Client.new(@config).login
 end
 
-def get_all_resource_records_for_institution(resolve = [])
-  #run through all repositories (1 and 2 are reserved for admin use)
-  repos_all = (3..12).to_a
-  resources_endpoints = repos_all.map do |repo|
-    'repositories/'+repo.to_s+'/resources'
-    end
-  #debug
-  #puts "endpoints to process are:"
-  #puts resources_endpoints
+def get_all_repo_uris
+  repositories = @client.get('/repositories').parsed
+  repositories.map do |repo|
+    repo['uri']
+  end
+end
 
-  #for each endpoint, get the count of records
+def get_all_resource_records_for_institution(resolve = [])
+  resources_endpoints = get_all_repo_uris.map do |repo|
+    repo+'/resources'
+    end
   @results = []
   resources_endpoints.each do |endpoint|
     @ids_by_endpoint = []
@@ -53,23 +53,15 @@ def get_all_resource_records_for_institution(resolve = [])
       }}).parsed
     @ids_by_endpoint = @ids_by_endpoint.flatten!
     count_ids = @ids_by_endpoint.count
-    #debug
-    #puts "number of records to retrieve for #{endpoint}:"
-    #puts count_ids
-
-    #for each endpoint, get the record by id and add to array of records
     paginate_endpoint(@ids_by_endpoint, count_ids, endpoint, resolve)
-  end #close resources_endpoints.each
-
-  #return array of results
+  end 
   @results = @results.flatten!
-end #close method
+end 
 
 def get_all_event_records_for_institution(resolve = [])
   #run through all repositories (1 and 2 are reserved for admin use)
-  repos_all = (3..12).to_a
-  resources_endpoints = repos_all.map do |repo|
-    'repositories/'+repo.to_s+'/events'
+  resources_endpoints = get_all_repo_uris.map do |repo|
+    repo+'/events'
     end
   #debug
   #puts "endpoints to process are:"
@@ -240,9 +232,8 @@ end
 
 def get_all_top_container_records_for_institution(resolve = [])
   #run through all repositories (1 and 2 are reserved for admin use)
-  repos_all = (3..12).to_a
-  resources_endpoints = repos_all.map do |repo|
-    'repositories/'+repo.to_s+'/top_containers'
+  resources_endpoints = get_all_repo_uris.map do |repo|
+    repo+'/top_containers'
     end
 
   #for each endpoint, get the count of records
@@ -304,9 +295,8 @@ end
 
 def get_all_resource_uris_for_institution()
   #run through all repositories (1 and 2 are reserved for admin use)
-  repos_all = (3..12).to_a
-  resources_endpoints = repos_all.map do |repo|
-    'repositories/'+repo.to_s+'/resources'
+  resources_endpoints = get_all_repo_uris.map do |repo|
+    repo+'/resources'
     end
   @uris = []
   resources_endpoints.each do |endpoint|
