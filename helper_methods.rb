@@ -32,51 +32,74 @@ def aspace_staging_login()
   #log in
   @client = ArchivesSpace::Client.new(@config).login
 end
-
+#this works
 def get_all_repo_uris
   repositories = @client.get('/repositories').parsed
-  repositories.map do |repo|
-    repo['uri']
-  end
+  repositories.map {|repo| repo['uri']}
+end
+#this works
+def get_repo_id_from_uri(uri)
+  uri.gsub('/repositories/', '')
 end
 
+#this works
+def get_resource_ids_for_all_repos
+  repos = get_all_repo_uris
+  @ids = []
+  repos.each do |repo|
+    @ids << @client.get("#{repo}/resources", {
+      query: {
+        all_ids: true
+      }}).parsed
+  end
+  @ids.flatten!
+end
+#this works
 def get_resource_uris_for_all_repos
-  get_all_repo_uris.map do |repo|
-    repo+'/resources'
-  end
-end
-
-def add_ids_to_array(repo, record_type)
-  @ids_by_endpoint = []
-  @ids_by_endpoint << @client.get("repositories/#{repo}/#{record_type}", {
+  @uris = get_all_repo_uris.map do |repo|
+    ids = @client.get("#{repo}/resources", {
     query: {
       all_ids: true
     }}).parsed
-  @ids_by_endpoint = @ids_by_endpoint.flatten!
+    ids.map do |id|
+      "#{repo}/resources/#{id}"
+    end
+  end
+  @uris.flatten!
 end
-
+#this works
+def add_ids_to_array(repo, record_type)
+  @ids = []
+  @ids << @client.get("repositories/#{repo}/#{record_type}", {
+    query: {
+      all_ids: true
+    }}).parsed
+  @ids = @ids.flatten!
+end
+#this works
 def get_resource_uris_for_specific_repos(repos = [])
   @uris = []
   repos.each do |repo|
     add_ids_to_array(repo, 'resources')
-    @ids_by_endpoint.each do |id|
+    @ids.each do |id|
       @uris << "repositories/#{repo}/resources/#{id}"
     end
   end
   @uris
 end 
-
+#this works (hands off to paginate_endpoint)
 def get_all_resource_records_for_institution(resolve = [])
-  @results = []
-  get_resource_uris_for_all_repos.each do |endpoint|
-    add_ids_to_array
-    count_ids = @ids_by_endpoint.count
-    paginate_endpoint(@ids_by_endpoint, count_ids, endpoint, resolve)
-  end 
-  @results = @results.flatten!
+  repos = get_all_repo_uris
+  repos.map do |repo|
+    repo_id = get_repo_id_from_uri(repo)
+    resource_ids = add_ids_to_array(repo_id, 'resources')
+    count_ids = resource_ids.count
+    paginate_endpoint(resource_ids, count_ids, "#{repo}/resources", resolve)
+  end
 end 
-
+#this works (returns records)
 def paginate_endpoint(ids, count_ids, endpoint, resolve)
+  @results = []
   count_processed_records = 0
   while count_processed_records < count_ids do
     last_record = [count_processed_records+249, count_ids].min
@@ -88,15 +111,20 @@ def paginate_endpoint(ids, count_ids, endpoint, resolve)
           }).parsed
     count_processed_records = last_record
   end
+  @results.flatten
+end
+#this works
+def get_all_records_of_type_in_repo(record_type, repo, resolve = [])
+  get_paginated_records(record_type, repo, resolve)
+  @results.flatten!
 end
 
-def construct_endpoint(repo, endpoint_name)
-  endpoint = 'repositories/'+repo.to_s+'/'+endpoint_name.to_s
+def construct_endpoint(repo, record_type)
+  endpoint = 'repositories/'+repo.to_s+'/'+record_type.to_s
 end
 
-def get_paginated_records(type, repo, resolve)
-  @results = []
-  endpoint = construct_endpoint(repo, type)
+def get_paginated_records(record_type, repo, resolve)
+  endpoint = construct_endpoint(repo, record_type)
   ids = []
   ids << @client.get(endpoint, {
     query: {
@@ -104,67 +132,6 @@ def get_paginated_records(type, repo, resolve)
     }}).parsed
   count_ids = ids.flatten!.count
   paginate_endpoint(ids, count_ids, endpoint, resolve)
-end
-
-#e.g., ("archival_objects", 12)
-def get_all_records_of_type_in_repo(type, repo, resolve = [])
-  get_paginated_records(type, repo, resolve)
-  @results.flatten!
-end
-
-def get_single_resource_by_id(repo, id, resolve = [])
-  endpoint_name = '/resources/'
-  endpoint = construct_endpoint(repo, endpoint_name)
-  id = id.to_s
-  @client.get(endpoint + id,{
-    query: {
-     id_set: id,
-     resolve: resolve
-    }}).parsed
-end
-
-def get_single_archival_object_by_id(repo, id, resolve = [])
-    endpoint_name = '/archival_objects/'
-    endpoint = construct_endpoint(repo, endpoint_name)
-    id = id.to_s
-    @client.get(endpoint + id,{
-      query: {
-       id_set: id,
-       resolve: resolve
-      }}).parsed
-end
-
-def get_single_container_by_id(repo, id, resolve = [])
-  endpoint_name = '/top_containers/'
-  endpoint = construct_endpoint(repo, endpoint_name)
-  id = id.to_s
-  @client.get(endpoint + id,{
-    query: {
-     id_set: id,
-     resolve: resolve
-    }}).parsed
-end
-
-def get_single_event_by_id(repo, id, resolve = [])
-  endpoint_name = '/events/'
-  endpoint = construct_endpoint(repo, endpoint_name)
-  id = id.to_s
-  @client.get(endpoint + id,{
-    query: {
-     id_set: id,
-     resolve: resolve
-    }}).parsed
-end
-
-def get_single_do_by_id(repo, id, resolve = [])
-  endpoint_name = '/digital_objects/'
-  endpoint = construct_endpoint(repo, endpoint_name)
-  id = id.to_s
-  @client.get(endpoint + id,{
-    query: {
-     id_set: id,
-     resolve: resolve
-    }}).parsed
 end
 
 def get_single_archival_object_by_cid(repo, cid, resolve = [])
@@ -183,10 +150,10 @@ def get_single_resource_by_eadid(repo, eadid, resolve = [])
   end
 end
 
+#error: add ids to array L49
 def get_uris_by_eadids(eadids, resolve = [])
-  collections_all = get_all_resource_records_for_institution()
   selected_resources = []
-  selected_resources << collections_all.select {|collection| eadids.include? collection['ead_id']}
+  selected_resources << get_all_resource_records_for_institution.select {|collection| eadids.include? collection['ead_id']}
   uris = selected_resources.flatten.map {|resource| "#{resource['uri']}, #{resource['ead_id']}"}
 end
 
@@ -212,20 +179,20 @@ end
 
 def get_all_top_container_records_for_institution(resolve = [])
   @results = []
-  get_resource_uris_for_all_repos.each do |endpoint|
+  get_resource_uris_for_all_repos.each do |uri|
     add_ids_to_array
-    count_ids = @ids_by_endpoint.count
-    paginate_endpoint(@ids_by_endpoint, count_ids, endpoint, resolve)
+    count_ids = @ids.count
+    paginate_endpoint(@ids, count_ids, uri, resolve)
   end 
   @results = @results.flatten!
 end
 
 def get_all_digital_object_records_for_a_repository(repo, resolve = [])
   @results = []
-  get_resource_uris_for_all_repos.each do |endpoint|
+  get_resource_uris_for_all_repos.each do |uri|
     add_ids_to_array
-    count_ids = @ids_by_endpoint.count
-    paginate_endpoint(@ids_by_endpoint, count_ids, endpoint, resolve)
+    count_ids = @ids.count
+    paginate_endpoint(@ids, count_ids, uri, resolve)
   end 
   @results = @results.flatten!
 end
@@ -247,17 +214,6 @@ def add_revision_statement(uri, description)
   post = @client.post(uri, resource.to_json)
   puts post.body
 end
-
-def get_all_resource_uris_for_institution()
-  @uris = []
-  get_resource_uris_for_all_repos.each do |endpoint|
-    add_ids_to_array
-    @ids_by_endpoint.each do |id|
-      @uris << "/#{endpoint}/#{id}"
-    end
-  end 
-  @uris
-end 
 
 def get_users()
   endpoint_name = '/users'
