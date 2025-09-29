@@ -40,7 +40,7 @@ def get_all_repo_uris
   end
 end
 
-def get_resource_endpoints_for_all_repos
+def get_resource_uris_for_all_repos
   get_all_repo_uris.map do |repo|
     repo+'/resources'
   end
@@ -48,22 +48,7 @@ end
 
 def get_all_resource_records_for_institution(resolve = [])
   @results = []
-  get_resource_endpoints_for_all_repos.each do |endpoint|
-    @ids_by_endpoint = []
-    @ids_by_endpoint << @client.get(endpoint, {
-      query: {
-       all_ids: true
-      }}).parsed
-    @ids_by_endpoint = @ids_by_endpoint.flatten!
-    count_ids = @ids_by_endpoint.count
-    paginate_endpoint(@ids_by_endpoint, count_ids, endpoint, resolve)
-  end 
-  @results = @results.flatten!
-end 
-
-def get_all_event_records_for_institution(resolve = [])
-@results = []
-  get_resource_endpoints_for_all_repos.each do |endpoint|
+  get_resource_uris_for_all_repos.each do |endpoint|
     @ids_by_endpoint = []
     @ids_by_endpoint << @client.get(endpoint, {
       query: {
@@ -94,9 +79,9 @@ def construct_endpoint(repo, endpoint_name)
   endpoint = 'repositories/'+repo.to_s+'/'+endpoint_name.to_s
 end
 
-def get_paginated_records(repo, endpoint_name, resolve)
+def get_paginated_records(type, repo, resolve)
   @results = []
-  endpoint = construct_endpoint(repo, endpoint_name)
+  endpoint = construct_endpoint(repo, type)
   ids = []
   ids << @client.get(endpoint, {
     query: {
@@ -106,8 +91,9 @@ def get_paginated_records(repo, endpoint_name, resolve)
   paginate_endpoint(ids, count_ids, endpoint, resolve)
 end
 
-def get_all_records_for_repo_endpoint(repo, endpoint_name, resolve = [])
-  get_paginated_records(repo, endpoint_name, resolve)
+#e.g., ("archival_objects", 12)
+def get_all_records_of_type_in_repo(type, repo, resolve = [])
+  get_paginated_records(type, repo, resolve)
   @results.flatten!
 end
 
@@ -168,7 +154,7 @@ end
 
 def get_single_archival_object_by_cid(repo, cid, resolve = [])
   endpoint_name = 'archival_objects'
-  components_all = get_all_records_for_repo_endpoint(repo, endpoint_name, resolve)
+  components_all = get_all_records_of_type_in_repo(type, repo, resolve)
   selected_resources = components_all.select do |c|
     c['ref_id'] == cid
   end
@@ -176,7 +162,7 @@ end
 
 def get_single_resource_by_eadid(repo, eadid, resolve = [])
   endpoint_name = 'resources'
-  collections_all = get_all_records_for_repo_endpoint(repo, endpoint_name, resolve)
+  collections_all = get_all_records_of_type_in_repo(type, repo, resolve)
   selected_resources = collections_all.select do |c|
     c['ead_id'] == eadid
   end
@@ -211,7 +197,7 @@ end
 
 def get_all_top_container_records_for_institution(resolve = [])
   @results = []
-  get_resource_endpoints_for_all_repos.each do |endpoint|
+  get_resource_uris_for_all_repos.each do |endpoint|
     @ids_by_endpoint = []
     @ids_by_endpoint << @client.get(endpoint, {
       query: {
@@ -226,7 +212,7 @@ end
 
 def get_all_digital_object_records_for_a_repository(repo, resolve = [])
   @results = []
-  get_resource_endpoints_for_all_repos.each do |endpoint|
+  get_resource_uris_for_all_repos.each do |endpoint|
     @ids_by_endpoint = []
     @ids_by_endpoint << @client.get(endpoint, {
       query: {
@@ -240,7 +226,7 @@ def get_all_digital_object_records_for_a_repository(repo, resolve = [])
 end
 
 def get_all_archival_objects_for_resource(repo, id, resolve = [])
-  archival_objects_all = get_all_records_for_repo_endpoint(repo, 'archival_objects', resolve)
+  archival_objects_all = get_all_records_of_type_in_repo('archival_objects', repo, resolve)
   archival_objects_filtered =
     archival_objects_all.select do |ao|
       ao['resource']['ref'] == "/repositories/#{repo}/resources/#{id}"
@@ -259,7 +245,7 @@ end
 
 def get_all_resource_uris_for_institution()
   @uris = []
-  get_resource_endpoints_for_all_repos.each do |endpoint|
+  get_resource_uris_for_all_repos.each do |endpoint|
     ids_by_endpoint = []
     ids_by_endpoint << @client.get(endpoint, {
       query: {
@@ -334,7 +320,7 @@ end
 
 def get_all_resource_uris_for_repos(repos = [])
   @uris = []
-  get_resource_endpoints_for_all_repos.each do |endpoint|
+  get_resource_uris_for_all_repos.each do |endpoint|
     ids_by_endpoint = []
     ids_by_endpoint << @client.get(endpoint, {
       query: {
