@@ -46,15 +46,30 @@ def get_resource_uris_for_all_repos
   end
 end
 
+def add_ids_to_array(repo, record_type)
+  @ids_by_endpoint = []
+  @ids_by_endpoint << @client.get("repositories/#{repo}/#{record_type}", {
+    query: {
+      all_ids: true
+    }}).parsed
+  @ids_by_endpoint = @ids_by_endpoint.flatten!
+end
+
+def get_resource_uris_for_specific_repos(repos = [])
+  @uris = []
+  repos.each do |repo|
+    add_ids_to_array(repo, 'resources')
+    @ids_by_endpoint.each do |id|
+      @uris << "repositories/#{repo}/resources/#{id}"
+    end
+  end
+  @uris
+end 
+
 def get_all_resource_records_for_institution(resolve = [])
   @results = []
   get_resource_uris_for_all_repos.each do |endpoint|
-    @ids_by_endpoint = []
-    @ids_by_endpoint << @client.get(endpoint, {
-      query: {
-       all_ids: true
-      }}).parsed
-    @ids_by_endpoint = @ids_by_endpoint.flatten!
+    add_ids_to_array
     count_ids = @ids_by_endpoint.count
     paginate_endpoint(@ids_by_endpoint, count_ids, endpoint, resolve)
   end 
@@ -198,12 +213,7 @@ end
 def get_all_top_container_records_for_institution(resolve = [])
   @results = []
   get_resource_uris_for_all_repos.each do |endpoint|
-    @ids_by_endpoint = []
-    @ids_by_endpoint << @client.get(endpoint, {
-      query: {
-       all_ids: true
-      }}).parsed
-    @ids_by_endpoint = @ids_by_endpoint.flatten!
+    add_ids_to_array
     count_ids = @ids_by_endpoint.count
     paginate_endpoint(@ids_by_endpoint, count_ids, endpoint, resolve)
   end 
@@ -213,12 +223,7 @@ end
 def get_all_digital_object_records_for_a_repository(repo, resolve = [])
   @results = []
   get_resource_uris_for_all_repos.each do |endpoint|
-    @ids_by_endpoint = []
-    @ids_by_endpoint << @client.get(endpoint, {
-      query: {
-       all_ids: true
-      }}).parsed
-    @ids_by_endpoint = @ids_by_endpoint.flatten!
+    add_ids_to_array
     count_ids = @ids_by_endpoint.count
     paginate_endpoint(@ids_by_endpoint, count_ids, endpoint, resolve)
   end 
@@ -246,13 +251,8 @@ end
 def get_all_resource_uris_for_institution()
   @uris = []
   get_resource_uris_for_all_repos.each do |endpoint|
-    ids_by_endpoint = []
-    ids_by_endpoint << @client.get(endpoint, {
-      query: {
-       all_ids: true
-      }}).parsed
-    ids_by_endpoint = ids_by_endpoint.flatten!
-    ids_by_endpoint.each do |id|
+    add_ids_to_array
+    @ids_by_endpoint.each do |id|
       @uris << "/#{endpoint}/#{id}"
     end
   end 
@@ -318,21 +318,7 @@ def add_resource_revision_statement(record, text)
   }
 end
 
-def get_all_resource_uris_for_repos(repos = [])
-  @uris = []
-  get_resource_uris_for_all_repos.each do |endpoint|
-    ids_by_endpoint = []
-    ids_by_endpoint << @client.get(endpoint, {
-      query: {
-       all_ids: true
-      }}).parsed
-    ids_by_endpoint = ids_by_endpoint.flatten!
-    ids_by_endpoint.each do |id|
-      @uris << "/#{endpoint}/#{id}"
-    end
-  end 
-  @uris
-end 
+
 
 def get_index_of_resource_uri(uri, repo)
   uris = get_all_resource_uris_for_repos([repo])
