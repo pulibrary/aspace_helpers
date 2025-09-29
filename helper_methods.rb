@@ -40,6 +40,12 @@ def get_all_repo_uris
   end
 end
 
+def resources_endpoints
+  get_all_repo_uris.map do |repo|
+    repo+'/resources'
+  end
+end
+
 def get_all_resource_records_for_institution(resolve = [])
   resources_endpoints = get_all_repo_uris.map do |repo|
     repo+'/resources'
@@ -295,9 +301,6 @@ end
 
 def get_all_resource_uris_for_institution()
   #run through all repositories (1 and 2 are reserved for admin use)
-  resources_endpoints = get_all_repo_uris.map do |repo|
-    repo+'/resources'
-    end
   @uris = []
   resources_endpoints.each do |endpoint|
     ids_by_endpoint = []
