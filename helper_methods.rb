@@ -40,18 +40,15 @@ def get_all_repo_uris
   end
 end
 
-def resources_endpoints
+def get_all_repo_resources_endpoints
   get_all_repo_uris.map do |repo|
     repo+'/resources'
   end
 end
 
 def get_all_resource_records_for_institution(resolve = [])
-  resources_endpoints = get_all_repo_uris.map do |repo|
-    repo+'/resources'
-    end
   @results = []
-  resources_endpoints.each do |endpoint|
+  get_all_repo_resources_endpoints.each do |endpoint|
     @ids_by_endpoint = []
     @ids_by_endpoint << @client.get(endpoint, {
       query: {
@@ -66,16 +63,13 @@ end
 
 def get_all_event_records_for_institution(resolve = [])
   #run through all repositories (1 and 2 are reserved for admin use)
-  resources_endpoints = get_all_repo_uris.map do |repo|
-    repo+'/events'
-    end
   #debug
   #puts "endpoints to process are:"
   #puts resources_endpoints
 
   #for each endpoint, get the count of records
   @results = []
-  resources_endpoints.each do |endpoint|
+  get_all_repo_resources_endpoints.each do |endpoint|
     @ids_by_endpoint = []
     @ids_by_endpoint << @client.get(endpoint, {
       query: {
@@ -238,13 +232,9 @@ end
 
 def get_all_top_container_records_for_institution(resolve = [])
   #run through all repositories (1 and 2 are reserved for admin use)
-  resources_endpoints = get_all_repo_uris.map do |repo|
-    repo+'/top_containers'
-    end
-
   #for each endpoint, get the count of records
   @results = []
-  resources_endpoints.each do |endpoint|
+  get_all_repo_resources_endpoints.each do |endpoint|
     @ids_by_endpoint = []
     @ids_by_endpoint << @client.get(endpoint, {
       query: {
@@ -260,12 +250,9 @@ def get_all_top_container_records_for_institution(resolve = [])
 end
 
 def get_all_digital_object_records_for_a_repository(repo, resolve = [])
-  resources_endpoints = []
-  resources_endpoints << 'repositories/'+repo.to_s+'/digital_objects'
-
   #for each endpoint, get the count of records
   @results = []
-  resources_endpoints.each do |endpoint|
+  get_all_repo_resources_endpoints.each do |endpoint|
     @ids_by_endpoint = []
     @ids_by_endpoint << @client.get(endpoint, {
       query: {
@@ -302,7 +289,7 @@ end
 def get_all_resource_uris_for_institution()
   #run through all repositories (1 and 2 are reserved for admin use)
   @uris = []
-  resources_endpoints.each do |endpoint|
+  get_all_repo_resources_endpoints.each do |endpoint|
     ids_by_endpoint = []
     ids_by_endpoint << @client.get(endpoint, {
       query: {
@@ -382,11 +369,8 @@ end
 #get resource uri's for specific repositories
 #add repositories in as an array of ids
 def get_all_resource_uris_for_repos(repos = [])
-  resources_endpoints = repos.map do |repo|
-    'repositories/'+repo.to_s+'/resources'
-    end
   @uris = []
-  resources_endpoints.each do |endpoint|
+  get_all_repo_resources_endpoints.each do |endpoint|
     ids_by_endpoint = []
     ids_by_endpoint << @client.get(endpoint, {
       query: {
