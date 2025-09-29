@@ -95,7 +95,7 @@ def get_all_resource_records_for_institution(resolve = [])
     resource_ids = add_ids_to_array(repo_id, 'resources')
     count_ids = resource_ids.count
     paginate_endpoint(resource_ids, count_ids, "#{repo}/resources", resolve)
-  end
+  end.flatten
 end 
 #this works (returns records)
 def paginate_endpoint(ids, count_ids, endpoint, resolve)
@@ -118,11 +118,11 @@ def get_all_records_of_type_in_repo(record_type, repo, resolve = [])
   get_paginated_records(record_type, repo, resolve)
   @results.flatten!
 end
-
+#this works
 def construct_endpoint(repo, record_type)
   endpoint = 'repositories/'+repo.to_s+'/'+record_type.to_s
 end
-
+#this works
 def get_paginated_records(record_type, repo, resolve)
   endpoint = construct_endpoint(repo, record_type)
   ids = []
@@ -133,43 +133,36 @@ def get_paginated_records(record_type, repo, resolve)
   count_ids = ids.flatten!.count
   paginate_endpoint(ids, count_ids, endpoint, resolve)
 end
-
+#this works
 def get_single_archival_object_by_cid(repo, cid, resolve = [])
-  endpoint_name = 'archival_objects'
-  components_all = get_all_records_of_type_in_repo(type, repo, resolve)
+  record_type = 'archival_objects'
+  components_all = get_all_records_of_type_in_repo(record_type, repo, resolve)
   selected_resources = components_all.select do |c|
     c['ref_id'] == cid
   end
 end
-
+#this works
 def get_single_resource_by_eadid(repo, eadid, resolve = [])
-  endpoint_name = 'resources'
-  collections_all = get_all_records_of_type_in_repo(type, repo, resolve)
+  record_type = 'resources'
+  collections_all = get_all_records_of_type_in_repo(record_type, repo, resolve)
   selected_resources = collections_all.select do |c|
     c['ead_id'] == eadid
   end
 end
-
-#error: add ids to array L49
+#this works
 def get_uris_by_eadids(eadids, resolve = [])
-  selected_resources = []
-  selected_resources << get_all_resource_records_for_institution.select {|collection| eadids.include? collection['ead_id']}
-  uris = selected_resources.flatten.map {|resource| "#{resource['uri']}, #{resource['ead_id']}"}
+  selected_resources = get_resources_by_eadids(eadids, resolve)
+  uris = selected_resources.flatten.map do |resource| 
+    "#{resource['uri']}, #{resource['ead_id']}"
+  end
 end
-
-def get_array_of_resources_by_eadids(eadids, resolve = [])
-  collections_all = get_all_resource_records_for_institution()
+#this works
+def get_resources_by_eadids(eadids, resolve = [])
   selected_resources = []
-  selected_resources << collections_all.select {|collection| eadids.include? collection['ead_id']}
-end
-
-def get_agent_by_id(agent_type, agent_id, resolve = [])
-endpoint_name = '/agents/' + agent_type
-ids = @client.get(endpoint_name.to_s, {
-  query: {
-   id_set: agent_id.to_s,
-   resolve: resolve
-  }}).parsed
+  selected_resources << get_all_resource_records_for_institution.select do |resource| 
+    eadids.include? resource['ead_id']
+  end
+  selected_resources
 end
 
 def get_person_by_id_as_xml(repo_id, agent_id)
@@ -203,16 +196,6 @@ def get_all_archival_objects_for_resource(repo, id, resolve = [])
     archival_objects_all.select do |ao|
       ao['resource']['ref'] == "/repositories/#{repo}/resources/#{id}"
     end
-end
-
-def add_revision_statement(uri, description)
-  resource = @client.get(uri).parsed
-  revision_statement =
-    {"date"=>Time.now,
-  	"description"=>description}
-  resource['revision_statements'] = resource['revision_statements'].append(revision_statement)
-  post = @client.post(uri, resource.to_json)
-  puts post.body
 end
 
 def get_users()
@@ -273,8 +256,6 @@ def add_resource_revision_statement(record, text)
     "jsonmodel_type"=>"revision_statement"
   }
 end
-
-
 
 def get_index_of_resource_uri(uri, repo)
   uris = get_all_resource_uris_for_repos([repo])
