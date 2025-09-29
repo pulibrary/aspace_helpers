@@ -2,6 +2,6 @@
 
 RSpec.describe AspaceHelperMethods do
   it "has a version number" do
-    expect(AspaceHelperMethods::VERSION).not_to be nil
+    expect(AspaceHelperMethods::VERSION).not_to be_nil
   end
 end
