@@ -23,6 +23,9 @@ CSV.open(output_file, "w",
       user['permissions'].map do |k, v|
           "#{k}: #{v.join(', ')}"
       end
+    # Including the username field is essential to this report.  We include it in the file despite
+    # bearer's privacy concerns, with the understanding that the report output will be kept secure.
+    # bearer:disable ruby_lang_file_generation
     row << [user['username'], user['name'], user['is_active_user'], repositories, permissions[0]]
     end
 end
