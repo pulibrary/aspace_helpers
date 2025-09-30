@@ -164,21 +164,21 @@ def get_resources_by_eadids(eadids, resolve = [])
   end
   selected_resources
 end
-
+#this works
 def get_person_by_id_as_xml(repo_id, agent_id)
 endpoint_name = '/repositories/' + repo_id.to_s + '/archival_contexts/people/' + agent_id.to_s + '.xml'
 @client.get(endpoint_name.to_s).parsed
 end
-
+#this works
 def get_all_top_container_records_for_institution(resolve = [])
-  @results = []
-  get_resource_uris_for_all_repos.each do |uri|
-    add_ids_to_array
-    count_ids = @ids.count
-    paginate_endpoint(@ids, count_ids, uri, resolve)
-  end 
-  @results = @results.flatten!
-end
+  repos = get_all_repo_uris
+  repos.map do |repo_uri|
+    repo_id = get_repo_id_from_uri(repo_uri)
+    container_ids = add_ids_to_array(repo_id, 'top_containers')
+    count_ids = container_ids.count
+    paginate_endpoint(container_ids, count_ids, "#{repo_uri}/top_containers", resolve)
+  end.flatten
+end 
 
 def get_all_digital_object_records_for_a_repository(repo, resolve = [])
   @results = []
