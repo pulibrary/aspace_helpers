@@ -6,6 +6,7 @@ require 'csv'
 require_relative '../../helper_methods.rb'
 require_relative 'resource'
 require_relative 'top_container'
+require_relative 'item_record_constructor'
 
 #log errors to file
 $stderr.reopen("log_err.txt", "w")
@@ -257,7 +258,9 @@ def process_resource(resource, file, log_out, remote_file)
   end
 
   #addresses github #397
-  construct_item_records(remote_file, resource, doc, tag099_a, log_out)
+  params = Params.new(doc, tag099_a, log_out, nil)
+  item_constructor = ItemRecordConstructor.new(@client)
+  item_constructor.construct_item_records(remote_file, resource, params)
 
   #addresses github #205
   tag351.remove unless tag351.nil?
@@ -288,30 +291,6 @@ rescue Errno::ECONNRESET,Errno::ECONNABORTED,Errno::ETIMEDOUT,Errno::ECONNREFUSE
     retry
   end
   log_out.puts "Encountered #{error.class}: '#{error.message}' at #{Time.now}, unsuccessful in retrieving resource #{resource} after #{retries} retries"
-end
-
-def construct_item_records(remote_file, resource, doc, tag099_a, log_out)
-  alma_barcodes_array = CSV.read(remote_file).flatten.to_a
-  alma_barcodes_set = alma_barcodes_array.to_set
-  #get the repo so we only check in the relevant repo
-  repo = resource.gsub(%r{(^/repositories/)(\d{1,2})(/resources.*$)}, '\2')
-  #get container records for the resource
-  containers_unfiltered = @client.get(
-    "repositories/#{repo}/top_containers/search",
-    query: { q: "collection_uri_u_sstr:\"#{resource}\"" }
-  )
-  containers =
-    #sort by top_container indicator
-    containers_unfiltered.parsed['response']['docs'].sort_by! { |container| JSON.parse(container['json'])['indicator'].scan(/\d+/).first.to_i }
-    containers_unfiltered.parsed['response']['docs'].select do |container|
-      json = JSON.parse(container['json'])
-      top_container = TopContainer.new(container)
-      if top_container.valid?(alma_barcodes_set)
-        doc.xpath('//marc:datafield').last.next=
-          top_container.item_record(tag099_a.content)
-      log_out.puts "Created record for #{json['type']} #{json['indicator']}"
-        end
-      end unless containers_unfiltered.nil?
 end
 
 # If you run this file directly, the main method will run
