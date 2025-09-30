@@ -200,7 +200,7 @@ def get_user_permissions()
       }}).parsed
   ids.map { |id| @client.get("/users/#{id}").parsed }
 end
-
+#this works
 def add_agent_maintenance_history(record, text)
   if record['agent_maintenance_histories'].nil?
     record['agent_maintenance_histories'] = [{
@@ -226,7 +226,7 @@ def add_agent_maintenance_history(record, text)
     }
   end
 end
-
+#this works
 def add_resource_revision_statement(record, text)
   record['revision_statements'] << {
     "date"=>"#{Time.now}",
@@ -238,9 +238,10 @@ def add_resource_revision_statement(record, text)
     "jsonmodel_type"=>"revision_statement"
   }
 end
-
-def get_index_of_resource_uri(uri, repo)
-  uris = get_all_resource_uris_for_repos([repo])
+#this works
+def get_index_of_resource_uri(uri)
+  repo = uri.gsub('repositories/', '').gsub(/\/resources\/.+/, '')
+  uris = get_resource_uris_for_specific_repos([repo])
   uris.index(uri)
 end
 
