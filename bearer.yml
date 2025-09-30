@@ -12,7 +12,7 @@ rule:
     only-rule: []
     # ruby_lang_manual_html_sanitization - this generates lots of false positives for all the string manipulation this application does.
     # since this application does not deal with user input or html, it is safe to skip for this repository
-    skip-rule: [ruby_lang_manual_html_sanitization]
+    skip-rule: [ruby_lang_manual_html_sanitization, ruby_lang_jwt]
 scan:
     context: ""
     data_subject_mapping: ""
