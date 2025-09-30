@@ -179,38 +179,20 @@ def get_all_top_container_records_for_institution(resolve = [])
     paginate_endpoint(container_ids, count_ids, "#{repo_uri}/top_containers", resolve)
   end.flatten
 end 
-
-def get_all_digital_object_records_for_a_repository(repo, resolve = [])
-  @results = []
-  get_resource_uris_for_all_repos.each do |uri|
-    add_ids_to_array
-    count_ids = @ids.count
-    paginate_endpoint(@ids, count_ids, uri, resolve)
-  end 
-  @results = @results.flatten!
-end
-
-def get_all_archival_objects_for_resource(repo, id, resolve = [])
-  archival_objects_all = get_all_records_of_type_in_repo('archival_objects', repo, resolve)
-  archival_objects_filtered =
-    archival_objects_all.select do |ao|
-      ao['resource']['ref'] == "/repositories/#{repo}/resources/#{id}"
-    end
-end
-
-def get_users()
+#this works
+def get_users
   endpoint_name = '/users'
-  ids = @client.get(endpoint_name, {
+  ids = @client.get('/users', {
     query: {
      all_ids: true
     }}).parsed.join(',')
-  users = @client.get(endpoint_name, {
+  users = @client.get('/users', {
     query: {
       id_set: ids
     }
     }).parsed
 end
-
+#this works
 def get_user_permissions()
   ids = @client.get('/users', {
       query: {
@@ -219,7 +201,7 @@ def get_user_permissions()
   ids.map { |id| @client.get("/users/#{id}").parsed }
 end
 
-def add_maintenance_history(record, text)
+def add_agent_maintenance_history(record, text)
   if record['agent_maintenance_histories'].nil?
     record['agent_maintenance_histories'] = [{
       "maintenance_event_type"=>"updated",
