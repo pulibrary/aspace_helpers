@@ -244,7 +244,8 @@ def get_index_of_resource_uri(uri)
   uris = get_resource_uris_for_specific_repos([repo])
   uris.index(uri)
 end
-
+#this works
+#input_ids and record_types_to_prefetch are passed in as arrays
 def get_resolved_objects_from_ids(repository_id, input_ids, record_type, record_types_to_prefetch)
   all_records = []
   count_processed_records = 0
