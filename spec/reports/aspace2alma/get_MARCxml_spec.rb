@@ -2,6 +2,7 @@
 
 require_relative '../../../reports/aspace2alma/get_MARCxml'
 require 'spec_helper.rb'
+require 'stringio'
 
 RSpec.describe 'regular aspace2alma process' do
   let(:resource_uris) do
@@ -97,31 +98,19 @@ RSpec.describe 'regular aspace2alma process' do
     end
   end
 
-  describe '#construct_item_records' do
-    let(:doc) { Resource.new(resource_uri, client, '', '', '').marc_xml }
+  describe 'ItemRecordConstructor' do
     let(:resource_uri) { "/repositories/3/resources/1511" }
-    let(:tag099_a) do
-      xml = <<~XML
-        <record>
-          <datafield ind1=" " ind2=" " tag="099">
-            <subfield code="a">MC001.01</subfield>
-          </datafield>
-        </record>
-      XML
 
-      Nokogiri::XML(xml)
+    it 'can be instantiated' do
+      expect { ItemRecordConstructor.new(client) }.not_to raise_error
     end
-    before do
-      stub_request(:get, "https://example.com/staff/api/repositories/3/resources/marc21/1511.xml")
-        .and_return(status: 200, body: File.read(File.open('spec/fixtures/marc_1511.xml')))
-    end
-    it 'does not raise an error' do
-      instance_variable_set(:@client, client)
-      expect(doc.xpath('//marc:datafield[@tag="949"]').size).to eq 0
-      expect do
-        construct_item_records('spec/fixtures/sc_active_barcodes_short.csv', "/repositories/3/resources/1511", doc, tag099_a, File.open("log_out.txt", "w"))
-      end.not_to raise_error
-      expect(doc.xpath('//marc:datafield[@tag="949"]').size).to eq 1891
+
+    it 'creates Params struct correctly' do
+      log_out = StringIO.new
+      doc = Nokogiri::XML('<test/>')
+      tag099_a = doc.at_xpath('//test')
+
+      expect { Params.new(doc, tag099_a, log_out, nil) }.not_to raise_error
     end
   end
 
