@@ -3,7 +3,7 @@
 # https://recordsincontexts.wikibase.cloud/wiki/Special:ApiSandbox
 
 client = MediawikiApi::Client.new "https://recordsincontexts.wikibase.cloud/w/api.php"
-client.log_in "user", "pw" 
+client.log_in "user", "pw"
 # get labels for two items
 # item = client.action :wbgetentities, ids: ['Q73', 'Q74'], format: 'json'
 # item.data['entities'].values.each do |item|
@@ -12,4 +12,3 @@ client.log_in "user", "pw"
 
 #protect an item
 protect = client.action :protect, :title => 'Item:Q73', :protections => 'edit=sysop', :reason => 'Wikidata entity', :token => false
-
