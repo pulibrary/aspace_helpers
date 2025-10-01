@@ -56,7 +56,7 @@ RSpec.describe 'regular aspace2alma process' do
     allow(client).to receive(:get).with("repositories/3/top_containers/search",
         query: { q: "collection_uri_u_sstr:\"/repositories/3/resources/1512\"" }).and_return(response)
     allow(response).to receive(:parsed).and_return(JSON.parse(File.read(File.open("spec/fixtures/container_response.json"))))
-    stub(:get_all_resource_uris_for_institution)
+    stub(:get_resource_uris_for_all_repos)
       .and_return(resource_uris)
     stub(:alma_sftp).with('MARC_out.xml')
   end

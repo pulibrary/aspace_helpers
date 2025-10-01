@@ -74,7 +74,7 @@ def fetch_and_process_records(remote_filename)
   rename_file("/alma/aspace/#{remote_filename}", "/alma/aspace/sc_active_barcodes_old.csv")
 
   #get collection records from ASpace
-  resources = get_all_resource_uris_for_institution
+  resources = get_resource_uris_for_all_repos
 
   file =  File.open(filename, "w")
   file << '<collection xmlns="http://www.loc.gov/MARC21/slim" xmlns:marc="http://www.loc.gov/MARC21/slim" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.loc.gov/MARC21/slim http://www.loc.gov/standards/marcxml/schema/MARC21slim.xsd">'
