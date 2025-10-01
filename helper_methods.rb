@@ -31,17 +31,16 @@ def aspace_staging_login()
   #log in
   @client = ArchivesSpace::Client.new(@config).login
 end
-#this works
+
 def get_all_repo_uris
   repositories = @client.get('/repositories').parsed
   repositories.map {|repo| repo['uri']}
 end
-#this works
+
 def get_repo_id_from_uri(uri)
   uri.gsub('/repositories/', '')
 end
 
-#this works
 def get_resource_ids_for_all_repos
   repos = get_all_repo_uris
   @ids = []
@@ -53,7 +52,7 @@ def get_resource_ids_for_all_repos
   end
   @ids.flatten!
 end
-#this works
+
 def get_resource_uris_for_all_repos
   @uris = get_all_repo_uris.map do |repo|
     ids = @client.get("#{repo}/resources", {
@@ -66,7 +65,7 @@ def get_resource_uris_for_all_repos
   end
   @uris.flatten!
 end
-#this works
+
 def add_ids_to_array(repo, record_type)
   @ids = []
   @ids << @client.get("repositories/#{repo}/#{record_type}", {
@@ -75,7 +74,7 @@ def add_ids_to_array(repo, record_type)
     }}).parsed
   @ids = @ids.flatten!
 end
-#this works
+
 def get_resource_uris_for_specific_repos(repos = [])
   @uris = []
   repos.each do |repo|
@@ -86,7 +85,7 @@ def get_resource_uris_for_specific_repos(repos = [])
   end
   @uris
 end 
-#this works (hands off to paginate_endpoint)
+
 def get_all_resource_records_for_institution(resolve = [])
   repos = get_all_repo_uris
   repos.map do |repo|
@@ -96,7 +95,7 @@ def get_all_resource_records_for_institution(resolve = [])
     paginate_endpoint(resource_ids, count_ids, "#{repo}/resources", resolve)
   end.flatten
 end 
-#this works (returns records)
+
 def paginate_endpoint(ids, count_ids, endpoint, resolve)
   @results = []
   count_processed_records = 0
@@ -112,16 +111,16 @@ def paginate_endpoint(ids, count_ids, endpoint, resolve)
   end
   @results.flatten
 end
-#this works
+
 def get_all_records_of_type_in_repo(record_type, repo, resolve = [])
   get_paginated_records(record_type, repo, resolve)
   @results.flatten!
 end
-#this works
+
 def construct_endpoint(repo, record_type)
   endpoint = 'repositories/'+repo.to_s+'/'+record_type.to_s
 end
-#this works
+
 def get_paginated_records(record_type, repo, resolve)
   endpoint = construct_endpoint(repo, record_type)
   ids = []
@@ -132,15 +131,7 @@ def get_paginated_records(record_type, repo, resolve)
   count_ids = ids.flatten!.count
   paginate_endpoint(ids, count_ids, endpoint, resolve)
 end
-#this works
-def get_single_archival_object_by_cid(repo, cid, resolve = [])
-  record_type = 'archival_objects'
-  components_all = get_all_records_of_type_in_repo(record_type, repo, resolve)
-  selected_resources = components_all.select do |c|
-    c['ref_id'] == cid
-  end
-end
-#this works
+
 def get_single_resource_by_eadid(repo, eadid, resolve = [])
   record_type = 'resources'
   collections_all = get_all_records_of_type_in_repo(record_type, repo, resolve)
@@ -148,14 +139,16 @@ def get_single_resource_by_eadid(repo, eadid, resolve = [])
     c['ead_id'] == eadid
   end
 end
-#this works
+
+#pass in eadids as array
 def get_uris_by_eadids(eadids, resolve = [])
   selected_resources = get_resources_by_eadids(eadids, resolve)
   uris = selected_resources.flatten.map do |resource| 
     "#{resource['uri']}, #{resource['ead_id']}"
   end
 end
-#this works
+
+#pass in eadids as array
 def get_resources_by_eadids(eadids, resolve = [])
   selected_resources = []
   selected_resources << get_all_resource_records_for_institution.select do |resource| 
@@ -163,12 +156,13 @@ def get_resources_by_eadids(eadids, resolve = [])
   end
   selected_resources
 end
-#this works
+
 def get_person_by_id_as_xml(repo_id, agent_id)
 endpoint_name = '/repositories/' + repo_id.to_s + '/archival_contexts/people/' + agent_id.to_s + '.xml'
 @client.get(endpoint_name.to_s).parsed
 end
-#this works
+
+#expect this method to take up to 30 minutes
 def get_all_top_container_records_for_institution(resolve = [])
   repos = get_all_repo_uris
   repos.map do |repo_uri|
@@ -178,7 +172,7 @@ def get_all_top_container_records_for_institution(resolve = [])
     paginate_endpoint(container_ids, count_ids, "#{repo_uri}/top_containers", resolve)
   end.flatten
 end 
-#this works
+
 def get_users
   endpoint_name = '/users'
   ids = @client.get('/users', {
@@ -191,15 +185,15 @@ def get_users
     }
     }).parsed
 end
-#this works
-def get_user_permissions()
+
+def get_user_permissions
   ids = @client.get('/users', {
       query: {
        all_ids: true
       }}).parsed
   ids.map { |id| @client.get("/users/#{id}").parsed }
 end
-#this works
+
 def add_agent_maintenance_history(record, text)
   if record['agent_maintenance_histories'].nil?
     record['agent_maintenance_histories'] = [{
@@ -225,7 +219,7 @@ def add_agent_maintenance_history(record, text)
     }
   end
 end
-#this works
+
 def add_resource_revision_statement(record, text)
   record['revision_statements'] << {
     "date"=>"#{Time.now}",
@@ -237,13 +231,13 @@ def add_resource_revision_statement(record, text)
     "jsonmodel_type"=>"revision_statement"
   }
 end
-#this works
+
 def get_index_of_resource_uri(uri)
   repo = uri.gsub('repositories/', '').gsub(/\/resources\/.+/, '')
   uris = get_resource_uris_for_specific_repos([repo])
   uris.index(uri)
 end
-#this works
+
 #input_ids and record_types_to_prefetch are passed in as arrays
 def get_resolved_objects_from_ids(repository_id, input_ids, record_type, record_types_to_prefetch)
   all_records = []
