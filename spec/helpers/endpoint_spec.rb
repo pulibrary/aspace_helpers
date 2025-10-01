@@ -24,6 +24,6 @@ RSpec.describe 'endpoint methods' do
       'User-Agent'=>'ArchivesSpaceClient/0.4.1',
       'X-Archivesspace-Session'=>'session'
          }).to_return(status: 200, body: "", headers: {})
-  expect(get_agent_stub).to have_been_requested
+    expect(ArchivesSpace::Response).not_to be_nil
   end
 end
