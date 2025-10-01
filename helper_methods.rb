@@ -84,7 +84,7 @@ def get_resource_uris_for_specific_repos(repos = [])
     end
   end
   @uris
-end 
+end
 
 def get_all_resource_records_for_institution(resolve = [])
   repos = get_all_repo_uris
@@ -94,7 +94,7 @@ def get_all_resource_records_for_institution(resolve = [])
     count_ids = resource_ids.count
     paginate_endpoint(resource_ids, count_ids, "#{repo}/resources", resolve)
   end.flatten
-end 
+end
 
 def paginate_endpoint(ids, count_ids, endpoint, resolve)
   @results = []
@@ -147,7 +147,7 @@ end
 #pass in eadids as array
 def get_uris_by_eadids(eadids, resolve = [])
   selected_resources = get_resources_by_eadids(eadids, resolve)
-  uris = selected_resources.flatten.map do |resource| 
+  uris = selected_resources.flatten.map do |resource|
     "#{resource['uri']}, #{resource['ead_id']}"
   end
 end
@@ -155,7 +155,7 @@ end
 #pass in eadids as array
 def get_resources_by_eadids(eadids, resolve = [])
   selected_resources = []
-  selected_resources << get_all_resource_records_for_institution.select do |resource| 
+  selected_resources << get_all_resource_records_for_institution.select do |resource|
     eadids.include? resource['ead_id']
   end
   selected_resources
@@ -175,16 +175,14 @@ def get_all_top_container_records_for_institution(resolve = [])
     count_ids = container_ids.count
     paginate_endpoint(container_ids, count_ids, "#{repo_uri}/top_containers", resolve)
   end.flatten
-end 
+end
 
 def get_users
   endpoint_name = '/users'
   ids = @client.get('/users', {
-  ids = @client.get('/users', {
     query: {
      all_ids: true
     }}).parsed.join(',')
-  users = @client.get('/users', {
   users = @client.get('/users', {
     query: {
       id_set: ids
@@ -239,7 +237,7 @@ def add_resource_revision_statement(record, text)
 end
 
 def get_index_of_resource_uri(uri)
-  repo = uri.gsub('repositories/', '').gsub(/\/resources\/.+/, '')
+  repo = uri.gsub('repositories/', '').gsub(%r{/resources/.+}, '')
   uris = get_resource_uris_for_specific_repos([repo])
   uris.index(uri)
 end
