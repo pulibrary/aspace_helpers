@@ -33,13 +33,10 @@ RSpec.describe TopContainer do
     expect(container_instance.at_recap?).to be true
   end
   it 'has a barcode' do
-    expect(container_instance.barcode?).to be true
-  end
-  it 'is not already in Alma' do
-    expect(container_instance.not_already_in_alma?(Set.new)).to be true
+    expect(container_instance.barcode).to be_truthy
   end
   it 'is a valid container' do
-    expect(container_instance.valid?(Set.new)).to be true
+    expect(container_instance.valid?).to be true
   end
 
   it 'constructs a MARC item record' do

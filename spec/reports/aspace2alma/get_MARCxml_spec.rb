@@ -26,26 +26,24 @@ RSpec.describe 'regular aspace2alma process' do
     Timecop.freeze(frozen_time)
     stub_aspace_login
     allow(Net::SFTP).to receive(:start).and_yield(sftp_session)
-    allow(sftp_session).to receive(:download!)
-      .with("/alma/aspace/sc_active_barcodes.csv", "spec/fixtures/sc_active_barcodes.csv")
+    allow(sftp_session).to receive(:open!)
+      .with("/alma/aspace/sc_active_barcodes.csv").and_return(File.open("spec/fixtures/sc_active_barcodes_short.csv"))
+    allow(sftp_session).to receive(:close!)
+      .with("/alma/aspace/sc_active_barcodes.csv")
     allow(sftp_session).to receive(:stat)
       .with("/alma/aspace/MARC_out.xml")
     allow(sftp_session).to receive(:stat)
       .with("/alma/aspace/MARC_out_old.xml")
     allow(sftp_session).to receive(:stat)
-      .with("/alma/aspace/sc_active_barcodes.csv")
-    allow(sftp_session).to receive(:stat)
-      .with("/alma/aspace/spec/fixtures/sc_active_barcodes.csv")
+      .with("/alma/aspace/sc_active_barcodes.csv").and_yield(instance_double(Net::SFTP::Response, ok?: true))
     allow(sftp_session).to receive(:stat)
       .with("/alma/aspace/sc_active_barcodes_old.csv")
-    allow(sftp_session).to receive(:stat)
-      .with("/alma/aspace/spec/fixtures/sc_active_barcodes_old.csv")
     allow(sftp_session).to receive(:remove!)
       .with("/alma/aspace/MARC_out_old.xml")
     allow(sftp_session).to receive(:remove!)
       .with("/alma/aspace/sc_active_barcodes_old.csv")
     allow(sftp_session).to receive(:rename!)
-      .with("/alma/aspace/spec/fixtures/sc_active_barcodes.csv", "/alma/aspace/sc_active_barcodes_old.csv")
+      .with("/alma/aspace/sc_active_barcodes.csv", "/alma/aspace/sc_active_barcodes_old.csv")
     allow(sftp_session).to receive(:rename!)
       .with("/alma/aspace/MARC_out.xml", "/alma/aspace/MARC_out_old.xml")
     allow(ArchivesSpace::Client).to receive(:new).and_return(client)
@@ -59,6 +57,13 @@ RSpec.describe 'regular aspace2alma process' do
     stub(:get_resource_uris_for_all_repos)
       .and_return(resource_uris)
     stub(:alma_sftp).with('MARC_out.xml')
+    allow(ENV).to receive(:fetch) do |var|
+        {
+          'SFTP_HOST' => 'my-sftp-host.princeton.edu',
+            'SFTP_USERNAME' => 'almauser',
+            'SFTP_PASSWORD' => 'supersecretpassword123'
+        }[var]
+    end
   end
 
   context 'when the connection is stable' do
@@ -69,7 +74,7 @@ RSpec.describe 'regular aspace2alma process' do
         .and_return(status: 200, body: "")
       stub_request(:get, "https://example.com/staff/api/repositories/3/resources/marc21/1512.xml")
         .and_return(status: 200, body: File.read(File.open('spec/fixtures/marc_1512.xml')))
-      fetch_and_process_records("spec/fixtures/sc_active_barcodes.csv")
+      fetch_and_process_records
     end
 
     let(:doc) { Nokogiri::XML(File.open('MARC_out.xml')) }
@@ -102,7 +107,7 @@ RSpec.describe 'regular aspace2alma process' do
     let(:resource_uri) { "/repositories/3/resources/1511" }
 
     it 'can be instantiated' do
-      expect { ItemRecordConstructor.new(client) }.not_to raise_error
+      expect { ItemRecordConstructor.new(client, instance_double(AlmaReportBarcodeValidation)) }.not_to raise_error
     end
 
     it 'creates Params struct correctly' do
@@ -130,7 +135,7 @@ RSpec.describe 'regular aspace2alma process' do
         .and_return(status: 200, body: File.read(File.open('spec/fixtures/marc_1512.xml')))
     end
     it 'retries the record' do
-      fetch_and_process_records("spec/fixtures/sc_active_barcodes.csv")
+      fetch_and_process_records
       # Since we are rescuing from this error, it is not actually raised
       # but this was the intermediate step to make sure our test setup was raising the error correctly
       # expect { fetch_and_process_records }.to raise_error(Errno::ECONNRESET)

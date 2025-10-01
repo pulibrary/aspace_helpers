@@ -7,13 +7,12 @@ require_relative '../../helper_methods.rb'
 require_relative 'resource'
 require_relative 'top_container'
 require_relative 'item_record_constructor'
+require_relative 'barcode_validation'
 
 #log errors to file
 $stderr.reopen("log_err.txt", "w")
 #keep values synced so they're not going to the buffer
 $stderr.sync = true
-
-remote_filename = "sc_active_barcodes.csv"
 
 #configure sendoff to alma
 def alma_sftp (filename)
@@ -51,27 +50,20 @@ def datestamp
   Time.now.utc.strftime('%Y%m%d%H%M')
 end
 
-def fetch_and_process_records(remote_filename)
+def fetch_and_process_records
   #open a quasi log to receive progress output
   log_out = File.open("log_out.txt", "w")
   aspace_login
   #log when the process started
   log_out.puts "Process started fetching records at #{Time.now}"
   filename = "MARC_out.xml"
-  #get file from remote server
-  get_file_from_sftp(remote_filename)
-  remote_file = remote_filename
   #rename MARC file:
   #in case the export fails, this ensures that
   #Alma will not find a stale file to import
   remove_file("/alma/aspace/MARC_out_old.xml")
   rename_file("/alma/aspace/#{filename}", "/alma/aspace/MARC_out_old.xml")
-  # #rename barcodes report after download:
-  # #this will keep the process from running if
-  # #either the fresh report from Alma does not arrive
-  # #or the ASpace export fails
-  remove_file("/alma/aspace/sc_active_barcodes_old.csv")
-  rename_file("/alma/aspace/#{remote_filename}", "/alma/aspace/sc_active_barcodes_old.csv")
+
+  barcode_validator = AlmaReportBarcodeValidation.new
 
   #get collection records from ASpace
   resources = get_resource_uris_for_all_repos
@@ -80,7 +72,7 @@ def fetch_and_process_records(remote_filename)
   file << '<collection xmlns="http://www.loc.gov/MARC21/slim" xmlns:marc="http://www.loc.gov/MARC21/slim" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.loc.gov/MARC21/slim http://www.loc.gov/standards/marcxml/schema/MARC21slim.xsd">'
 
   resources.each do |resource_uri|
-    process_resource(resource_uri, file, log_out, remote_file)
+    process_resource(resource_uri, file, log_out, barcode_validator)
   end
 
   file << '</collection>'
@@ -93,10 +85,10 @@ def fetch_and_process_records(remote_filename)
   log_out.puts "Process finished at #{Time.now}"
 end
 
-def process_resource(resource, file, log_out, remote_file)
+def process_resource(resource, file, log_out, barcode_validator)
   retries ||= 0
 
-  my_resource = Resource.new(resource, @client, file, log_out, remote_file)
+  my_resource = Resource.new(resource, @client, file, log_out)
   # uri = my_resource.marc_uri
   # marc_record = @client.get(uri)
   doc = my_resource.marc_xml
@@ -259,8 +251,8 @@ def process_resource(resource, file, log_out, remote_file)
 
   #addresses github #397
   params = Params.new(doc, tag099_a, log_out, nil)
-  item_constructor = ItemRecordConstructor.new(@client)
-  item_constructor.construct_item_records(remote_file, resource, params)
+  item_constructor = ItemRecordConstructor.new(@client, barcode_validator)
+  item_constructor.construct_item_records(resource, params)
 
   #addresses github #205
   tag351.remove unless tag351.nil?
@@ -296,5 +288,5 @@ end
 # If you run this file directly, the main method will run
 # If you run the file from rspec, it will only run when calling the method
 if $PROGRAM_NAME == __FILE__
-  fetch_and_process_records(remote_filename)
+  fetch_and_process_records
 end
