@@ -42,15 +42,10 @@ def get_repo_id_from_uri(uri)
 end
 
 def get_resource_ids_for_all_repos
-  repos = get_all_repo_uris
-  @ids = []
-  repos.each do |repo|
-    @ids << @client.get("#{repo}/resources", {
-      query: {
-        all_ids: true
-      }}).parsed
+  get_all_repo_uris.reduce([]) do |resource_ids, repo|
+    repo_ids = @client.get("#{repo}/resources", {query:{all_ids:true}}).parsed
+    resource_ids.concat repo_ids
   end
-  @ids.flatten!
 end
 
 def get_resource_uris_for_all_repos
@@ -63,7 +58,7 @@ def get_resource_uris_for_all_repos
       "#{repo}/resources/#{id}"
     end
   end
-  @uris.flatten!
+  @uris.flatten
 end
 
 def add_ids_to_array(repo, record_type)
@@ -72,7 +67,7 @@ def add_ids_to_array(repo, record_type)
     query: {
       all_ids: true
     }}).parsed
-  @ids = @ids.flatten!
+  @ids = @ids.flatten
 end
 
 def get_resource_uris_for_specific_repos(repos = [])
