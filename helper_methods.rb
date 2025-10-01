@@ -98,6 +98,7 @@ end
 
 def paginate_endpoint(ids, count_ids, endpoint, resolve)
   @results = []
+  @results = []
   count_processed_records = 0
   while count_processed_records < count_ids do
     last_record = [count_processed_records+249, count_ids].min
@@ -109,6 +110,7 @@ def paginate_endpoint(ids, count_ids, endpoint, resolve)
           }).parsed
     count_processed_records = last_record
   end
+  @results.flatten
   @results.flatten
 end
 
@@ -133,6 +135,8 @@ def get_paginated_records(record_type, repo, resolve)
 end
 
 def get_single_resource_by_eadid(repo, eadid, resolve = [])
+  record_type = 'resources'
+  collections_all = get_all_records_of_type_in_repo(record_type, repo, resolve)
   record_type = 'resources'
   collections_all = get_all_records_of_type_in_repo(record_type, repo, resolve)
   selected_resources = collections_all.select do |c|
@@ -176,9 +180,11 @@ end
 def get_users
   endpoint_name = '/users'
   ids = @client.get('/users', {
+  ids = @client.get('/users', {
     query: {
      all_ids: true
     }}).parsed.join(',')
+  users = @client.get('/users', {
   users = @client.get('/users', {
     query: {
       id_set: ids
