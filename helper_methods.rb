@@ -43,7 +43,7 @@ end
 
 def get_resource_ids_for_all_repos
   get_all_repo_uris.reduce([]) do |resource_ids, repo|
-    repo_ids = @client.get("#{repo}/resources", {query:{all_ids:true}}).parsed
+    repo_ids = @client.get("#{repo}/resources", {query: {all_ids: true}}).parsed
     resource_ids.concat repo_ids
   end
 end
