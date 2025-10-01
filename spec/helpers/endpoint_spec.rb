@@ -18,7 +18,7 @@ RSpec.describe 'endpoint methods' do
 
   it 'can retrieve an agent by id' do
     aspace_login
-    person = get_agent_by_id("people", 11175)
+    person = @client.get("/agents/people/11175").parsed
     expect(get_agent_stub).to have_been_requested
   end
 end
