@@ -1,5 +1,8 @@
 require 'csv'
+require 'json'
 require 'net/sftp'
+require 'open-uri'
+require 'uri'
 
 # This class checks if a barcode already exists in Alma based on a
 # report from Alma analytics fetched via SFTP.  This way, we can
@@ -59,4 +62,82 @@ class AlmaReportDuplicateCheck
     def old_report_path
         '/alma/aspace/sc_active_barcodes_old.csv'
     end
+end
+
+# This class checks if a barcode already exists in Alma based on a
+# series of requests to the Alma API.  These requests check a logical
+# set that contains all items in SC locations with barcodes.  This way, we can
+# avoid adding duplicate barcodes to Alma.
+class AlmaSetDuplicateCheck
+  def duplicate?(barcode)
+    check_variables
+    alma_barcodes.include? barcode
+  end
+
+  AlmaMemberSetResponse = Struct.new(:raw_data) do
+    def self.from_uri(uri)
+      self.new(uri.open('Accept' => 'application/json').read)
+    end
+
+    def total_barcode_count
+      data['total_record_count']
+    end
+
+    def barcodes
+      # barcodes are kept in the "description" field
+      data['member']&.map {|item| item['description'] } || []
+    end
+
+    private
+
+    def data
+      @data ||= JSON.parse raw_data
+    end
+  end
+
+  private
+
+  attr_reader :total_barcode_count
+
+  def alma_barcodes
+    @alma_barcodes ||= begin
+      found_barcodes = []
+      offset = 0
+      # If we don't yet know the number of barcodes we'll fetch, or if we know that there are barcodes
+      # that we haven't yet fetched...
+      while !total_barcode_count || total_barcode_count >= offset
+        response = AlmaMemberSetResponse.from_uri uri(offset)
+        @total_barcode_count ||= response.total_barcode_count
+        found_barcodes.concat response.barcodes
+        offset += alma_page_size
+      end
+      found_barcodes
+    end
+  end
+
+  def uri(offset)
+    URI.parse "#{alma_region}/almaws/v1/conf/sets/#{alma_sc_barcodes_set}/members?limit=#{alma_page_size}&offset=#{offset}&apikey=#{api_key}"
+  end
+
+  def check_variables
+    raise 'Missing the ALMA_CONFIG_API_KEY environment variable; please set it to a valid api key with config read permissions' unless api_key
+    raise 'Missing the ALMA_REGION environment variable; please set it to a valid alma region including https://' unless alma_region
+    raise 'Missing the ALMA_SC_BARCODES_SET environment variable; please set it to the id of a set containing special collections barcodes' unless alma_sc_barcodes_set
+  end
+
+  def alma_region
+    ENV.fetch 'ALMA_REGION', nil
+  end
+
+  def alma_sc_barcodes_set
+    ENV.fetch 'ALMA_SC_BARCODES_SET', nil
+  end
+
+  def api_key
+    ENV.fetch 'ALMA_CONFIG_API_KEY', nil
+  end
+
+  def alma_page_size
+    100
+  end
 end
