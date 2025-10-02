@@ -8,10 +8,10 @@ RSpec.describe Resource do
   end
   let(:resource_uri) { '/repositories/3/resources/1511' }
   let(:client) { ArchivesSpace::Client.new(ArchivesSpace::Configuration.new(base_uri: 'https://example.com/staff/api')) }
-  let(:our_resource) { described_class.new(resource_uri, client, 'file', 'log_out', 'remote_file') }
+  let(:our_resource) { described_class.new(resource_uri, client, 'file', 'log_out') }
   before {aspace_request}
   it 'can be instantiated' do
-    expect(described_class.new(resource_uri, client, 'file', 'log_out', 'remote_file')).to be
+    expect(described_class.new(resource_uri, client, 'file', 'log_out')).to be
   end
 
   describe '#marc_uri' do

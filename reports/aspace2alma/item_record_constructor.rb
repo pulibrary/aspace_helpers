@@ -5,10 +5,6 @@ require_relative 'top_container'
 Params = Struct.new(:doc, :tag099_a, :log_out, :alma_barcodes_set)
 # Module with utility functions for item record processing.
 module ItemRecordUtils
-  def self.load_alma_barcodes(remote_file)
-    CSV.read(remote_file).flatten.to_set
-  end
-
   def self.extract_repository_id(resource)
     resource.gsub(ItemRecordConstructor::REPO_PATH_REGEX, '\2')
   end
@@ -17,10 +13,6 @@ module ItemRecordUtils
     containers.sort_by do |container|
       JSON.parse(container['json'])['indicator'].scan(/\d+/).first.to_i
     end
-  end
-
-  def self.container_valid?(top_container, alma_barcodes_set)
-    top_container.valid?(alma_barcodes_set)
   end
 
   def self.log_container_creation(log_out, json)
@@ -60,14 +52,14 @@ end
 class ItemRecordConstructor
   REPO_PATH_REGEX = %r{(^/repositories/)(\d{1,2})(/resources.*$)}
 
-  def initialize(client)
+  def initialize(client, barcode_duplicate_check)
     @client = client
+    @barcode_duplicate_check = barcode_duplicate_check
   end
 
-  attr_reader :client
+  attr_reader :barcode_duplicate_check, :client
 
-  def construct_item_records(remote_file, resource, params)
-    params.alma_barcodes_set = ItemRecordUtils.load_alma_barcodes(remote_file)
+  def construct_item_records(resource, params)
     containers = fetch_and_sort_containers(resource)
 
     return unless containers
@@ -97,9 +89,13 @@ class ItemRecordConstructor
 
   def process_single_container(container, params)
     top_container = TopContainer.new(container)
-    return false unless ItemRecordUtils.container_valid?(top_container, params.alma_barcodes_set)
+    return false unless container_valid?(top_container)
 
     ItemRecordUtils.create_and_log_item_record(container, top_container, params)
     true
+  end
+
+  def container_valid?(top_container)
+    top_container.valid? && top_container.barcode && !barcode_duplicate_check.duplicate?(top_container.barcode)
   end
 end

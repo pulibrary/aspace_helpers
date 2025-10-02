@@ -23,18 +23,12 @@ class TopContainer
     /^(sca)?rcp\p{L}+/.match?(location_code)
   end
 
-  def barcode?
-    container_doc['barcode'].present?
+  def barcode
+    container_doc['barcode']
   end
 
-  def not_already_in_alma?(set)
-    !set.include?(container_doc['barcode'])
-  end
-
-  def valid?(set)
-    at_recap? &&
-      barcode? &&
-      not_already_in_alma?(set)
+  def valid?
+    at_recap?
   end
 
   def item_record(tag099_a)

@@ -6,7 +6,7 @@ require 'archivesspace/client'
 class Resource
   attr_reader :resource_uri, :aspace_client
 
-  def initialize(resource_uri, aspace_client, _file, _log_out, _remote_file)
+  def initialize(resource_uri, aspace_client, _file, _log_out)
     @resource_uri = resource_uri
     @aspace_client = aspace_client
   end

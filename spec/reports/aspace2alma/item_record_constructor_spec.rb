@@ -1,11 +1,14 @@
 require 'spec_helper'
 require_relative '../../../reports/aspace2alma/item_record_constructor'
+require_relative '../../../reports/aspace2alma/barcode_validation'
 require_relative '../../../reports/aspace2alma/resource'
 
 RSpec.shared_context 'with common mocks' do
   let(:mock_client) { instance_spy(ArchivesSpace::Client) }
-  let(:constructor) { ItemRecordConstructor.new(mock_client) }
-  let(:remote_file) { 'spec/fixtures/test_barcodes.csv' }
+  let(:constructor) do
+    validator = instance_double(AlmaReportDuplicateCheck, duplicate?: false)
+    ItemRecordConstructor.new(mock_client, validator)
+  end
   let(:resource_uri) { '/repositories/2/resources/123' }
   let(:mock_doc) { instance_spy(Nokogiri::XML::Document) }
   let(:mock_tag099_a) { instance_spy(Nokogiri::XML::Element, content: 'C0001') }
@@ -48,7 +51,6 @@ RSpec.describe ItemRecordConstructor do
     before do
       # Create a test CSV file
       FileUtils.mkdir_p('spec/fixtures')
-      File.write(remote_file, "32101012345678\n32101087654321\n")
 
       # Mock TopContainer class
       allow(TopContainer).to receive(:new).and_return(mock_top_container)
@@ -65,10 +67,6 @@ RSpec.describe ItemRecordConstructor do
       allow(mock_last_element).to receive(:next=)
     end
 
-    after do
-      FileUtils.rm_f(remote_file)
-    end
-
     describe '#initialize' do
       it 'sets the client' do
         expect(constructor.client).to eq(mock_client)
@@ -81,21 +79,13 @@ RSpec.describe ItemRecordConstructor do
           allow(mock_client).to receive(:get).and_return(mock_api_response)
         end
 
-        it 'loads alma barcodes from CSV file' do
-          constructor.construct_item_records(remote_file, resource_uri, params)
-
-          expect(params.alma_barcodes_set).to include('32101012345678')
-          expect(params.alma_barcodes_set).to include('32101087654321')
-          expect(params.alma_barcodes_set).to be_a(Set)
-        end
-
         it 'fetches containers from ArchivesSpace API' do
           allow(mock_client).to receive(:get)
             .with('repositories/2/top_containers/search',
                   query: { q: 'collection_uri_u_sstr:"/repositories/2/resources/123"' })
             .and_return(mock_api_response)
 
-          constructor.construct_item_records(remote_file, resource_uri, params)
+          constructor.construct_item_records(resource_uri, params)
 
           expect(mock_client).to have_received(:get)
             .with('repositories/2/top_containers/search',
@@ -103,20 +93,19 @@ RSpec.describe ItemRecordConstructor do
         end
 
         it 'processes valid containers' do
-          expected_barcode_set = Set.new(['32101012345678', '32101087654321'])
-          allow(mock_top_container).to receive(:valid?).with(expected_barcode_set).and_return(true)
+          allow(mock_top_container).to receive(:valid?).and_return(true)
           allow(mock_log_out).to receive(:puts).with('Created record for Box 1')
 
-          constructor.construct_item_records(remote_file, resource_uri, params)
+          constructor.construct_item_records(resource_uri, params)
 
-          expect(mock_top_container).to have_received(:valid?).with(expected_barcode_set)
+          expect(mock_top_container).to have_received(:valid?)
           expect(mock_log_out).to have_received(:puts).with('Created record for Box 1')
         end
 
         it 'adds item records to MARC document' do
           allow(mock_top_container).to receive(:item_record).with('C0001').and_return('<item>test</item>')
 
-          constructor.construct_item_records(remote_file, resource_uri, params)
+          constructor.construct_item_records(resource_uri, params)
 
           expect(mock_top_container).to have_received(:item_record).with('C0001')
         end
@@ -130,7 +119,7 @@ RSpec.describe ItemRecordConstructor do
         end
 
         it 'returns empty array without processing any containers' do
-          result = constructor.construct_item_records(remote_file, resource_uri, params)
+          result = constructor.construct_item_records(resource_uri, params)
           expect(result).to eq([])
           expect(mock_top_container).not_to have_received(:valid?)
         end
@@ -143,7 +132,7 @@ RSpec.describe ItemRecordConstructor do
 
         it 'handles API failure gracefully without side effects' do
           expect do
-            result = constructor.construct_item_records(remote_file, resource_uri, params)
+            result = constructor.construct_item_records(resource_uri, params)
             expect(result).to be_nil
           end.not_to raise_error
         end
@@ -156,7 +145,7 @@ RSpec.describe ItemRecordConstructor do
         end
 
         it 'skips invalid containers' do
-          constructor.construct_item_records(remote_file, resource_uri, params)
+          constructor.construct_item_records(resource_uri, params)
 
           expect(mock_top_container).not_to have_received(:item_record)
           expect(mock_log_out).not_to have_received(:puts)
@@ -166,9 +155,12 @@ RSpec.describe ItemRecordConstructor do
 
     describe '#construct_item_records integration test' do
       let(:real_client) { ArchivesSpace::Client.new(ArchivesSpace::Configuration.new(base_uri: 'https://example.com/staff/api')) }
-      let(:real_constructor) { described_class.new(real_client) }
+      let(:real_constructor) do
+        validator = instance_double(AlmaReportDuplicateCheck, duplicate?: false)
+        described_class.new(real_client, validator)
+      end
       let(:resource_uri) { "/repositories/3/resources/1511" }
-      let(:real_doc) { Resource.new(resource_uri, real_client, '', '', '').marc_xml }
+      let(:real_doc) { Resource.new(resource_uri, real_client, '', '').marc_xml }
       let(:real_tag099_a) { real_doc.at_xpath('//marc:datafield[@tag="099"]/marc:subfield[@code="a"]') }
       let(:real_log_out) { StringIO.new }
       let(:real_params) { Params.new(real_doc, real_tag099_a, real_log_out, nil) }
@@ -190,14 +182,11 @@ RSpec.describe ItemRecordConstructor do
       it 'processes data without raising errors' do
         result = nil
         expect do
-          result = real_constructor.construct_item_records('spec/fixtures/sc_active_barcodes_short.csv', resource_uri, real_params)
+          result = real_constructor.construct_item_records(resource_uri, real_params)
         end.not_to raise_error
 
         # With empty container response, method should return nil (no containers found)
         expect(result).to be_nil
-
-        # Verify barcodes were still loaded (this happens before container processing)
-        expect(real_params.alma_barcodes_set).not_to be_empty
 
         # Verify the integration with real Resource and ArchivesSpace client works
         expect(real_tag099_a).not_to be_nil
@@ -245,24 +234,6 @@ RSpec.describe ItemRecordConstructor do
 
     let(:alma_barcodes_set) { Set.new(['12345', '67890']) }
 
-    before do
-      FileUtils.mkdir_p('spec/fixtures')
-      File.write(remote_file, "12345\n67890\n11111\n")
-    end
-
-    after do
-      FileUtils.rm_f(remote_file)
-    end
-
-    describe '.load_alma_barcodes' do
-      it 'loads barcodes from CSV and returns a set' do
-        result = described_class.load_alma_barcodes(remote_file)
-
-        expect(result).to be_a(Set)
-        expect(result).to include('12345', '67890', '11111')
-      end
-    end
-
     describe '.extract_repository_id' do
       it 'extracts repository ID from resource URI' do
         result = described_class.extract_repository_id(resource_uri)
@@ -282,17 +253,6 @@ RSpec.describe ItemRecordConstructor do
 
         indicators = result.map { |c| JSON.parse(c['json'])['indicator'] }
         expect(indicators).to eq(['1', '2', '10'])
-      end
-    end
-
-    describe '.container_valid?' do
-      it 'delegates to top_container valid? method' do
-        allow(mock_top_container).to receive(:valid?).with(alma_barcodes_set).and_return(true)
-
-        result = described_class.container_valid?(mock_top_container, alma_barcodes_set)
-
-        expect(result).to be true
-        expect(mock_top_container).to have_received(:valid?).with(alma_barcodes_set)
       end
     end
 
