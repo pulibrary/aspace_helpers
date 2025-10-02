@@ -1,8 +1,9 @@
 require 'csv'
 require 'net/sftp'
 
-# This class validates barcodes according to a report from Alma
-# analytics fetched from SFTP
+# This class checks if a barcode already exists in Alma based on a
+# report from Alma analytics fetched via SFTP.  This way, we can
+# avoid adding duplicate barcodes to Alma.
 class AlmaReportDuplicateCheck
     def duplicate?(barcode)
         alma_barcodes.include? barcode
