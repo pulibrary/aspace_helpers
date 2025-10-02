@@ -41,9 +41,9 @@ class AlmaReportDuplicateCheck
     # #either the fresh report from Alma does not arrive
     # #or the ASpace export fails
     def safely_read_report(sftp)
-        file_handle = sftp.open! fresh_report_path
-        barcodes_from_report = CSV.read(file_handle, headers: true)['Barcode']&.to_set
-        sftp.close! fresh_report_path
+        raw = sftp.file.open(fresh_report_path, &:read)
+        parsed = CSV.parse(raw, headers: true)
+        barcodes_from_report = parsed&.to_set {|row| row[0]}
         sftp.rename!(fresh_report_path, old_report_path)
         barcodes_from_report
     end

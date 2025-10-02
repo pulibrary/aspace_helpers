@@ -17,10 +17,12 @@ def mock_sftp_session
       barcode123
       barcode456
     END_BARCODE_CSV
+    sftp_file_factory_mock = instance_double(Net::SFTP::Operations::FileFactory)
+    allow(sftp_file_factory_mock).to receive(:open).with('/alma/aspace/sc_active_barcodes.csv').and_yield barcode_csv
 
     sftp = instance_double(Net::SFTP::Session).as_null_object
     allow(sftp).to receive(:stat).and_yield(instance_double(Net::SFTP::Response, ok?: true))
-    allow(sftp).to receive(:open!).with('/alma/aspace/sc_active_barcodes.csv').and_return(barcode_csv)
+    allow(sftp).to receive(:file).and_return(sftp_file_factory_mock)
     sftp
 end
 
@@ -69,8 +71,17 @@ RSpec.describe AlmaReportDuplicateCheck do
         expect(barcode_validator.duplicate?('barcode123')).to be true
         expect(barcode_validator.duplicate?('barcode456')).to be true
         expect(barcode_validator.duplicate?('barcode789')).to be false
+    end
 
-        expect(sftp).to have_received(:open!).with('/alma/aspace/sc_active_barcodes.csv').once
+    it 'only opens the sftp file once, even if called multiple times' do
+        sftp = mock_sftp_session
+        mock_sftp_environment_variables
+        allow(Net::SFTP).to receive(:start).and_yield sftp
+
+        barcode_validator = described_class.new
+        20.times { |i| barcode_validator.duplicate?("barcode#{i}") }
+
+        expect(sftp.file).to have_received(:open).once
     end
 end
 # rubocop:enable RSpec/SpecFilePathFormat
