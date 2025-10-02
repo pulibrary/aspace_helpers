@@ -26,10 +26,9 @@ RSpec.describe 'regular aspace2alma process' do
     Timecop.freeze(frozen_time)
     stub_aspace_login
     allow(Net::SFTP).to receive(:start).and_yield(sftp_session)
-    allow(sftp_session).to receive(:open!)
-      .with("/alma/aspace/sc_active_barcodes.csv").and_return(File.open("spec/fixtures/sc_active_barcodes_short.csv"))
     allow(sftp_session).to receive(:close!)
       .with("/alma/aspace/sc_active_barcodes.csv")
+    allow(AlmaReportDuplicateCheck).to receive(:new).and_return(double(AlmaReportDuplicateCheck, duplicate?: true))
     allow(sftp_session).to receive(:stat)
       .with("/alma/aspace/MARC_out.xml")
     allow(sftp_session).to receive(:stat)
@@ -107,7 +106,7 @@ RSpec.describe 'regular aspace2alma process' do
     let(:resource_uri) { "/repositories/3/resources/1511" }
 
     it 'can be instantiated' do
-      expect { ItemRecordConstructor.new(client, instance_double(AlmaReportBarcodeValidation)) }.not_to raise_error
+      expect { ItemRecordConstructor.new(client, instance_double(AlmaReportDuplicateCheck)) }.not_to raise_error
     end
 
     it 'creates Params struct correctly' do

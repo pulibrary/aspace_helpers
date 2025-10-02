@@ -25,19 +25,19 @@ def mock_sftp_session
 end
 
 # rubocop:disable RSpec/SpecFilePathFormat
-RSpec.describe AlmaReportBarcodeValidation do
+RSpec.describe AlmaReportDuplicateCheck do
     it 'connects to sftp with the correct credentials' do
         mock_sftp_environment_variables
         allow(Net::SFTP).to receive(:start).and_yield mock_sftp_session
 
-        described_class.new.valid?('barcode123')
+        described_class.new.duplicate?('barcode123')
 
         expect(Net::SFTP).to have_received(:start).with('my-sftp-host.princeton.edu', 'almauser', {password: 'supersecretpassword123'})
     end
 
     it 'raises an error if credentials are not set' do
         allow(ENV).to receive(:fetch)
-        expect { described_class.new.valid?('barcode123') }.to raise_error('Missing SFTP credentials, please make sure that the SFTP_HOST, SFTP_USERNAME, and SFTP_PASSWORD variables are set')
+        expect { described_class.new.duplicate?('barcode123') }.to raise_error('Missing SFTP credentials, please make sure that the SFTP_HOST, SFTP_USERNAME, and SFTP_PASSWORD variables are set')
     end
 
     it 'deletes the existing old file' do
@@ -45,7 +45,7 @@ RSpec.describe AlmaReportBarcodeValidation do
         sftp = mock_sftp_session
         allow(Net::SFTP).to receive(:start).and_yield sftp
 
-        described_class.new.valid?('barcode123')
+        described_class.new.duplicate?('barcode123')
 
         expect(sftp).to have_received(:remove!).with('/alma/aspace/sc_active_barcodes_old.csv')
     end
@@ -55,20 +55,20 @@ RSpec.describe AlmaReportBarcodeValidation do
         mock_sftp_environment_variables
         allow(Net::SFTP).to receive(:start).and_yield sftp
 
-        described_class.new.valid?('barcode123')
+        described_class.new.duplicate?('barcode123')
 
         expect(sftp).to have_received(:rename!).with('/alma/aspace/sc_active_barcodes.csv', '/alma/aspace/sc_active_barcodes_old.csv')
     end
 
-    it 'can use the fresh file to determine if a barcode is valid' do
+    it 'can use the fresh file to determine if a barcode is a duplicate' do
         sftp = mock_sftp_session
         mock_sftp_environment_variables
         allow(Net::SFTP).to receive(:start).and_yield sftp
 
         barcode_validator = described_class.new
-        expect(barcode_validator.valid?('barcode123')).to be true
-        expect(barcode_validator.valid?('barcode456')).to be true
-        expect(barcode_validator.valid?('barcode789')).to be false
+        expect(barcode_validator.duplicate?('barcode123')).to be true
+        expect(barcode_validator.duplicate?('barcode456')).to be true
+        expect(barcode_validator.duplicate?('barcode789')).to be false
 
         expect(sftp).to have_received(:open!).with('/alma/aspace/sc_active_barcodes.csv').once
     end

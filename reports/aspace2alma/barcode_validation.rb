@@ -3,17 +3,17 @@ require 'net/sftp'
 
 # This class validates barcodes according to a report from Alma
 # analytics fetched from SFTP
-class AlmaReportBarcodeValidation
-    def valid?(barcode)
-        check_sftp_credentials
-        barcodes.include? barcode
+class AlmaReportDuplicateCheck
+    def duplicate?(barcode)
+        alma_barcodes.include? barcode
     end
 
   private
 
-    def barcodes
-        @barcodes ||= begin
-        barcodes_from_report = barcodes_from_sftp
+    def alma_barcodes
+        @alma_barcodes ||= begin
+            check_sftp_credentials
+            barcodes_from_report = barcodes_from_sftp
             raise 'Could not download barcodes from sftp, stopping.' unless barcodes_from_report
 
             barcodes_from_report
@@ -40,15 +40,10 @@ class AlmaReportBarcodeValidation
     # #either the fresh report from Alma does not arrive
     # #or the ASpace export fails
     def safely_read_report(sftp)
-        barcodes_from_report = nil
-        sftp.stat(fresh_report_path) do |response|
-            if response.ok?
-                file_handle = sftp.open! fresh_report_path
-                barcodes_from_report = CSV.read(file_handle, headers: true)['Barcode']&.to_set
-                sftp.close! fresh_report_path
-                sftp.rename!(fresh_report_path, old_report_path)
-            end
-        end
+        file_handle = sftp.open! fresh_report_path
+        barcodes_from_report = CSV.read(file_handle, headers: true)['Barcode']&.to_set
+        sftp.close! fresh_report_path
+        sftp.rename!(fresh_report_path, old_report_path)
         barcodes_from_report
     end
 

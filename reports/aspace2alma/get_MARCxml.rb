@@ -63,7 +63,7 @@ def fetch_and_process_records
   remove_file("/alma/aspace/MARC_out_old.xml")
   rename_file("/alma/aspace/#{filename}", "/alma/aspace/MARC_out_old.xml")
 
-  barcode_validator = AlmaReportBarcodeValidation.new
+  barcode_duplicate_check = AlmaReportDuplicateCheck.new
 
   #get collection records from ASpace
   resources = get_resource_uris_for_all_repos
@@ -72,7 +72,7 @@ def fetch_and_process_records
   file << '<collection xmlns="http://www.loc.gov/MARC21/slim" xmlns:marc="http://www.loc.gov/MARC21/slim" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.loc.gov/MARC21/slim http://www.loc.gov/standards/marcxml/schema/MARC21slim.xsd">'
 
   resources.each do |resource_uri|
-    process_resource(resource_uri, file, log_out, barcode_validator)
+    process_resource(resource_uri, file, log_out, barcode_duplicate_check)
   end
 
   file << '</collection>'
@@ -85,7 +85,7 @@ def fetch_and_process_records
   log_out.puts "Process finished at #{Time.now}"
 end
 
-def process_resource(resource, file, log_out, barcode_validator)
+def process_resource(resource, file, log_out, barcode_duplicate_check)
   retries ||= 0
 
   my_resource = Resource.new(resource, @client, file, log_out)
@@ -251,7 +251,7 @@ def process_resource(resource, file, log_out, barcode_validator)
 
   #addresses github #397
   params = Params.new(doc, tag099_a, log_out, nil)
-  item_constructor = ItemRecordConstructor.new(@client, barcode_validator)
+  item_constructor = ItemRecordConstructor.new(@client, barcode_duplicate_check)
   item_constructor.construct_item_records(resource, params)
 
   #addresses github #205
