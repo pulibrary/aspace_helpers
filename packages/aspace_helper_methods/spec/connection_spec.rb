@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require_relative "../../helper_methods"
 require "spec_helper"
 
 RSpec.describe "connection" do
