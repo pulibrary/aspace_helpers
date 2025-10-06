@@ -76,6 +76,8 @@ class AlmaSetDuplicateCheck
     alma_barcodes.include? barcode
   end
 
+  # This struct that is responsible for parsing the relevant data from an
+  # Alma /sets/{id}/members API json response.
   AlmaMemberSetResponse = Struct.new(:raw_data) do
     def self.from_uri(uri)
       new(uri.open('Accept' => 'application/json').read)
@@ -108,11 +110,13 @@ class AlmaSetDuplicateCheck
   end
 
   def alma_responses
-      # Alma only allows 10 API requests per second for all of PUL.
-      # So we make sure that there are only 5 simultaneous requests.
-      # Each request takes 3-7 seconds, so it is quite unlikely that
-      # we would have more than 5 requests in any given second, and
-      # much more likely that we would have ~1 request/second.
+      # Alma only allows 10 API requests per second for all of the
+      # PUL sandbox.
+      # So we use a semaphore to ensure that there are only 5
+      # simultaneous requests. Each request typically takes 3-7 seconds,
+      # so it is quite unlikely that we would have more than 5 requests
+      # in any given second, and much more likely that we would have
+      # ~1 request/second.
       semaphore = Async::Semaphore.new 5
       page_offsets_to_request.map do |offset|
         semaphore.async { AlmaMemberSetResponse.from_uri uri(offset) }
@@ -120,7 +124,13 @@ class AlmaSetDuplicateCheck
   end
 
   def page_offsets_to_request
-    (0..total_barcode_count).step(alma_page_size)
+    # offsets start at 0, while the barcode count starts at 1.  Reduce
+    # the count by one so that it matches the offset argument we send
+    # to the Alma API.
+    # For a total_barcode_count of 350 and an alma_page_size of 100,
+    # this method would yield: 0, 100, 200, 300
+    offset_of_last_barcode = total_barcode_count - 1
+    (0..offset_of_last_barcode).step(alma_page_size)
   end
 
   def total_barcode_count
