@@ -74,6 +74,8 @@ class AlmaSetDuplicateCheck
     alma_barcodes.include? barcode
   end
 
+  # This struct is responsible for parsing the relevant data from an
+  # Alma /sets/{id}/members API json response.
   AlmaMemberSetResponse = Struct.new(:raw_data) do
     def self.from_uri(uri)
       new(uri.open('Accept' => 'application/json').read)
@@ -99,32 +101,39 @@ class AlmaSetDuplicateCheck
 
   def alma_barcodes
     @alma_barcodes ||= begin
-      found_barcodes = []
-      worker_threads = offsets_to_request.each do |offset|
-        until can_make_another_request? do sleep 1 end
-        current_threads << Thread.new do
+      offsets_to_request.each do |offset|
+        sleep 1 until can_make_another_request?
+        request_threads << Thread.new do
           response = AlmaMemberSetResponse.from_uri uri(offset)
           response.barcodes
         end
       end
-      all_barcodes = current_threads.map { |thread| thread.value }.flatten.to_set
+      request_threads.map(&:value).flatten.to_set
     end
   end
 
   def offsets_to_request
+    # offsets start with 0, while barcode_counts start with 1.  We subtract one from
+    # the barcode count to let it match
+    maximum_offset = total_barcode_count - 1
+    # For a total_barcode_count of 350 and an alma_page_size of 100,
+    # this method would yield: 0, 100, 200, 300
     (0..total_barcode_count).step(alma_page_size)
   end
 
-  def current_threads
-    @current_threads ||= []
+  def request_threads
+    @request_threads ||= []
   end
 
   def can_make_another_request?
-    current_threads.count { |thread| thread.alive? } < thread_limit
-  end
-
-  def thread_limit
-    5
+    # Alma only allows 10 API requests per second for all of the
+    # PUL sandbox.
+    # So we make sure that there are only 5 active request threads
+    # at any given time. Each request typically takes 3-7 seconds,
+    # so it is quite unlikely that we would have more than 5 requests
+    # in any given second, and much more likely that we would have
+    # ~1 request/second.
+    request_threads.count(&:alive?) < 5
   end
 
   def total_barcode_count
