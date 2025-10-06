@@ -198,6 +198,7 @@ DEPENDENCIES
   byebug
   capistrano (~> 3.16.0)
   capistrano-bundler
+  concurrent-ruby
   csv
   ed25519
   net-sftp
