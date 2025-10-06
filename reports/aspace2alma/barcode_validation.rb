@@ -1,4 +1,5 @@
 require 'async'
+require 'async/semaphore'
 require 'csv'
 require 'json'
 require 'net/sftp'
@@ -99,13 +100,27 @@ class AlmaSetDuplicateCheck
   private
 
   def alma_barcodes
-    @alma_barcodes ||= Async do
-      responses = (0..total_barcode_count).step(alma_page_size).map do |offset|
-        Async { AlmaMemberSetResponse.from_uri uri(offset) }
-      end.map {|response| response.wait.barcodes }
-      .reduce([], :concat)
-      .to_set
-    end.wait
+    @alma_barcodes ||= Sync do
+      alma_responses.map {|response| response.wait.barcodes }
+                    .reduce([], :concat)
+                    .to_set
+    end
+  end
+
+  def alma_responses
+      # Alma only allows 10 API requests per second for all of PUL.
+      # So we make sure that there are only 5 simultaneous requests.
+      # Each request takes 3-7 seconds, so it is quite unlikely that
+      # we would have more than 5 requests in any given second, and
+      # much more likely that we would have ~1 request/second.
+      semaphore = Async::Semaphore.new 5
+      page_offsets_to_request.map do |offset|
+        semaphore.async { AlmaMemberSetResponse.from_uri uri(offset) }
+      end
+  end
+
+  def page_offsets_to_request
+    (0..total_barcode_count).step(alma_page_size)
   end
 
   def total_barcode_count
