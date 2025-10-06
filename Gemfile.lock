@@ -10,6 +10,12 @@ GIT
       json (~> 2.0)
       nokogiri (~> 1.10)
 
+PATH
+  remote: packages/aspace_helper_methods
+  specs:
+    aspace_helper_methods (0.1.0)
+      archivesspace-client
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -187,6 +193,7 @@ PLATFORMS
 DEPENDENCIES
   activesupport
   archivesspace-client!
+  aspace_helper_methods!
   bcrypt_pbkdf
   byebug
   capistrano (~> 3.16.0)
