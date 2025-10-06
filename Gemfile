@@ -32,3 +32,6 @@ group :development, :test do
   gem "timecop"
   gem "webmock"
 end
+
+gem "aspace_helper_methods", path: "packages/aspace_helper_methods"
+
