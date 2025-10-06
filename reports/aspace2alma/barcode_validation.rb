@@ -100,15 +100,31 @@ class AlmaSetDuplicateCheck
   def alma_barcodes
     @alma_barcodes ||= begin
       found_barcodes = []
-      worker_threads = (0..total_barcode_count).step(alma_page_size).map do |offset|
-        Thread.new do
+      worker_threads = offsets_to_request.each do |offset|
+        until can_make_another_request? do sleep 1 end
+        current_threads << Thread.new do
           response = AlmaMemberSetResponse.from_uri uri(offset)
-          found_barcodes.concat response.barcodes
+          response.barcodes
         end
       end
-      worker_threads.each(&:join)
-      found_barcodes.to_set
+      all_barcodes = current_threads.map { |thread| thread.value }.flatten.to_set
     end
+  end
+
+  def offsets_to_request
+    (0..total_barcode_count).step(alma_page_size)
+  end
+
+  def current_threads
+    @current_threads ||= []
+  end
+
+  def can_make_another_request?
+    current_threads.count { |thread| thread.alive? } < thread_limit
+  end
+
+  def thread_limit
+    5
   end
 
   def total_barcode_count
