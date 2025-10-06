@@ -122,7 +122,9 @@ RSpec.describe AlmaSetDuplicateCheck do
 
         described_class.new.duplicate? 'barcode99999'
 
-        assert_requested page1
+        # We request this page twice: once to get the total count of barcodes,
+        # and once to get the actual barcode data
+        assert_requested page1, times: 2
         assert_requested page2
         assert_requested page3
     end

@@ -76,7 +76,7 @@ class AlmaSetDuplicateCheck
 
   AlmaMemberSetResponse = Struct.new(:raw_data) do
     def self.from_uri(uri)
-      self.new(uri.open('Accept' => 'application/json').read)
+      new(uri.open('Accept' => 'application/json').read)
     end
 
     def total_barcode_count
@@ -97,22 +97,20 @@ class AlmaSetDuplicateCheck
 
   private
 
-  attr_reader :total_barcode_count
-
   def alma_barcodes
     @alma_barcodes ||= begin
       found_barcodes = []
-      offset = 0
-      # If we don't yet know the number of barcodes we'll fetch, or if we know that there are barcodes
-      # that we haven't yet fetched...
-      while !total_barcode_count || total_barcode_count >= offset
+      worker_threads = (0..total_barcode_count).step(alma_page_size).map do |offset|
         response = AlmaMemberSetResponse.from_uri uri(offset)
-        @total_barcode_count ||= response.total_barcode_count
         found_barcodes.concat response.barcodes
-        offset += alma_page_size
       end
-      found_barcodes
+      worker_threads.each(&:join)
+      found_barcodes.to_set
     end
+  end
+
+  def total_barcode_count
+    @total_barcode_count ||= AlmaMemberSetResponse.from_uri(uri(0)).total_barcode_count
   end
 
   def uri(offset)
