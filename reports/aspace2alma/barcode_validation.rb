@@ -1,3 +1,4 @@
+require 'async'
 require 'csv'
 require 'json'
 require 'net/sftp'
@@ -98,15 +99,13 @@ class AlmaSetDuplicateCheck
   private
 
   def alma_barcodes
-    @alma_barcodes ||= begin
-      found_barcodes = []
-      worker_threads = (0..total_barcode_count).step(alma_page_size).map do |offset|
-        response = AlmaMemberSetResponse.from_uri uri(offset)
-        found_barcodes.concat response.barcodes
-      end
-      worker_threads.each(&:join)
-      found_barcodes.to_set
-    end
+    @alma_barcodes ||= Async do
+      responses = (0..total_barcode_count).step(alma_page_size).map do |offset|
+        Async { AlmaMemberSetResponse.from_uri uri(offset) }
+      end.map {|response| response.wait.barcodes }
+      .reduce([], :concat)
+      .to_set
+    end.wait
   end
 
   def total_barcode_count

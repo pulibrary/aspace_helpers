@@ -2,6 +2,7 @@ source "https://rubygems.org"
 
 gem 'activesupport'
 gem 'archivesspace-client', github: 'lyrasis/archivesspace-client', ref: 'a4351eb'
+gem 'async'
 gem "bcrypt_pbkdf"
 gem 'csv'
 gem "ed25519"
