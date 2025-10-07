@@ -26,7 +26,7 @@ RSpec.describe 'regular aspace2alma process' do
     Timecop.freeze(frozen_time)
     stub_aspace_login
     allow(Net::SFTP).to receive(:start).and_yield(sftp_session)
-    allow(AlmaReportDuplicateCheck).to receive(:new).and_return(instance_double(AlmaReportDuplicateCheck, duplicate?: true))
+    allow(AlmaSetDuplicateCheck).to receive(:new).and_return(instance_double(AlmaSetDuplicateCheck, duplicate?: true))
     allow(sftp_session).to receive(:stat)
       .with("/alma/aspace/MARC_out.xml")
     allow(sftp_session).to receive(:stat)
@@ -46,13 +46,6 @@ RSpec.describe 'regular aspace2alma process' do
     stub(:get_resource_uris_for_all_repos)
       .and_return(resource_uris)
     stub(:alma_sftp).with('MARC_out.xml')
-    allow(ENV).to receive(:fetch) do |var|
-        {
-          'SFTP_HOST' => 'my-sftp-host.princeton.edu',
-            'SFTP_USERNAME' => 'almauser',
-            'SFTP_PASSWORD' => 'supersecretpassword123'
-        }[var]
-    end
   end
 
   context 'when the connection is stable' do
@@ -96,7 +89,7 @@ RSpec.describe 'regular aspace2alma process' do
     let(:resource_uri) { "/repositories/3/resources/1511" }
 
     it 'can be instantiated' do
-      expect { ItemRecordConstructor.new(client, instance_double(AlmaReportDuplicateCheck)) }.not_to raise_error
+      expect { ItemRecordConstructor.new(client, instance_double(AlmaSetDuplicateCheck)) }.not_to raise_error
     end
 
     it 'creates Params struct correctly' do

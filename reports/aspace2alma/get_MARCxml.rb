@@ -64,7 +64,7 @@ def fetch_and_process_records
   remove_file("/alma/aspace/MARC_out_old.xml")
   rename_file("/alma/aspace/#{filename}", "/alma/aspace/MARC_out_old.xml")
 
-  barcode_duplicate_check = AlmaReportDuplicateCheck.new
+  barcode_duplicate_check = AlmaSetDuplicateCheck.new
 
   #get collection records from ASpace
   resources = get_resource_uris_for_all_repos
