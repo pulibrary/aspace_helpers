@@ -1,4 +1,4 @@
-source "https://rubygems.org"
+source "https://gem.coop"
 
 gem 'activesupport'
 gem 'archivesspace-client', github: 'lyrasis/archivesspace-client', ref: 'a4351eb'

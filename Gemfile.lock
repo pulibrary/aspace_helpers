@@ -17,7 +17,7 @@ PATH
       archivesspace-client
 
 GEM
-  remote: https://rubygems.org/
+  remote: https://gem.coop/
   specs:
     actionview (8.0.1)
       activesupport (= 8.0.1)
