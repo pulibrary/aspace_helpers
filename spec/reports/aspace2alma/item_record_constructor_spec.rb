@@ -6,7 +6,7 @@ require_relative '../../../reports/aspace2alma/resource'
 RSpec.shared_context 'with common mocks' do
   let(:mock_client) { instance_spy(ArchivesSpace::Client) }
   let(:constructor) do
-    validator = instance_double(AlmaReportDuplicateCheck, duplicate?: false)
+    validator = instance_double(AlmaSetDuplicateCheck, duplicate?: false)
     ItemRecordConstructor.new(mock_client, validator)
   end
   let(:resource_uri) { '/repositories/2/resources/123' }
@@ -156,7 +156,7 @@ RSpec.describe ItemRecordConstructor do
     describe '#construct_item_records integration test' do
       let(:real_client) { ArchivesSpace::Client.new(ArchivesSpace::Configuration.new(base_uri: 'https://example.com/staff/api')) }
       let(:real_constructor) do
-        validator = instance_double(AlmaReportDuplicateCheck, duplicate?: false)
+        validator = instance_double(AlmaSetDuplicateCheck, duplicate?: false)
         described_class.new(real_client, validator)
       end
       let(:resource_uri) { "/repositories/3/resources/1511" }
