@@ -1,4 +1,3 @@
-
 require 'archivesspace/client'
 require 'active_support/all'
 require 'json'
@@ -8,24 +7,24 @@ require 'aspace_helper_methods'
 aspace_login
 
 eadids = %w[C0014
-C0232
-C0395
-C0641
-C0790
-C0812
-C0827
-C0915
-C1123
-C1229
-C1283
-C1358
-C1393
-C1439
-C1457
-C1475
-C1479
-C1480
-C1603]
+            C0232
+            C0395
+            C0641
+            C0790
+            C0812
+            C0827
+            C0915
+            C1123
+            C1229
+            C1283
+            C1358
+            C1393
+            C1439
+            C1457
+            C1475
+            C1479
+            C1480
+            C1603]
 
 resource_uris = get_uris_by_eadids(eadids)
 resource_uris.map! do |string|
@@ -35,11 +34,11 @@ end
 top_containers =
   resource_uris.map do |uri|
   parsed = @client.get(
-      'repositories/5/top_containers/search',
+    'repositories/5/top_containers/search',
     query: {
       q: "collection_uri_u_sstr:\"#{uri}\""
     }
-    ).parsed
+  ).parsed
     parsed['response']['docs']
 end
 
