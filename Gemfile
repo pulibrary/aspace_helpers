@@ -9,7 +9,6 @@ gem 'net-sftp'
 gem 'net-ssh'
 gem 'nokogiri'
 gem 'rake'
-gem 'whenever', require: false
 
 group :development do
   gem "capistrano", "~> 3.16.0"
