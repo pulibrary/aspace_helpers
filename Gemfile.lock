@@ -1,9 +1,8 @@
 GIT
   remote: https://github.com/lyrasis/archivesspace-client.git
-  revision: a4351eb03d8e271c560875190b54b3da40f563b1
-  ref: a4351eb
+  revision: ca0b406c2bee02eb11b9f68dd92ccf6ead551fa8
   specs:
-    archivesspace-client (0.4.1)
+    archivesspace-client (0.4.2)
       dry-cli (~> 0.7)
       httparty (~> 0.14)
       jbuilder (~> 2.12)
