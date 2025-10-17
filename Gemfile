@@ -1,7 +1,7 @@
 source "https://gem.coop"
 
 gem 'activesupport'
-gem 'archivesspace-client', github: 'lyrasis/archivesspace-client', ref: 'a4351eb'
+gem 'archivesspace-client', github: 'lyrasis/archivesspace-client'
 gem "bcrypt_pbkdf"
 gem 'csv'
 gem "ed25519"
