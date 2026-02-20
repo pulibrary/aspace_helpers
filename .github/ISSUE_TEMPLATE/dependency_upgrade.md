@@ -1,7 +1,7 @@
 ---
 name: Dependency upgrade
 about: Upgrading the version of a system dependency
-title: 'Upgrade to [INSERT DEPENDENCY HERE] [INSERT VERSION NUMBER HERE]'
+title: Upgrade to [INSERT DEPENDENCY HERE] [INSERT VERSION NUMBER HERE]
 labels: maintenance
 assignees: ''
 
