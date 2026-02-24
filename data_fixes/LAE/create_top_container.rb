@@ -10,15 +10,14 @@ puts "Process started: #{Time.now}"
 #create containers from CSV
 csv = CSV.parse(File.read("/Users/heberleinr/Documents/aspace_helpers/data_fixes/LAE/Religion in Cuba microfilm reels.csv"), :headers => true)
 csv.each do |row|
-record = 
+record =
   {
-    "jsonmodel_type": "top_container",
-    "indicator": "#{row['Call Number']} #{row['Volume']}",
-    "type": "item",
-    "barcode": "#{row['Barcode']}"
+    jsonmodel_type: "top_container",
+    indicator: "#{row['Call Number']} #{row['Volume']}",
+    type: "item",
+    barcode: (row['Barcode']).to_s
   }
 
   post = @client.post('/repositories/8/top_containers', record)
   puts post.body
 end
-
