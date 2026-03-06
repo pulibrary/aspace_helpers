@@ -13,11 +13,11 @@ resource_id = 4113
 #search for top containers by resource id
 top_containers = []
 top_containers << @client.get(
-    "/repositories/#{repo}/top_containers/search",
+  "/repositories/#{repo}/top_containers/search",
     query: {
       q: "collection_uri_u_sstr:\"/repositories/#{repo}/resources/#{resource_id}\""
     }
-  ).parsed['response']['docs']
+).parsed['response']['docs']
 top_containers.flatten!
 
 #search for archival objects by resource id
@@ -34,12 +34,13 @@ microfilms = top_containers.select do |top_container|
 end
 
 #get microfilm uris
-microfilm_uris =  microfilms.map {|microfilm| microfilm['uri']}
+microfilm_uris = microfilms.map {|microfilm| microfilm['uri']}
 
 #unlink microfilm instances from aos
 ao_uris.each do |ao_uri|
   record = @client.get(ao_uri).parsed
   next if record['instances'].empty?
+
   record['instances'].reject! do |instance|
     microfilm_uris.any? do |microfilm_uri|
       instance['sub_container']['top_container']['ref'].include? microfilm_uri
@@ -48,6 +49,3 @@ ao_uris.each do |ao_uri|
   post = @client.post(ao_uri, record)
   puts post.body
 end
-
-
-
