@@ -12,7 +12,7 @@ resources = get_all_records_of_type_in_repo("resources", 8)
 resources.each do |resource|
   altformavail_all = resource['notes'].select { |note| note["type"] == "altformavail" }
   altformavail_all.each do |altformavail|
-    puts "#{resource['ead_id']}^#{resource['uri']}^#{altformavail['subnotes'][0]['content'].gsub! /\n/, ' '}"
+    puts "#{resource['ead_id']}^#{resource['uri']}^#{altformavail['subnotes'][0]['content'].gsub!("\n", ' ')}"
     end
   end
 

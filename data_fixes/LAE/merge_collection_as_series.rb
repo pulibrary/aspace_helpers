@@ -41,4 +41,3 @@ merge_candidate_uris.each do |candidate_uri|
                       })
  puts post.body
 end
-

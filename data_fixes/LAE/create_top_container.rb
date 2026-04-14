@@ -18,24 +18,17 @@ record =
     barcode: (row['Barcode']).to_s,
     container_locations: [
       {
-        "jsonmodel_type"=>"container_location", 
-        "start_date"=>"2026-03-31", 
-        "status"=>"current", 
+        "jsonmodel_type"=>"container_location",
+        "start_date"=>"2026-03-31",
+        "status"=>"current",
         "ref"=>row['Location']
-        }
-      ],
-    collection: [{"ref"=>row['resource'], "identifier"=>row['eadid']}], 
-    container_profile: {"ref"=>"/container_profiles/31"}, 
+      }
+    ],
+    collection: [{"ref"=>row['resource'], "identifier"=>row['eadid']}],
+    container_profile: {"ref"=>"/container_profiles/31"},
     restricted: true
   }
 
   post = @client.post('/repositories/8/top_containers', record)
   puts post.body
 end
-
-
-
-
-
-
-

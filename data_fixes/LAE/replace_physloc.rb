@@ -14,12 +14,12 @@ resources = get_all_records_of_type_in_repo("resources", 8)
 resources.each do |resource|
   physloc_all = resource['notes'].select { |note| note["type"] == "physloc" }
   physloc_all.each do |physloc|
-    if physloc['content'].to_s.match(match_string)
-      physloc['content'][0] = replace_string
-      uri = resource['uri']
-      post = @client.post(uri, resource)
-      puts post.body
-    end
+    next unless physloc['content'].to_s.match(match_string)
+
+    physloc['content'][0] = replace_string
+    uri = resource['uri']
+    post = @client.post(uri, resource)
+    puts post.body
   end
 rescue Exception => msg
 error = "Process ended: #{Time.now} with error '#{msg.class}: #{msg.message}''"

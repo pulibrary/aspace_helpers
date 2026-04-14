@@ -12,7 +12,7 @@ resources = get_all_records_of_type_in_repo("resources", 8)
 resources.each do |resource|
   accessrestrict_all = resource['notes'].select { |note| note["type"] == "accessrestrict" }
   accessrestrict_all.each do |accessrestrict|
-    puts "#{resource['ead_id']}^#{resource['uri']}^#{accessrestrict['rights_restriction']['local_access_restriction_type'][0]}^#{accessrestrict['subnotes'][0]['content'].gsub! /\n/, ' '}"
+    puts "#{resource['ead_id']}^#{resource['uri']}^#{accessrestrict['rights_restriction']['local_access_restriction_type'][0]}^#{accessrestrict['subnotes'][0]['content'].gsub!("\n", ' ')}"
     end
   end
 

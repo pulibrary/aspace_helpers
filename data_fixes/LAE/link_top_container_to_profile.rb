@@ -10,22 +10,22 @@ puts "Process started: #{Time.now}"
 
 #link containers to container profile
 ids = [124396,
-124397,
-124398,
-124399,
-124400,
-124401,
-124402,
-124403,
-124404,
-124405,
-124406,
-124407,
-124408,
-124409,
-124410,
-124411,
-124412]
+       124397,
+       124398,
+       124399,
+       124400,
+       124401,
+       124402,
+       124403,
+       124404,
+       124405,
+       124406,
+       124407,
+       124408,
+       124409,
+       124410,
+       124411,
+       124412]
 ids.each do |id|
   uri = "/repositories/8/top_containers/batch/container_profile?ids[]=#{id}&container_profile_uri=/container_profiles/3"
   post = @client.post(uri, {})

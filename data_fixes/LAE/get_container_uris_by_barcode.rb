@@ -10,12 +10,10 @@ csv = CSV.parse(File.read("/Users/heberleinr/Documents/aspace_helpers/data_fixes
 csv.each do |row|
     barcode = row['Barcode'].to_s
     uri = @client.get("/repositories/8/find_by_id/top_containers", {query: {
-        barcode: [barcode]
-        }
-    }).parsed
+                        barcode: [barcode]
+                      }}).parsed
     puts uri['top_containers'][0]['ref']
 end
-
 
 # docs = top_container_uris = @client.get(
 # 'repositories/8/top_containers/search',
