@@ -12,19 +12,19 @@ csv = CSV.parse(File.read("/Users/heberleinr/Documents/aspace_helpers/data_fixes
 csv.each do |row|
 record =
   {
-  "jsonmodel_type"=>"digital_object",
+    "jsonmodel_type"=>"digital_object",
   "digital_object_id"=>row['identifier'],
   "title"=>row['title'],
   "publish"=>true,
   "restrictions"=>false,
   "file_versions"=>[{
-  "file_uri"=>"https://figgy.princeton.edu/concern/scanned_resources/#{row['identifier']}/manifest",
+    "file_uri"=>"https://figgy.princeton.edu/concern/scanned_resources/#{row['identifier']}/manifest",
   "publish"=>true,
   "created_by"=>"admin",
   "jsonmodel_type"=>"file_version",
   "is_representative"=>false,
   "identifier"=>row['ark']
-    }]
+  }]
   }
   post = @client.post('/repositories/8/digital_objects', record)
   puts "#{row['uri']}^#{post.body}"

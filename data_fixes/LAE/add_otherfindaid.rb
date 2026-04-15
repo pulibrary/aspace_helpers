@@ -13,13 +13,13 @@ csv.each do |row|
   resource = @client.get(row['uri']).parsed
   resource['notes'].delete_if { |note| note["type"] == "otherfindaid" }
   resource['notes'].append(
-    {"jsonmodel_type" => "note_multipart", 
-    "type" => "otherfindaid", 
+    {"jsonmodel_type" => "note_multipart",
+    "type" => "otherfindaid",
     "subnotes" => [{
-      "jsonmodel_type" => "note_text", 
-      "content" => "<extref href=\"#{row['mmsid_physical']}\">Main catalog: collection record</extref>\n<extref href=\"#{row['mmsid_mf']}\">Main catalog: microfilm record</extref>", 
+      "jsonmodel_type" => "note_text",
+      "content" => "<extref href=\"#{row['mmsid_physical']}\">Main catalog: collection record</extref>\n<extref href=\"#{row['mmsid_mf']}\">Main catalog: microfilm record</extref>",
       "publish" => true
-      }], 
+    }],
       "publish" => true}
   )
   post = @client.post(row['uri'], resource)
