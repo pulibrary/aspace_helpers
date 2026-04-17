@@ -10,6 +10,10 @@ AllCops:
     - 'tools/as_marcao/get_marc_ao.rb'
     - 'vendor/**/*'
 
+Layout/LineLength:
+  Exclude:
+  - 'data_fixes/LAE/edit_accessrestrict.rb'
+
 Metrics/AbcSize:
   Exclude:
     - 'reports/aspace2alma/get_MARCxml.rb'
