@@ -17,7 +17,7 @@ csv.each do |row|
     "type" => "otherfindaid",
     "subnotes" => [{
       "jsonmodel_type" => "note_text",
-      "content" => "<extref href=\"#{row['mmsid_physical']}\">Main catalog: collection record</extref>\n<extref href=\"#{row['mmsid_mf']}\">Main catalog: microfilm record</extref>",
+      "content" => "<p><extref href=\"#{row['mmsid_physical']}\">Main catalog: collection record</extref></p>\n<p><extref href=\"#{row['mmsid_mf']}\">Main catalog: microfilm record</extref></p>",
       "publish" => true
     }],
       "publish" => true}

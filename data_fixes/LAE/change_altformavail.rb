@@ -17,7 +17,7 @@ csv.each do |row|
     "type" => "altformavail",
     "subnotes" => [{
       "jsonmodel_type" => "note_text",
-      "content" => "<p>Images of this collection may be viewed online at #{row['ark']}</p>#{row['note']}",
+      "content" => "<p>Images of this collection may be viewed online in the <extref href=\"#{row['ark']}\">PUL catalog</extref> (scroll down for the image viewer).</p>#{row['note']}",
       "publish" => true
     }],
       "publish" => true}
