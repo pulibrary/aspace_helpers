@@ -14,7 +14,7 @@ This collection has been fully digitized and the digital images are available he
 csv = CSV.parse(File.read("/Users/heberleinr/Documents/aspace_helpers/data_fixes/LAE/altformavail.csv"), :headers => true)
 csv.each do |row|
   replace_string = "<p>Images of this collection may be viewed online in the <extref href=\"#{row['ark']}\">PUL catalog</extref> (scroll down for the image viewer) or on the <extref xlink:href=\"https://dpul.princeton.edu/lae-dig-microfilm\">Latin American Ephemera: Digitized Microfilm Sets</extref> site.</p>"
-  resource = @client.get(row['uri']).parsed  
+  resource = @client.get(row['uri']).parsed
     accessrestrict_all = resource['notes'].select { |note| note["type"] == "accessrestrict" }
     accessrestrict_all.each do |accessrestrict|
       accessrestrict_text = accessrestrict['subnotes'][0]['content']
