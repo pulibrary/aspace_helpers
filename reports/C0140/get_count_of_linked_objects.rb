@@ -20,8 +20,8 @@ all_records = []
 
 #get objects and counts
 uris = @client.get("#{resource}/ordered_records").parsed['uris']
-uris.each do |uri|
-    record = @client.get(uri['ref']).parsed
+records_by_uri = batch_get_records_by_uris(uris.map { |uri| uri['ref'] })
+records_by_uri.each_value do |record|
     all_records << record
     @linked_agents_counts += record['linked_agents'].count
     @subjects_counts += record['subjects'].count
@@ -38,7 +38,7 @@ uris.each do |uri|
       end.count
     top_container_count =
       record['instances'].reject do |instance|
-          instance['instance_type'] += "digital_object"
+          instance['instance_type'] == "digital_object"
       end.count
     @instance_digital_object_counts += digital_object_count.to_i
     @instance_top_container_counts += top_container_count.to_i

@@ -8,44 +8,44 @@ require 'aspace_helper_methods'
 require_relative 'resource'
 require_relative 'top_container'
 require_relative 'item_record_constructor'
-require_relative 'barcode_validation'
+# require_relative 'barcode_validation'
 
 #log errors to file
 $stderr.reopen("log_err.txt", "w")
 #keep values synced so they're not going to the buffer
 $stderr.sync = true
 
-#configure sendoff to alma
-def alma_sftp (filename)
-  Net::SFTP.start(ENV.fetch('SFTP_HOST', nil), ENV.fetch('SFTP_USERNAME', nil), { password: ENV.fetch('SFTP_PASSWORD', nil) }) do |sftp|
-    sftp.upload!(filename, File.join('/alma/aspace/', File.basename(filename)))
-  end
-end
+# #configure sendoff to alma
+# def alma_sftp (filename)
+#   Net::SFTP.start(ENV.fetch('SFTP_HOST', nil), ENV.fetch('SFTP_USERNAME', nil), { password: ENV.fetch('SFTP_PASSWORD', nil) }) do |sftp|
+#     sftp.upload!(filename, File.join('/alma/aspace/', File.basename(filename)))
+#   end
+# end
 
-#get Alma barcode report from sftp
-def get_file_from_sftp(remote_filename)
-  Net::SFTP.start(ENV.fetch('SFTP_HOST', nil), ENV.fetch('SFTP_USERNAME', nil), { password: ENV.fetch('SFTP_PASSWORD', nil) }) do |sftp|
-    sftp.download!(File.join('/alma/aspace/', File.basename(remote_filename)), remote_filename)
-  end
-end
+# #get Alma barcode report from sftp
+# def get_file_from_sftp(remote_filename)
+#   Net::SFTP.start(ENV.fetch('SFTP_HOST', nil), ENV.fetch('SFTP_USERNAME', nil), { password: ENV.fetch('SFTP_PASSWORD', nil) }) do |sftp|
+#     sftp.download!(File.join('/alma/aspace/', File.basename(remote_filename)), remote_filename)
+#   end
+# end
 
-#rename old files so we never send an outdated file by accident
-def rename_file(original_path, new_path)
-  Net::SFTP.start(ENV.fetch('SFTP_HOST', nil), ENV.fetch('SFTP_USERNAME', nil), { password: ENV.fetch('SFTP_PASSWORD', nil) }) do |sftp|
-    sftp.stat(original_path) do |response|
-      sftp.rename!(original_path, new_path) if response.ok?
-    end
-  end
-end
+# #rename old files so we never send an outdated file by accident
+# def rename_file(original_path, new_path)
+#   Net::SFTP.start(ENV.fetch('SFTP_HOST', nil), ENV.fetch('SFTP_USERNAME', nil), { password: ENV.fetch('SFTP_PASSWORD', nil) }) do |sftp|
+#     sftp.stat(original_path) do |response|
+#       sftp.rename!(original_path, new_path) if response.ok?
+#     end
+#   end
+# end
 
-#remove files in preparation for renaming
-def remove_file(path)
-  Net::SFTP.start(ENV.fetch('SFTP_HOST', nil), ENV.fetch('SFTP_USERNAME', nil), { password: ENV.fetch('SFTP_PASSWORD', nil) }) do |sftp|
-    sftp.stat(path) do |response|
-      sftp.remove!(path) if response.ok?
-    end
-  end
-end
+# #remove files in preparation for renaming
+# def remove_file(path)
+#   Net::SFTP.start(ENV.fetch('SFTP_HOST', nil), ENV.fetch('SFTP_USERNAME', nil), { password: ENV.fetch('SFTP_PASSWORD', nil) }) do |sftp|
+#     sftp.stat(path) do |response|
+#       sftp.remove!(path) if response.ok?
+#     end
+#   end
+# end
 
 def datestamp
   Time.now.utc.strftime('%Y%m%d%H%M')
@@ -61,10 +61,10 @@ def fetch_and_process_records
   #rename MARC file:
   #in case the export fails, this ensures that
   #Alma will not find a stale file to import
-  remove_file("/alma/aspace/MARC_out_old.xml")
-  rename_file("/alma/aspace/#{filename}", "/alma/aspace/MARC_out_old.xml")
+  # remove_file("/alma/aspace/MARC_out_old.xml")
+  # rename_file("/alma/aspace/#{filename}", "/alma/aspace/MARC_out_old.xml")
 
-  barcode_duplicate_check = AlmaSetDuplicateCheck.new
+  #barcode_duplicate_check = AlmaSetDuplicateCheck.new
 
   #get collection records from ASpace
   resources = get_resource_uris_for_all_repos
@@ -73,20 +73,22 @@ def fetch_and_process_records
   file << '<collection xmlns="http://www.loc.gov/MARC21/slim" xmlns:marc="http://www.loc.gov/MARC21/slim" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.loc.gov/MARC21/slim http://www.loc.gov/standards/marcxml/schema/MARC21slim.xsd">'
 
   resources.each do |resource_uri|
-    process_resource(resource_uri, file, log_out, barcode_duplicate_check)
+      # process_resource(resource_uri, file, log_out, barcode_duplicate_check)
+      process_resource(resource_uri, file, log_out)
   end
 
   file << '</collection>'
   file.close
 
   #send to alma
-  alma_sftp(filename)
+  # alma_sftp(filename)
 
   #log when the process finished.
   log_out.puts "Process finished at #{Time.now}"
 end
 
-def process_resource(resource, file, log_out, barcode_duplicate_check)
+# def process_resource(resource, file, log_out, barcode_duplicate_check)
+def process_resource(resource, file, log_out)
   retries ||= 0
 
   my_resource = Resource.new(resource, @client, file, log_out)
@@ -251,8 +253,11 @@ def process_resource(resource, file, log_out, barcode_duplicate_check)
   end
 
   #addresses github #397
-  params = Params.new(doc, tag099_a, log_out, nil)
-  item_constructor = ItemRecordConstructor.new(@client, barcode_duplicate_check)
+  #params = Params.new(doc, tag099_a, log_out, nil)
+  params = Params.new(doc, tag099_a, log_out)
+    # item_constructor = ItemRecordConstructor.new(@client, barcode_duplicate_check)
+    item_constructor = ItemRecordConstructor.new(@client)
+
   item_constructor.construct_item_records(resource, params)
 
   #addresses github #205
