@@ -2,9 +2,7 @@ require 'csv'
 require 'json'
 require_relative 'top_container'
 
-#Params = Struct.new(:doc, :tag099_a, :log_out, :alma_barcodes_set)
-Params = Struct.new(:doc, :tag099_a, :log_out)
-
+Params = Struct.new(:doc, :tag099_a, :log_out, :alma_barcodes_set)
 # Module with utility functions for item record processing.
 module ItemRecordUtils
   def self.extract_repository_id(resource)
@@ -54,17 +52,12 @@ end
 class ItemRecordConstructor
   REPO_PATH_REGEX = %r{(^/repositories/)(\d{1,2})(/resources.*$)}
 
-  # def initialize(client, barcode_duplicate_check)
-  #   @client = client
-  #   @barcode_duplicate_check = barcode_duplicate_check
-  # end
-
-  def initialize(client)
+  def initialize(client, barcode_duplicate_check)
     @client = client
+    @barcode_duplicate_check = barcode_duplicate_check
   end
 
-    # attr_reader :barcode_duplicate_check, :client
-    attr_reader :client
+  attr_reader :barcode_duplicate_check, :client
 
   def construct_item_records(resource, params)
     containers = fetch_and_sort_containers(resource)
@@ -103,7 +96,6 @@ class ItemRecordConstructor
   end
 
   def container_valid?(top_container)
-    # top_container.valid? && top_container.barcode && !barcode_duplicate_check.duplicate?(top_container.barcode)
-    top_container.valid? && top_container.barcode
+    top_container.valid? && top_container.barcode && !barcode_duplicate_check.duplicate?(top_container.barcode)
   end
 end
