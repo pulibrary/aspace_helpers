@@ -112,7 +112,7 @@ end
 def batch_get_records_by_uris(uris, resolve = [])
   records_by_uri = {}
   uris.uniq.group_by { |uri| uri.sub(%r{/\d+\z}, '') }.each do |endpoint, group|
-    ids = group.map { |uri| uri[%r{\d+\z}].to_i }
+    ids = group.map { |uri| uri[/\d+\z/].to_i }
     paginate_endpoint(ids, ids.count, endpoint, resolve).each do |record|
       records_by_uri[record['uri']] = record
     end

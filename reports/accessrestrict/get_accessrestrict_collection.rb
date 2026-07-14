@@ -19,10 +19,10 @@ CSV.open(output_file, "w",
          :headers => ["eadid", "uri", "accessrestrict"]) do |row|
   ids.each_slice(250).with_index(1) do |id_batch, batch_number|
     records = @client.get("repositories/#{repo}/resources", {
-      query: {
-        id_set: id_batch
-      }
-    }).parsed
+                            query: {
+                              id_set: id_batch
+                            }
+                          }).parsed
     records.each do |record|
       eadid = record['ead_id']
       uri = record['uri']
