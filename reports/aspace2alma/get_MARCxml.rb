@@ -47,6 +47,28 @@ def remove_file(path)
   end
 end
 
+# Set SKIP_SFTP=1 to keep the generated MARC file local: skips the remote
+# file rotation and the upload to Alma's SFTP server.
+# Set SKIP_BARCODE_CHECK=1 to skip the Alma duplicate-barcode check, which
+# otherwise requires the ALMA_* API environment variables.
+# For a fully local run:
+#   SKIP_SFTP=1 SKIP_BARCODE_CHECK=1 ruby get_MARCxml.rb
+def skip_sftp?
+  ENV['SKIP_SFTP'] == '1'
+end
+
+def skip_barcode_check?
+  ENV['SKIP_BARCODE_CHECK'] == '1'
+end
+
+# Stands in for AlmaSetDuplicateCheck when SKIP_BARCODE_CHECK=1: treats no
+# barcode as a duplicate, so every valid container gets an item record.
+class NoOpDuplicateCheck
+  def duplicate?(_barcode)
+    false
+  end
+end
+
 def datestamp
   Time.now.utc.strftime('%Y%m%d%H%M')
 end
@@ -61,10 +83,14 @@ def fetch_and_process_records
   #rename MARC file:
   #in case the export fails, this ensures that
   #Alma will not find a stale file to import
-  remove_file("/alma/aspace/MARC_out_old.xml")
-  rename_file("/alma/aspace/#{filename}", "/alma/aspace/MARC_out_old.xml")
+  if skip_sftp?
+    log_out.puts "SKIP_SFTP is set: skipping remote file rotation and upload"
+  else
+    remove_file("/alma/aspace/MARC_out_old.xml")
+    rename_file("/alma/aspace/#{filename}", "/alma/aspace/MARC_out_old.xml")
+  end
 
-  barcode_duplicate_check = AlmaSetDuplicateCheck.new
+  barcode_duplicate_check = skip_barcode_check? ? NoOpDuplicateCheck.new : AlmaSetDuplicateCheck.new
 
   #get collection records from ASpace
   resources = get_resource_uris_for_all_repos
@@ -80,7 +106,7 @@ def fetch_and_process_records
   file.close
 
   #send to alma
-  alma_sftp(filename)
+  alma_sftp(filename) unless skip_sftp?
 
   #log when the process finished.
   log_out.puts "Process finished at #{Time.now}"
