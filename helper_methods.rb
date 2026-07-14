@@ -26,7 +26,9 @@ def aspace_staging_login()
     #page_size: 50,
     throttle: 0,
     verify_ssl: false,
-  })
+  }) do |config|
+  config.log_level = Logger::DEBUG
+end
 
   #log in
   @client = ArchivesSpace::Client.new(@config).login
@@ -93,20 +95,35 @@ end
 
 def paginate_endpoint(ids, count_ids, endpoint, resolve)
   @results = []
-  @results = []
   count_processed_records = 0
   while count_processed_records < count_ids do
-    last_record = [count_processed_records+249, count_ids].min
+    last_record = [count_processed_records+249, count_ids-1].min
     @results << @client.get(endpoint, {
             query: {
               id_set: ids[count_processed_records..last_record],
               resolve: resolve
             }
           }).parsed
-    count_processed_records = last_record
+    count_processed_records = last_record + 1
   end
   @results.flatten
-  @results.flatten
+end
+
+def batch_get_records_by_uris(uris, resolve = [])
+  records_by_uri = {}
+  uris.uniq.group_by { |uri| uri.sub(%r{/\d+\z}, '') }.each do |endpoint, group|
+    ids = group.map { |uri| uri[%r{\d+\z}].to_i }
+    paginate_endpoint(ids, ids.count, endpoint, resolve).each do |record|
+      records_by_uri[record['uri']] = record
+    end
+  end
+  records_by_uri
+end
+
+# Fetch a record by ref so repeated refs only cost one API call.
+def get_record_cached(ref)
+  @record_cache ||= {}
+  @record_cache[ref] ||= @client.get(ref).parsed
 end
 
 def get_all_records_of_type_in_repo(record_type, repo, resolve = [])
@@ -139,7 +156,6 @@ def get_single_resource_by_eadid(repo, eadid, resolve = [])
   end
 end
 
-#pass in eadids as array
 def get_uris_by_eadids(eadids, resolve = [])
   selected_resources = get_resources_by_eadids(eadids, resolve)
   uris = selected_resources.flatten.map do |resource|
@@ -147,7 +163,6 @@ def get_uris_by_eadids(eadids, resolve = [])
   end
 end
 
-#pass in eadids as array
 def get_resources_by_eadids(eadids, resolve = [])
   selected_resources = []
   selected_resources << get_all_resource_records_for_institution.select do |resource|
@@ -161,7 +176,7 @@ endpoint_name = '/repositories/' + repo_id.to_s + '/archival_contexts/people/' +
 @client.get(endpoint_name.to_s).parsed
 end
 
-#expect this method to take up to 30 minutes
+# this method may take a long time to run
 def get_all_top_container_records_for_institution(resolve = [])
   repos = get_all_repo_uris
   repos.map do |repo_uri|
@@ -237,7 +252,6 @@ def get_index_of_resource_uri(uri)
   uris.index(uri)
 end
 
-#input_ids and record_types_to_prefetch are passed in as arrays
 def get_resolved_objects_from_ids(repository_id, input_ids, record_type, record_types_to_prefetch)
   all_records = []
   count_processed_records = 0

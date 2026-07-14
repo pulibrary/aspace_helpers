@@ -8,7 +8,7 @@ output_file = "users_with_groups.csv"
 
 CSV.open(output_file, "w",
          :write_headers => true,
-         :headers => ["username", "name", "uri", "is active user", "is system user", "is admin", "repositories", "groups"]) do |row|
+         :headers => ["username", "name", "uri", "is system user", "is active user", "is admin", "repositories", "groups"]) do |row|
     repositories = (3..12).to_a
     repositories << 1
 
