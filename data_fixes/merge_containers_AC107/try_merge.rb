@@ -1,21 +1,16 @@
 require 'archivesspace/client'
-require_relative 'sandbox_auth'
 require 'json'
+require 'csv'
+require_relative 'aspace_helper_methods'
 
-#configure access
-config = ArchivesSpace::Configuration.new({
-  base_uri: "https://aspace-staging.princeton.edu/staff/api",
-  base_repo: "",
-  username: @user,
-  password: @password,
-  #page_size: 50,
-  throttle: 0,
-  verify_ssl: false,
-})
+aspace_staging_login
 
-#log in
-client = ArchivesSpace::Client.new(config).login
-
-update=client.post('/merge_requests/top_container?repo_id=4', {"target":{"ref":"/repositories/4/top_containers/64898"},"victims":[{"ref":"/repositories/4/top_containers/65214"},{"ref":"/repositories/4/top_containers/65641"}]}
+update=client.post('/merge_requests/top_container?repo_id=8', {
+  "target":{"ref":"/repositories/8/top_containers/110015"},
+  "victims":[
+    {"ref":"/repositories/8/top_containers/110016"},
+    {"ref":"/repositories/4/top_containers/110017"}
+  ]
+}
 )
 puts update.body

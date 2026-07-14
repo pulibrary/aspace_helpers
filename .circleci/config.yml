@@ -28,9 +28,16 @@ jobs:
     environment:
       # Set to default branch of your repo
       DEFAULT_BRANCH: main
+      BEARER_VERSION: 2.0.2
+      BEARER_SHA256: 865c80c5f80aaca1f83e98bca4decb0fd5b5d024e13f8ec48e94d69430d0d23b
     steps:
       - checkout
-      - run: curl -sfL https://raw.githubusercontent.com/Bearer/bearer/main/contrib/install.sh | sh -s -- -b /tmp
+      - run:
+          name: Install Bearer (pinned version, checksum-verified)
+          command: |
+            curl -sfL -o /tmp/bearer.tar.gz "https://github.com/Bearer/bearer/releases/download/v${BEARER_VERSION}/bearer_${BEARER_VERSION}_linux_amd64.tar.gz"
+            echo "${BEARER_SHA256}  /tmp/bearer.tar.gz" | sha256sum -c -
+            tar -xzf /tmp/bearer.tar.gz -C /tmp bearer
       - run: CURRENT_BRANCH=$CIRCLE_BRANCH SHA=$CIRCLE_SHA1 /tmp/bearer scan .
   semgrep:
     docker:

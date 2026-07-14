@@ -33,12 +33,12 @@ end
 
 top_containers =
   resource_uris.map do |uri|
-  parsed = @client.get(
-    'repositories/5/top_containers/search',
-    query: {
-      q: "collection_uri_u_sstr:\"#{uri}\""
-    }
-  ).parsed
+    parsed = @client.get(
+      'repositories/5/top_containers/search',
+      query: {
+        q: "collection_uri_u_sstr:\"#{uri}\""
+      }
+    ).parsed
     parsed['response']['docs']
 end
 
