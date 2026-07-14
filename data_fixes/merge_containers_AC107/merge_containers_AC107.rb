@@ -49,7 +49,6 @@ top_containers = file_ids.map do |id|
 ).parsed['response']['docs'].map { |result| { JSON.parse(result['json'])['indicator'] => result['uri'] } }
 end
 
-#flatten response array and group by box number string (we know they are all of type "box")
 top_containers = top_containers.flatten!
 top_containers_grouped = {}
 top_containers.each do |hash|
@@ -57,7 +56,6 @@ top_containers.each do |hash|
      if top_containers_grouped.has_key?(k) == false
      then top_containers_grouped.store(k, [])
      end
-     #instead of storing top_containers_grouped[k] << hash[k], need to hash uris with key "ref"
      ref = {}
      ref.store("ref", hash[k])
      top_containers_grouped[k] << ref
