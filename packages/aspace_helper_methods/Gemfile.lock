@@ -34,7 +34,7 @@ GEM
       rexml
     crass (1.0.7)
     csv (3.3.6)
-    diff-lcs (1.5.1)
+    diff-lcs (1.6.2)
     dry-cli (0.7.0)
     erubi (1.13.1)
     hashdiff (1.2.1)
@@ -80,19 +80,19 @@ GEM
     rake (13.4.2)
     regexp_parser (2.12.0)
     rexml (3.4.4)
-    rspec (3.13.0)
+    rspec (3.13.2)
       rspec-core (~> 3.13.0)
       rspec-expectations (~> 3.13.0)
       rspec-mocks (~> 3.13.0)
-    rspec-core (3.13.1)
+    rspec-core (3.13.6)
       rspec-support (~> 3.13.0)
-    rspec-expectations (3.13.3)
+    rspec-expectations (3.13.5)
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.13.0)
-    rspec-mocks (3.13.1)
+    rspec-mocks (3.13.8)
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.13.0)
-    rspec-support (3.13.1)
+    rspec-support (3.13.7)
     rubocop (1.89.0)
       json (~> 2.3)
       language_server-protocol (~> 3.17.0.2)
@@ -125,7 +125,7 @@ PLATFORMS
 DEPENDENCIES
   aspace_helper_methods!
   rake (~> 13.4)
-  rspec (~> 3.0)
+  rspec (~> 3.13)
   rubocop (~> 1.89)
   webmock
 
