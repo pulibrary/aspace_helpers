@@ -18,13 +18,3 @@ updates:
       interval: weekly
     cooldown:
       default-days: 7
-
-  # CircleCI orbs in .circleci/config.yml (root config only; the packaged
-  # gem's config declares no orbs). Does not cover the pinned Bearer
-  # binary/SHA256, which is a plain curl in a run step.
-  - package-ecosystem: circleci
-    directory: "/"
-    schedule:
-      interval: weekly
-    cooldown:
-      default-days: 7
