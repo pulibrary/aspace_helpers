@@ -1,0 +1,21 @@
+version: 2
+updates:
+  # Root application bundle
+  - package-ecosystem: bundler
+    directory: "/"
+    schedule:
+      interval: weekly
+
+  # Packaged gem — source of all 19 alerts on the security tab as of 2026-08
+  - package-ecosystem: bundler
+    directory: "/packages/aspace_helper_methods"
+    schedule:
+      interval: weekly
+
+  # CircleCI orbs in .circleci/config.yml (root config only; the packaged
+  # gem's config declares no orbs). Does not cover the pinned Bearer
+  # binary/SHA256, which is a plain curl in a run step.
+  - package-ecosystem: circleci
+    directory: "/"
+    schedule:
+      interval: weekly
