@@ -11,7 +11,7 @@ gem 'nokogiri', ">= 1.19.4"
 gem 'rake'
 
 group :development do
-  gem "capistrano", "~> 3.16.0"
+  gem "capistrano", "~> 3.20.1"
   gem "capistrano-bundler"
   gem "stringio"
 end
