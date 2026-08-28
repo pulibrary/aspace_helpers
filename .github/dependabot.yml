@@ -1,0 +1,20 @@
+version: 2
+updates:
+  # Root application bundle
+  - package-ecosystem: bundler
+    directory: "/"
+    schedule:
+      interval: weekly
+    # Wait 7 days before proposing a newly published version, so a
+    # compromised or broken release has time to be yanked. Cooldown applies
+    # to version updates ONLY — security updates are never delayed by it.
+    cooldown:
+      default-days: 7
+
+  # Packaged gem — source of all 19 alerts on the security tab as of 2026-08
+  - package-ecosystem: bundler
+    directory: "/packages/aspace_helper_methods"
+    schedule:
+      interval: weekly
+    cooldown:
+      default-days: 7

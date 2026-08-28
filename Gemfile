@@ -7,7 +7,7 @@ gem 'csv'
 gem "ed25519"
 gem 'net-sftp'
 gem 'net-ssh'
-gem 'nokogiri'
+gem 'nokogiri', ">= 1.19.4"
 gem 'rake'
 
 group :development do
