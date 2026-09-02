@@ -75,7 +75,12 @@ end
 
 def fetch_and_process_records
   #open a quasi log to receive progress output
-  log_out = File.open("log_out.txt", "w")
+  File.open("log_out.txt", "w") do |log_out|
+    export_records(log_out)
+  end
+end
+
+def export_records(log_out)
   aspace_login
   #log when the process started
   log_out.puts "Process started fetching records at #{Time.now}"
@@ -95,15 +100,15 @@ def fetch_and_process_records
   #get collection records from ASpace
   resources = get_resource_uris_for_all_repos
 
-  file =  File.open(filename, "w")
-  file << '<collection xmlns="http://www.loc.gov/MARC21/slim" xmlns:marc="http://www.loc.gov/MARC21/slim" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.loc.gov/MARC21/slim http://www.loc.gov/standards/marcxml/schema/MARC21slim.xsd">'
+  File.open(filename, "w") do |file|
+    file << '<collection xmlns="http://www.loc.gov/MARC21/slim" xmlns:marc="http://www.loc.gov/MARC21/slim" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.loc.gov/MARC21/slim http://www.loc.gov/standards/marcxml/schema/MARC21slim.xsd">'
 
-  resources.each do |resource_uri|
-    process_resource(resource_uri, file, log_out, barcode_duplicate_check)
+    resources.each do |resource_uri|
+      process_resource(resource_uri, file, log_out, barcode_duplicate_check)
+    end
+
+    file << '</collection>'
   end
-
-  file << '</collection>'
-  file.close
 
   #send to alma
   alma_sftp(filename) unless skip_sftp?

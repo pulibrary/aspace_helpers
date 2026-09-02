@@ -60,10 +60,10 @@ require 'fileutils'
             ead.remove_namespaces!
             eadid = ead.at_xpath('//eadid/text()')
             #save file with eadid as file name
-            file =  File.open("./#{dir}/#{eadid}.EAD.xml", "w")
-            #add back a default namespace
-            ead.child.add_namespace('ead', 'http://www.loc.gov/ead/ead')
-            file << ead
-            file.close
+            File.open("./#{dir}/#{eadid}.EAD.xml", "w") do |file|
+              #add back a default namespace
+              ead.child.add_namespace('ead', 'http://www.loc.gov/ead/ead')
+              file << ead
+            end
           end
       end

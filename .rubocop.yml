@@ -16,30 +16,44 @@ Layout/LineLength:
 
 Metrics/AbcSize:
   Exclude:
+    - 'data_fixes/subject_remediation/lcsh_reconciliation/heading_classifier.rb'
+    - 'data_fixes/subject_remediation/lcsh_reconciliation/segment_resolver.rb'
+    - 'data_fixes/subject_remediation/lcsh_reconciliation/authority_index.rb'
+    - 'data_fixes/subject_remediation/lcsh_reconciliation/lcnaf_lookup.rb'
     - 'reports/aspace2alma/get_MARCxml.rb'
     - 'reports/aspace2alma/get_ao2MARC_data.rb'
     - 'tools/as_marcao/marc_ao_mapper.rb'
 
 Metrics/MethodLength:
   Exclude:
+    - 'data_fixes/subject_remediation/lcsh_reconciliation/segment_resolver.rb'
     - 'reports/aspace2alma/get_MARCxml.rb'
     - 'reports/aspace2alma/get_ao2MARC_data.rb'
     - 'tools/as_marcao/marc_ao_mapper.rb'
 
 Metrics/CyclomaticComplexity:
   Exclude:
+    - 'data_fixes/subject_remediation/lcsh_reconciliation/heading_classifier.rb'
+    - 'data_fixes/subject_remediation/lcsh_reconciliation/segment_resolver.rb'
+    - 'data_fixes/subject_remediation/lcsh_reconciliation/authority_index.rb'
     - 'reports/aspace2alma/get_MARCxml.rb'
     - 'reports/aspace2alma/get_ao2MARC_data.rb'
     - 'tools/as_marcao/marc_ao_mapper.rb'
 
 Metrics/PerceivedComplexity:
   Exclude:
+    - 'data_fixes/subject_remediation/lcsh_reconciliation/segment_resolver.rb'
+    - 'data_fixes/subject_remediation/lcsh_reconciliation/heading_classifier.rb'
+    - 'data_fixes/subject_remediation/lcsh_reconciliation/authority_index.rb'
     - 'reports/aspace2alma/get_MARCxml.rb'
     - 'reports/aspace2alma/get_ao2MARC_data.rb'
     - 'tools/as_marcao/marc_ao_mapper.rb'
 
 Metrics/ClassLength:
   Exclude:
+    - 'data_fixes/subject_remediation/lcsh_reconciliation/segment_resolver.rb'
+    - 'data_fixes/subject_remediation/lcsh_reconciliation/lcnaf_lookup.rb'
+    - 'data_fixes/subject_remediation/lcsh_reconciliation/authority_index.rb'
     - 'tools/as_marcao/marc_ao_mapper.rb'
 
 Naming/VariableNumber:
@@ -58,3 +72,19 @@ Style/MultipleComparison:
 
 Style/RedundantParentheses:
   Enabled: false
+Metrics/ModuleLength:
+  Exclude:
+    - 'data_fixes/subject_remediation/lcsh_reconciliation/aat_index.rb'
+    - 'data_fixes/subject_remediation/lcsh_reconciliation/lcnaf_lookup.rb'
+    - 'data_fixes/subject_remediation/lcsh_reconciliation/segment_resolver.rb'
+    - 'data_fixes/subject_remediation/lcsh_reconciliation/heading_classifier.rb'
+    - 'data_fixes/subject_remediation/lcsh_reconciliation/authority_index.rb'
+
+Metrics/ParameterLists:
+  Exclude:
+    - 'data_fixes/subject_remediation/lcsh_reconciliation/heading_classifier.rb'
+    - 'data_fixes/subject_remediation/lcsh_reconciliation/segment_resolver.rb'
+
+RSpec/ExampleLength:
+  Exclude:
+    - 'spec/data_fixes/subject_remediation/heading_classifier_spec.rb'
