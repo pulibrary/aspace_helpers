@@ -31,7 +31,7 @@ def mock_alma_api_responses
         [page1, page2, page3]
 end
 
-# rubocop:disable RSpec/SpecFilePathFormat
+# rubocop:disable-next RSpec/SpecFilePathFormat
 RSpec.describe AlmaSetDuplicateCheck do
     it 'makes requests to alma' do
         mock_alma_api_environment_variables
@@ -62,4 +62,3 @@ RSpec.describe AlmaSetDuplicateCheck do
         expect(duplicate_checker.duplicate?('barcode99999')).to be false
     end
 end
-# rubocop:enable RSpec/SpecFilePathFormat

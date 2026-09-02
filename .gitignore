@@ -20,3 +20,4 @@ vendor
 log_err.txt
 log_out.txt
 coverage/*
+data_fixes/subject_remediation/lcsh_reconciliation/authority_cache/

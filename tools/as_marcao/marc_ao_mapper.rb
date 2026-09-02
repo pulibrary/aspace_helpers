@@ -5,7 +5,7 @@
 # fields resolved: subjects, linked_agents, top_container
 
 require 'nokogiri'
-# rubocop:disable Style/SlicingWithRange
+# rubocop:disable-next Style/SlicingWithRange
 class MarcAOMapper
   def self.resolves
     [
@@ -392,7 +392,7 @@ class MarcAOMapper
       end
       #if there are no subfields but the main term has double dashes, compute supfields
       computed_subterms =
-        if subject['terms'].count == 1 && subject['full_first_term'] =~ /--/
+        if subject['terms'].one? && subject['full_first_term'] =~ /--/
           tokens = subject['full_first_term'].split('--')
           tokens.each(&:strip!)
           tokens[1..-1].map do |token|
@@ -450,4 +450,3 @@ class MarcAOMapper
           </record>"
   end
 end
-# rubocop:enable Style/SlicingWithRange
