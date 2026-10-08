@@ -1,10 +1,10 @@
 GIT
   remote: https://github.com/lyrasis/archivesspace-client.git
-  revision: 6d22a53fcced32a31d8e817e4a94e5eb240e0e9f
+  revision: 21d31b1366c878c873c43d9f80658c078b8e2c5a
   specs:
-    archivesspace-client (0.6.0)
+    archivesspace-client (0.7.0)
       dry-cli (< 2.0)
-      httparty (~> 0.14)
+      httparty (~> 0.16)
       jbuilder (~> 2.12)
       json (~> 2.0)
 
@@ -67,7 +67,7 @@ GEM
     ed25519 (1.4.0)
     erubi (1.13.1)
     hashdiff (1.2.1)
-    httparty (0.24.2)
+    httparty (0.24.3)
       csv
       mini_mime (>= 1.0.0)
       multi_xml (>= 0.5.2)
@@ -176,7 +176,7 @@ GEM
     unicode-display_width (3.3.0)
       unicode-emoji (~> 4.3)
     unicode-emoji (4.3.0)
-    uri (1.1.1)
+    uri (1.1.2)
     webmock (3.26.4)
       addressable (>= 2.8.0)
       crack (>= 0.3.2)
